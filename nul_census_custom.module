@@ -1,11 +1,20 @@
 <?php
 
-function raic_body_class_preprocess_html(&$vars) {
-  global $language;
-  if ($language) {
-    $vars['classes_array'][] = 'lang-' . $language->language;
+function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
+  if (!empty($form['#node']->type) && $form['#node']->type == 'nul_census') {
+    nul_census_custom_tableizeMe($numberOfRows, $numberOfColumns, $arrayOfRowContent);
+    // print_r($form);
+    // die();
   }
-  else {
-    $vars['classes_array'][] = 'lang-none';
-  }
+}
+
+/**
+ * Function to create Tables Form Layout
+ * @param  [type] $numberOfRows      [description]
+ * @param  [type] $numberOfColumns   [description]
+ * @param  [type] $arrayOfRowContent [description]
+ * @return [type]                    [description]
+ */
+function nul_census_custom_tableizeMe($numberOfRows, $numberOfColumns, $arrayOfRowContent) {
+
 }
