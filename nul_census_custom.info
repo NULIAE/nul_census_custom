@@ -1,0 +1,7 @@
+name = NUL Census Customizations Module
+description = Styles Census fields for a better user experience
+core = 7.x
+files[] = nul_census_custom.module
+version = "7.x-1.0"
+core = "7.x"
+package = NUL 

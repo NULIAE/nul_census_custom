@@ -1,0 +1,11 @@
+<?php
+
+function raic_body_class_preprocess_html(&$vars) {
+  global $language;
+  if ($language) {
+    $vars['classes_array'][] = 'lang-' . $language->language;
+  }
+  else {
+    $vars['classes_array'][] = 'lang-none';
+  }
+}
