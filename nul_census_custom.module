@@ -1,7 +1,7 @@
 <?php
 
 function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
-  if (!empty($form['#node']->type) && $form['#node']->type == 'nul_census') {
+  if (!empty($form['#node']->type) && $form['#node']->type == 'census') {
     // Add css file to style Census form in edit mode
     $form['#attached']['css'] = array(
       drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',

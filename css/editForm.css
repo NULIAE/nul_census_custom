@@ -11,3 +11,7 @@
 .nulTableRow div {
   display: table-cell;
 }
+
+.nulTable .nulTableRow .form-item label {
+  display: none;
+}
