@@ -6,11 +6,12 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     $form['#attached']['css'] = array(
       drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
     );
-  }
-  // make tooltips for board composition table
-  foreach ($form as $key => $value) {
-    if (substr($key, 0, 12) == 'field_board_' && !empty($form[$key][LANGUAGE_NONE][0]['value']['#title'])) {
-      $form[$key]['#attributes']['title'] = $form[$key][LANGUAGE_NONE][0]['value']['#title'];
+
+    // make tooltips for board composition table
+    foreach ($form as $key => $value) {
+      if (substr($key, 0, 12) == 'field_board_' && !empty($form[$key][LANGUAGE_NONE][0]['value']['#title'])) {
+        $form[$key]['#attributes']['title'] = $form[$key][LANGUAGE_NONE][0]['value']['#title'];
+      }
     }
   }
 }
