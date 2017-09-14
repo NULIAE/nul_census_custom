@@ -1,4 +1,5 @@
 .nulTable {
+  border: 1px solid #bebfb9;
   display: table;
 }
 
@@ -10,8 +11,27 @@
 .nulTableRow h3,
 .nulTableRow div {
   display: table-cell;
+  padding-right: 10px;
+  padding-left: 10px;
 }
 
 .nulTable .nulTableRow .form-item label {
   display: none;
+}
+
+.nulTableRow:nth-child(odd) {
+  background-color: #F3F4EE;
+}
+
+.nulTableRow:nth-child(even) {
+  background-color: white;
+}
+
+.group-boardcomptableheader.nulTableRow {
+  background-color: #E1E2DC;
+}
+
+.group-boardcomptableheader .nulTableCell {
+  padding-top: 10px;
+  padding-bottom: 10px;
 }
