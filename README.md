@@ -14,3 +14,7 @@ All these fields are in the group "What is the racial/gender composition of your
 Rows are made into groups with in the "What is the racial/gender composition of your board?" group with the css class "nulTableRow"
 
 Then a style sheet is added that styles the div's using the display properties: "table", "table-row" and "table-cell" to appear as a table and hides the labels. There is also code in here that creates a tooltip for each of the input fields for which the labels are hidden.
+
+See screenshot below:
+
+![Screenshot of board composition table](img/boardCompositionTable.png)
