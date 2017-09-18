@@ -9,8 +9,10 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
 
     // make tooltips for board composition table
     foreach ($form as $key => $value) {
-      if (substr($key, 0, 12) == 'field_board_' && !empty($form[$key][LANGUAGE_NONE][0]['value']['#title'])) {
-        $form[$key]['#attributes']['title'] = $form[$key][LANGUAGE_NONE][0]['value']['#title'];
+      if (substr($key, 0, 12) == 'field_voter_' || substr($key, 0, 12) == 'field_board_') {
+        if (!empty($form[$key][LANGUAGE_NONE][0]['value']['#title'])) {
+          $form[$key]['#attributes']['title'] = $form[$key][LANGUAGE_NONE][0]['value']['#title'];
+        }
       }
     }
   }

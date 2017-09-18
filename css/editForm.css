@@ -27,11 +27,13 @@
   background-color: white;
 }
 
-.group-boardcomptableheader.nulTableRow {
+.group-boardcomptableheader.nulTableRow,
+.nulTableRow.nulTableHeader {
   background-color: #E1E2DC;
 }
 
-.group-boardcomptableheader .nulTableCell {
+.group-boardcomptableheader .nulTableCell,
+.nulTableRow.nulTableHeader .nulTableCell {
   padding-top: 10px;
   padding-bottom: 10px;
 }
