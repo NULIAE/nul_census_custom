@@ -1,13 +1,17 @@
 .nulTable {
   border: 1px solid #bebfb9;
   display: table;
+margin: 5px;
 }
 
-.nulTableRow {
+.nulTableRow,
+.nulTable div.field-group-div {
   display: table-row;
 }
 
 .nulTableCell,
+.nulTable .field-group-div h3,
+.nulTable .field-group-div div,
 .nulTableRow h3,
 .nulTableRow div {
   display: table-cell;
@@ -15,25 +19,44 @@
   padding-left: 10px;
 }
 
-.nulTable .nulTableRow .form-item label {
+.nulTable .nulTableRow .form-item label,
+.nulTable .field-group-div .form-item label {
   display: none;
 }
 
+.nulTable .field-group-div:nth-child(odd),
 .nulTableRow:nth-child(odd) {
   background-color: #F3F4EE;
 }
 
+.nulTable .field-group-div:nth-child(even),
 .nulTableRow:nth-child(even) {
   background-color: white;
 }
 
 .group-boardcomptableheader.nulTableRow,
-.nulTableRow.nulTableHeader {
+.nulTableRow.nulTableHeader,
+.nulTable .field-group-div.nulTableHeader {
   background-color: #E1E2DC;
 }
 
+.nulTable .field-group-div.nulTableHeader h3,
 .group-boardcomptableheader .nulTableCell,
 .nulTableRow.nulTableHeader .nulTableCell {
   padding-top: 10px;
   padding-bottom: 10px;
+}
+
+.group-contact .nulTable {
+ width: 800px;
+ margin-bottom: 20px;
+}
+
+.nulTable h3,
+.nulTable div.description {
+  padding: 5px;
+}
+
+#edit-field-indirect-contact-served {
+padding: 5px;
 }
