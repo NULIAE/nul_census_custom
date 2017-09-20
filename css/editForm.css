@@ -60,3 +60,10 @@ margin: 5px;
 #edit-field-indirect-contact-served {
 padding: 5px;
 }
+
+.nulTable > h3:first-child {
+  display: table-caption;
+  border: 1px solid #bebfb9;
+  background-color: #bebfb9;
+  font-weight: bold;
+}
