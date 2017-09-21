@@ -1,7 +1,8 @@
 .nulTable {
   border: 1px solid #bebfb9;
   display: table;
-margin: 5px;
+  width: 100%;
+  min-width: 600px;
 }
 
 .nulTableRow,
@@ -51,8 +52,7 @@ margin: 5px;
  margin-bottom: 20px;
 }
 
-.nulTable h3,
-.nulTable div.description {
+.nulTable h3 {
   padding: 5px;
 }
 
