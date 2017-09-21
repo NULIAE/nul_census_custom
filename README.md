@@ -26,6 +26,8 @@ All field groups styled this way:
 2. Voter Registration fields
 3. Emergency Relief Activities
 4. Direct Contact, Public Contact and Indirect Contact Data (A, B and C)
+5. Community Forum
+6. Community Organization
 
 ## Notes on Config
 
