@@ -1,12 +1,18 @@
 <?php
 
+/**
+ * hook_node_view()
+ */
 function nul_census_custom_node_view($node, $view_mode, $langcode) {
-if ($node->type == 'census') {
-      drupal_add_js(drupal_get_path('module', 'nul_census_custom') .'/js/formFix.js');
-
+  // If on census view mode run this js to fix up table styling
+  if ($node->type == 'census') {
+    drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/formFix.js');
   }
 }
 
+/**
+ * hook_form_alter()
+ */
 function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
   if (!empty($form['#node']->type) && $form['#node']->type == 'census') {
     // Add css file to style Census form in edit mode
@@ -14,9 +20,9 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
       drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
     );
 
-    // make tooltips for board composition table
+    // make tooltips for all fields
     foreach ($form as $key => $value) {
-      if (substr($key, 0, 12) == 'field_voter_' || substr($key, 0, 12) == 'field_board_') {
+      if (substr($key, 0, 6) == 'field_') {
         if (!empty($form[$key][LANGUAGE_NONE][0]['value']['#title'])) {
           $form[$key]['#attributes']['title'] = $form[$key][LANGUAGE_NONE][0]['value']['#title'];
         }
