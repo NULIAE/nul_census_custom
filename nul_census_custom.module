@@ -15,6 +15,10 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
  */
 function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
   if (!empty($form['#node']->type) && $form['#node']->type == 'census') {
+    // float save to the bottom 
+    if (!empty($form['#node_edit_form']) && $form['#node_edit_form'] == TRUE) {
+      $form['actions']['#weight'] = 1000; 
+    }
     // Add css file to style Census form in edit mode
     $form['#attached']['css'] = array(
       drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
