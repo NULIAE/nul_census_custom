@@ -152,12 +152,12 @@ function nul_census_custom_node_create($censusId, $type, $title) {
 function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
   $tabFields = nul_census_custom_tab_info('all');
   // Setting up new censuss
-  if (!empty($form['#node']->type) && $form['#node']->type == 'test-clean-census') {
+  if (!empty($form['#node']->type)) {
     if (arg(0) == 'node' && arg(1) == 'add' && arg(2) == 'test-clean-census' && arg(3) >= 1) {
       $year = date("Y");
       //TODO look up contact org name of arg(3) and print instead of id
       // Update and disable title field
-      $form['title']['#default_value'] = arg(3) . " " . $year . "Census";
+      $form['title']['#default_value'] = arg(3) . " " . $year . " Census";
       $form['title']['#disabled'] = TRUE;
       // Update Year field and hide
       $form['field_year'][LANGUAGE_NONE][0]['value']['#default_value'] = $year;
@@ -232,10 +232,27 @@ function nul_census_custom_permission() {
  */
 function nul_census_custom_check_tabstatus_permisions($status) {
   global $user;
-  $canEdit = FALSE;
   //TODO build out permissions
-  if ($status == 2 && user_access('edit census tabs with status submitted reviewed or review complete')) {
-    $canEdit = TRUE;
+  switch ($status) {
+    // Incomplete
+    case 1:
+      $canEdit = TRUE;
+      break;
+
+    // complete
+    case 2:
+      if ($user_access('edit census tabs with status submitted reviewed or review complete')) {
+        $canEdit = TRUE;
+      }
+      else {
+        $canEdit = FALSE;
+      }
+      break;
+
+    default:
+      $canEdit = FALSE;
+
+      break;
   }
   return $canEdit;
 }
