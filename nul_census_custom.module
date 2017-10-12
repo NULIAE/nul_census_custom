@@ -65,6 +65,18 @@ function nul_census_custom_tab_info($format) {
  * hook_node_view()
  */
 function nul_census_custom_node_view($node, $view_mode, $langcode) {
+  // Check permissions, if do not have permission to edit complete tabs hide edit button
+  $tabFields = nul_census_custom_tab_info('all');
+  foreach ($tabFields as $field => $values) {
+    if ($node->type == $values['type'] && !empty($node->field_tab_status[LANGUAGE_NONE][0]['tid'])) {
+      $canEdit = nul_census_custom_check_tabstatus_permisions($node->field_tab_status[LANGUAGE_NONE][0]['tid']);
+      if (!$canEdit) {
+        drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/hideEdit.js');
+        drupal_set_message("You do not have permission to edit this content at this stage", 'error');
+      }
+    }
+  }
+
   // If on emergency_relief_activities view mode run this js to fix up table styling
   if ($node->type == 'emergency_relief_activities') {
     drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/formFix.js');
@@ -72,7 +84,6 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
 
   // if on the main census node check to see if the related tabs are populated, if not create a related node of that content type and assign it
   if ($node->type == 'test_clean_census') {
-    $tabFields = nul_census_custom_tab_info('all');
     // check if any tabs are set up yet
     foreach ($tabFields as $field => $values) {
       // TODO also check in database if there is a tab node that references this census node
@@ -139,25 +150,28 @@ function nul_census_custom_node_create($censusId, $type, $title) {
  * hook_form_alter()
  */
 function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
-  if (arg(0) == 'node' && arg(1) == 'add' && arg(2) == 'test-clean-census' && arg(3) >= 1) {
-    $year = date("Y");
-    //TODO look up contact org name of arg(3) and print instead of id
-    // Update and disable title field
-    $form['title']['#default_value'] = arg(3) . " " . $year . "Census";
-    $form['title']['#disabled'] = TRUE;
-    // Update Year field and hide
-    $form['field_year'][LANGUAGE_NONE][0]['value']['#default_value'] = $year;
-    $form['field_year']['#type'] = 'hidden';
-    // Update affliate field and hide it
-    $form['field_affiliate_'][LANGUAGE_NONE][0]['value']['#default_value'] = arg(3);
-    $form['field_affiliate_']['#type'] = 'hidden';
+  $tabFields = nul_census_custom_tab_info('all');
+  // Setting up new censuss
+  if (!empty($form['#node']->type) && $form['#node']->type == 'test-clean-census') {
+    if (arg(0) == 'node' && arg(1) == 'add' && arg(2) == 'test-clean-census' && arg(3) >= 1) {
+      $year = date("Y");
+      //TODO look up contact org name of arg(3) and print instead of id
+      // Update and disable title field
+      $form['title']['#default_value'] = arg(3) . " " . $year . "Census";
+      $form['title']['#disabled'] = TRUE;
+      // Update Year field and hide
+      $form['field_year'][LANGUAGE_NONE][0]['value']['#default_value'] = $year;
+      $form['field_year']['#type'] = 'hidden';
+      // Update affliate field and hide it
+      $form['field_affiliate_'][LANGUAGE_NONE][0]['value']['#default_value'] = arg(3);
+      $form['field_affiliate_']['#type'] = 'hidden';
 
-    // get all tab fields if they are unpopulated hide them (on new census node should all be empty)
-    $tabFields = nul_census_custom_tab_info('all');
-    foreach ($tabFields as $tabField => $values) {
-      // hide fields to pick entity references
-      if (empty($form[$tabField][LANGUAGE_NONE][0]['value']['#default_value'])) {
-        $form[$tabField]['#type'] = 'hidden';
+      // get all tab fields if they are unpopulated hide them (on new census node should all be empty)
+      foreach ($tabFields as $tabField => $values) {
+        // hide fields to pick entity references
+        if (empty($form[$tabField][LANGUAGE_NONE][0]['value']['#default_value'])) {
+          $form[$tabField]['#type'] = 'hidden';
+        }
       }
     }
   }
@@ -173,6 +187,21 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
       if (substr($key, 0, 6) == 'field_') {
         if (!empty($form[$key][LANGUAGE_NONE][0]['value']['#title'])) {
           $form[$key]['#attributes']['title'] = $form[$key][LANGUAGE_NONE][0]['value']['#title'];
+        }
+      }
+    }
+    // Permissioning on census tab content types in edit mode (also checks its not in comment mode)
+    foreach ($tabFields as $field => $values) {
+      if (!empty($form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']) && $form['#node']->type == $values['type'] && substr($form_id, 0, 7) !== 'comment') {
+        $canEdit = nul_census_custom_check_tabstatus_permisions($form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']);
+        // If can't edit redirect to node in view mode.
+        if (!$canEdit) {
+          if (arg(0) == 'node' && arg(2) == 'edit') {
+            drupal_goto(arg(0) . '/' . arg(1));
+          }
+          else {
+            drupal_goto('403');
+          }
         }
       }
     }
@@ -194,4 +223,19 @@ function nul_census_custom_permission() {
       'description' => t('Allows a user to edit census tabs with status rresubmit.'),
     ),
   );
+}
+
+/**
+ * Check permissions of user and status of tab
+ * @param  int $status status of tab
+ * @return boolean        can they edit or not
+ */
+function nul_census_custom_check_tabstatus_permisions($status) {
+  global $user;
+  $canEdit = FALSE;
+  //TODO build out permissions
+  if ($status == 2 && user_access('edit census tabs with status submitted reviewed or review complete')) {
+    $canEdit = TRUE;
+  }
+  return $canEdit;
 }
