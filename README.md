@@ -45,3 +45,16 @@ php_value suhosin.request.max_vars 3000
 ```
 
 To the .htaccess file
+
+## Census in edit mode
+
+When you visit: <url>/node/add/test-clean-census/<affiliateId>
+Hides tab fields affiliate and year
+Populates the year to be the current year
+Populates title to be the affiliate id concatenated with the year
+
+Related tab content type npdes are created on first view with status of incomplete.
+
+## Census in view mode
+
+When one views the census in view mode styles table

@@ -1,25 +1,71 @@
 <?php
 
+function nul_census_custom_tab_info($format) {
+  $tabFields = array(
+    'field_tab_1_contact_information' => array(
+      'type' => "contact_information",
+      'title' => "Contact Information",
+    ),
+    'field_tab_2_service_areas' => array(
+      'type' => "service_areas",
+      'title' => "Service Areas",
+    ),
+    'field_tab_3_community_relations' => array(
+      'type' => "community_relations",
+      'title' => "Community Relations",
+    ),
+    'field_tab_4_employees_and_board_' => array(
+      'type' => "employees_and_board_members",
+      'title' => "Employees and Board Members",
+    ),
+    'field_tab_5_budget' => array(
+      'type' => "revenue",
+      'title' => "Revenue",
+    ),
+    'field_tab_6_expenditures' => array(
+      'type' => "expenditures",
+      'title' => "Expenditures",
+    ),
+    'field_tab_13_civic_engagement' => array(
+      'type' => "civic_engagement",
+      'title' => "Civic Engagement",
+    ),
+    'field_tab_14_emergency_relief_ac' => array(
+      'type' => "emergency_relief_activities",
+      'title' => "Emergency Relief Activities",
+    ),
+    'field_tab_15_contact_data_direct' => array(
+      'type' => "contact_data_direct_indirect_pub",
+      'title' => "Contact Data (Direct, Indirect & Public)",
+    ),
+    'field_tab_16_empowerment' => array(
+      'type' => "empowerment",
+      'title' => "Empowerment",
+    ),
+    'field_tab_17_volunteers_members' => array(
+      'type' => "volunteers_members",
+      'title' => "Volunteers/Members",
+    ),
+    'field_tab_18_survey_certificatio' => array(
+      'type' => "survey_certification",
+      'title' => "Survey Certification",
+    ),
+  );
+  if ($format == 'all') {
+    return $tabFields;
+  }
+}
 /**
  * hook_node_view()
  */
 function nul_census_custom_node_view($node, $view_mode, $langcode) {
-  // If on census view mode run this js to fix up table styling
-  if ($node->type == 'census') {
+  // If on emergency_relief_activities view mode run this js to fix up table styling
+  if ($node->type == 'emergency_relief_activities') {
     drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/formFix.js');
   }
   // if on the main census node check to see if the related tabs are populated
   if ($node->type == 'test_clean_census') {
-    $tabFields = array(
-      'field_tab_1_contact_information' => array(
-        'type' => "contact_information",
-        'title' => "Contact Information",
-      ),
-      'field_tab_2_service_areas' => array(
-        'type' => "service_areas",
-        'title' => "Service Areas",
-      ),
-    );
+    $tabFields = nul_census_custom_tab_info('all');
     // check if any tabs are set up yet
     foreach ($tabFields as $field => $values) {
       // TODO also check in database if there is a tab node that references this census node
@@ -74,7 +120,7 @@ function nul_census_custom_node_create($censusId, $type, $title) {
     'target_type' => 'node',
   );
   // Term reference (taxonomy) field
-  $node->field_sa_tab_status[$node->language][]['tid'] = 1;
+  $node->field_tab_status[$node->language][]['tid'] = 1;
 
   $node = node_submit($node);
   // Prepare node for saving
@@ -90,20 +136,23 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     $year = date("Y");
     //TODO look up contact org name of arg(3) and print instead of id
     $form['title']['#default_value'] = arg(3) . " " . $year . "Census";
+    $form['title']['#disabled'] = TRUE;
     $form['field_year'][LANGUAGE_NONE][0]['value']['#default_value'] = $year;
+    $form['field_year']['#type'] = 'hidden';
     $form['field_affiliate_'][LANGUAGE_NONE][0]['value']['#default_value'] = arg(3);
-    // hide fields to pick entity references
-    if (empty($form['field_tab_1_contact_information'][LANGUAGE_NONE][0]['value']['#default_value'])) {
-      $form['field_tab_1_contact_information']['#type'] = 'hidden';
-      $form['field_tab_2_service_areas']['#type'] = 'hidden';
+    $form['field_affiliate_']['#type'] = 'hidden';
+
+    // get all tab fields
+    $tabFields = nul_census_custom_tab_info('all');
+    foreach ($tabFields as $tabField => $values) {
+      // hide fields to pick entity references
+      if (empty($form[$tabField][LANGUAGE_NONE][0]['value']['#default_value'])) {
+        $form[$tabField]['#type'] = 'hidden';
+      }
     }
   }
-  if (!empty($form['#node']->type) && $form['#node']->type == 'census') {
-    // float save to the bottom
-    if (!empty($form['#node_edit_form']) && $form['#node_edit_form'] == TRUE) {
-      $form['actions']['#weight'] = 1000;
-    }
-    // Add css file to style Census form in edit mode
+  if (!empty($form['#node']->type)) {
+    // Add css file to tab in edit mode
     $form['#attached']['css'] = array(
       drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
     );
