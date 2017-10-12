@@ -60,3 +60,7 @@ Related tab content type npdes are created on first view with status of incomple
 When one views the census in view mode styles table
 
 ## Permissions
+For Census Tabs:
+
+If the census tab status is incomplete anyone can edit
+IF the census tab status is complete only those with the permission:  XXX can edit.
