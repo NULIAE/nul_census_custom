@@ -58,3 +58,5 @@ Related tab content type npdes are created on first view with status of incomple
 ## Census in view mode
 
 When one views the census in view mode styles table
+
+## Permissions
