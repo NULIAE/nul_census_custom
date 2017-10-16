@@ -194,8 +194,14 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     }
     // Permissioning on census tab content types in edit mode (also checks its not in comment mode)
     foreach ($tabFields as $field => $values) {
+      // TODO make sure this holds all total fields
+      $fieldsToDisable = array('title', 'field_voter_societal_impact');
+      foreach ($fieldsToDisable as $key => $field) {
+        if (!empty($form[$field])) {
+          $form[$field]['#disabled'] = TRUE;
+        }
+      }
       // hide title field on cenus tab content types in edit mode
-      $form['title']['#disabled'] = TRUE;
       $form['title']['#type'] = 'hidden';
       // load totaling js
       drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/totaling.js');
@@ -240,67 +246,73 @@ function nul_census_custom_permission() {
  */
 function nul_census_custom_check_tabstatus_permisions($status) {
   global $user;
-  //TODO build out permissions
-  switch ($status) {
-    // Incomplete
-    case 10:
-      $canEdit = TRUE;
-      break;
-
-    // Complete
-    case 11:
-      if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
+  // IF user is an administrator they can edit whatever always
+  if (in_array('administrator', $user->roles)) {
+    $canEdit = TRUE;
+  }
+  // If user is not admin check permissions
+  if (!in_array('administrator', $user->roles)) {
+    switch ($status) {
+      // Incomplete
+      case 10:
         $canEdit = TRUE;
-      }
-      else {
+        break;
+
+      // Complete
+      case 11:
+        if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
+          $canEdit = TRUE;
+        }
+        else {
+          $canEdit = FALSE;
+        }
+        break;
+
+      // Resubmit
+      case 13:
+        if (user_access('edit census tabs with status resubmit')) {
+          $canEdit = TRUE;
+        }
+        else {
+          $canEdit = FALSE;
+        }
+        break;
+
+      // Reviewed
+      case 14:
+        if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
+          $canEdit = TRUE;
+        }
+        else {
+          $canEdit = FALSE;
+        }
+        break;
+
+      // Reviewed Complete
+      case 15:
+        if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
+          $canEdit = TRUE;
+        }
+        else {
+          $canEdit = FALSE;
+        }
+        break;
+
+      // Submitted
+      case 12:
+        if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
+          $canEdit = TRUE;
+        }
+        else {
+          $canEdit = FALSE;
+        }
+        break;
+
+      default:
         $canEdit = FALSE;
-      }
-      break;
 
-    // Resubmit
-    case 13:
-      if (user_access('edit census tabs with status resubmit')) {
-        $canEdit = TRUE;
-      }
-      else {
-        $canEdit = FALSE;
-      }
-      break;
-
-    // Reviewed
-    case 14:
-      if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
-        $canEdit = TRUE;
-      }
-      else {
-        $canEdit = FALSE;
-      }
-      break;
-
-    // Reviewed Complete
-    case 15:
-      if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
-        $canEdit = TRUE;
-      }
-      else {
-        $canEdit = FALSE;
-      }
-      break;
-
-    // Submitted
-    case 12:
-      if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
-        $canEdit = TRUE;
-      }
-      else {
-        $canEdit = FALSE;
-      }
-      break;
-
-    default:
-      $canEdit = FALSE;
-
-      break;
+        break;
+    }
   }
   return $canEdit;
 }
