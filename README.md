@@ -60,7 +60,12 @@ Related tab content type npdes are created on first view with status of incomple
 When one views the census in view mode styles table
 
 ## Permissions
-For Census Tabs:
+For Census Tabs editing:
 
-If the census tab status is incomplete anyone can edit
-IF the census tab status is complete only those with the permission:  XXX can edit.
+| status            | edit census tabs with status submitted reviewed complete or review complete | edit census tabs with status resubmit |
+| Complete          | Yes                                                                         | No                                    |
+| Incomplete        | Yes                                                                         | Yes                                   |
+| Resubmit          | No                                                                          | Yes                                   |
+| Reviewed          | Yes                                                                         | No                                    |
+| Reviewed Complete | Yes                                                                         | No                                    |
+| Submitted         | Yes                                                                         | No                                    | 
