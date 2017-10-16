@@ -144,7 +144,7 @@ function nul_census_custom_node_create($censusId, $type, $title) {
     'target_type' => 'node',
   );
   // Term reference (taxonomy) field
-  $node->field_tab_status[$node->language][]['tid'] = 1;
+  $node->field_tab_status[$node->language][]['tid'] = 10;
 
   $node = node_submit($node);
   // Prepare node for saving
@@ -237,12 +237,12 @@ function nul_census_custom_check_tabstatus_permisions($status) {
   //TODO build out permissions
   switch ($status) {
     // Incomplete
-    case 1:
+    case 10:
       $canEdit = TRUE;
       break;
 
     // Complete
-    case 2:
+    case 11:
       if ($user_access('edit census tabs with status submitted reviewed complete or review complete')) {
         $canEdit = TRUE;
       }
@@ -252,7 +252,7 @@ function nul_census_custom_check_tabstatus_permisions($status) {
       break;
 
     // Resubmit
-    case 3:
+    case 13:
       if ($user_access('edit census tabs with status resubmit')) {
         $canEdit = TRUE;
       }
@@ -262,7 +262,7 @@ function nul_census_custom_check_tabstatus_permisions($status) {
       break;
 
     // Reviewed
-    case 4:
+    case 14:
       if ($user_access('edit census tabs with status submitted reviewed complete or review complete')) {
         $canEdit = TRUE;
       }
@@ -272,7 +272,7 @@ function nul_census_custom_check_tabstatus_permisions($status) {
       break;
 
     // Reviewed Complete
-    case 5:
+    case 15:
       if ($user_access('edit census tabs with status submitted reviewed complete or review complete')) {
         $canEdit = TRUE;
       }
@@ -282,7 +282,7 @@ function nul_census_custom_check_tabstatus_permisions($status) {
       break;
 
     // Submitted
-    case 6:
+    case 12:
       if ($user_access('edit census tabs with status submitted reviewed complete or review complete')) {
         $canEdit = TRUE;
       }
