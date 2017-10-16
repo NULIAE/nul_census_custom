@@ -65,29 +65,7 @@ function nul_census_custom_tab_info($format) {
  * hook_node_view()
  */
 function nul_census_custom_node_view($node, $view_mode, $langcode) {
-  // Check permissions, if do not have permission to edit complete tabs hide edit button
   $tabFields = nul_census_custom_tab_info('all');
-  foreach ($tabFields as $field => $values) {
-    if ($node->type == $values['type']) {
-      // Add css file to tab in view mode
-      $form['#attached']['css'] = array(
-        drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
-      );
-      if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['tid'])) {
-        $canEdit = nul_census_custom_check_tabstatus_permisions($node->field_tab_status[LANGUAGE_NONE][0]['tid']);
-        if (!$canEdit) {
-          drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/hideEdit.js');
-          drupal_set_message("You do not have permission to edit this content at this stage", 'error');
-        }
-      }
-    }
-  }
-
-  // If on emergency_relief_activities view mode run this js to fix up table styling
-  if ($node->type == 'emergency_relief_activities') {
-    drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/formFix.js');
-  }
-
   // if on the main census node check to see if the related tabs are populated, if not create a related node of that content type and assign it
   if ($node->type == 'test_clean_census') {
     // check if any tabs are set up yet
@@ -110,6 +88,28 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
       node_save($thisNode);
       $path = current_path();
       drupal_goto($path);
+    }
+  }
+  else {
+    // Check permissions, if do not have permission to edit complete tabs hide edit button
+    foreach ($tabFields as $field => $values) {
+      if ($node->type == $values['type']) {
+        // Add css file to tab in view mode
+        $form['#attached']['css'] = array(
+          drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
+        );
+        if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['tid'])) {
+          $canEdit = nul_census_custom_check_tabstatus_permisions($node->field_tab_status[LANGUAGE_NONE][0]['tid']);
+          if (!$canEdit) {
+            drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/hideEdit.js');
+            drupal_set_message("You do not have permission to edit this content at this stage", 'error');
+          }
+        }
+      }
+      // If on emergency_relief_activities view mode run this js to fix up table styling
+      if ($node->type == 'emergency_relief_activities') {
+        drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/formFix.js');
+      }
     }
   }
 }
