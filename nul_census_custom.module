@@ -194,6 +194,12 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     }
     // Permissioning on census tab content types in edit mode (also checks its not in comment mode)
     foreach ($tabFields as $field => $values) {
+      // hide title field on cenus tab content types in edit mode
+      $form['title']['#disabled'] = TRUE;
+      $form['title']['#type'] = 'hidden';
+      // load totaling js
+      drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/totaling.js');
+
       if (!empty($form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']) && $form['#node']->type == $values['type'] && substr($form_id, 0, 7) !== 'comment') {
         $canEdit = nul_census_custom_check_tabstatus_permisions($form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']);
         // If can't edit redirect to node in view mode.
