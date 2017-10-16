@@ -98,7 +98,7 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
         $form['#attached']['css'] = array(
           drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
         );
-        if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['tid'])) {
+        if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['tid']) && $node->nid == arg(1) && $node->type !== 'test_clean_census') {
           $canEdit = nul_census_custom_check_tabstatus_permisions($node->field_tab_status[LANGUAGE_NONE][0]['tid']);
           if (!$canEdit) {
             drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/hideEdit.js');
