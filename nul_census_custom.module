@@ -214,9 +214,9 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
 function nul_census_custom_permission() {
   // TODO add permissions for tabs view/edit based on status
   return array(
-    'edit census tabs with status submitted reviewed or review complete' => array(
-      'title' => t('Edit census tabs with status submitted, reviewed or review complete'),
-      'description' => t('Allows a user to edit census tabs with status submitted, reviewed or review complete.'),
+    'edit census tabs with status submitted reviewed complete or review complete' => array(
+      'title' => t('Edit census tabs with status submitted, complete, reviewed or review complete'),
+      'description' => t('Allows a user to edit census tabs with status complete, submitted, reviewed or review complete.'),
     ),
     'edit census tabs with status resubmit' => array(
       'title' => t('Edit census tabs with status resubmit'),
@@ -239,9 +239,49 @@ function nul_census_custom_check_tabstatus_permisions($status) {
       $canEdit = TRUE;
       break;
 
-    // complete
+    // Complete
     case 2:
-      if ($user_access('edit census tabs with status submitted reviewed or review complete')) {
+      if ($user_access('edit census tabs with status submitted reviewed complete or review complete')) {
+        $canEdit = TRUE;
+      }
+      else {
+        $canEdit = FALSE;
+      }
+      break;
+
+    // Resubmit
+    case 3:
+      if ($user_access('edit census tabs with status resubmit')) {
+        $canEdit = TRUE;
+      }
+      else {
+        $canEdit = FALSE;
+      }
+      break;
+
+    // Reviewed
+    case 4:
+      if ($user_access('edit census tabs with status submitted reviewed complete or review complete')) {
+        $canEdit = TRUE;
+      }
+      else {
+        $canEdit = FALSE;
+      }
+      break;
+
+    // Reviewed Complete
+    case 5:
+      if ($user_access('edit census tabs with status submitted reviewed complete or review complete')) {
+        $canEdit = TRUE;
+      }
+      else {
+        $canEdit = FALSE;
+      }
+      break;
+
+    // Submitted
+    case 6:
+      if ($user_access('edit census tabs with status submitted reviewed complete or review complete')) {
         $canEdit = TRUE;
       }
       else {
