@@ -194,14 +194,8 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     }
     // Permissioning on census tab content types in edit mode (also checks its not in comment mode)
     foreach ($tabFields as $field => $values) {
-      // TODO make sure this holds all total fields
-      $fieldsToDisable = array('title', 'field_voter_societal_impact');
-      foreach ($fieldsToDisable as $key => $field) {
-        if (!empty($form[$field])) {
-          $form[$field]['#disabled'] = TRUE;
-        }
-      }
       // hide title field on cenus tab content types in edit mode
+      $form['title']['#disabled'] = TRUE;
       $form['title']['#type'] = 'hidden';
       // load totaling js
       drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/totaling.js');
