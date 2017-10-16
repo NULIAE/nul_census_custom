@@ -69,3 +69,7 @@ For Census Tabs editing:
 | Reviewed          | Yes                                                                         | No                                    |  
 | Reviewed Complete | Yes                                                                         | No                                    |  
 | Submitted         | Yes                                                                         | No                                    |  
+
+#Totalling
+
+Totals the board total and 

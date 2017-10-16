@@ -13,6 +13,22 @@
       base: 'field-board-',
       totalFieldId: 'edit-field-board-member-grand-total-und-0-value',
     },
+    {
+      base: 'field-police-',
+      totalFieldId: 'edit-field-police-societal-impact-und-0-value',
+    },
+    {
+      base: 'field-comm-org-',
+      totalFieldId: 'edit-field-comm-org-societal-impact-und-0-value',
+    },
+    {
+      base: 'field-forums-',
+      totalFieldId: 'edit-field-forums-societal-impact-und-0-value',
+    },
+    {
+      base: 'field-crja-',
+      totalFieldId: 'edit-field-crja-societal-impact-und-0-value',
+    },
   ];
   var races = ['white', 'hispanic', 'asian', 'native', 'african-amer', 'other'];
   $(document).ready(function () {
