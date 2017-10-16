@@ -243,7 +243,7 @@ function nul_census_custom_check_tabstatus_permisions($status) {
 
     // Complete
     case 11:
-      if ($user_access('edit census tabs with status submitted reviewed complete or review complete')) {
+      if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
         $canEdit = TRUE;
       }
       else {
@@ -253,7 +253,7 @@ function nul_census_custom_check_tabstatus_permisions($status) {
 
     // Resubmit
     case 13:
-      if ($user_access('edit census tabs with status resubmit')) {
+      if (user_access('edit census tabs with status resubmit')) {
         $canEdit = TRUE;
       }
       else {
@@ -263,7 +263,7 @@ function nul_census_custom_check_tabstatus_permisions($status) {
 
     // Reviewed
     case 14:
-      if ($user_access('edit census tabs with status submitted reviewed complete or review complete')) {
+      if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
         $canEdit = TRUE;
       }
       else {
@@ -273,7 +273,7 @@ function nul_census_custom_check_tabstatus_permisions($status) {
 
     // Reviewed Complete
     case 15:
-      if ($user_access('edit census tabs with status submitted reviewed complete or review complete')) {
+      if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
         $canEdit = TRUE;
       }
       else {
@@ -283,7 +283,7 @@ function nul_census_custom_check_tabstatus_permisions($status) {
 
     // Submitted
     case 12:
-      if ($user_access('edit census tabs with status submitted reviewed complete or review complete')) {
+      if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
         $canEdit = TRUE;
       }
       else {

@@ -62,10 +62,10 @@ When one views the census in view mode styles table
 ## Permissions
 For Census Tabs editing:
 
-| status            | edit census tabs with status submitted reviewed complete or review complete | edit census tabs with status resubmit |
-| Complete          | Yes                                                                         | No                                    |
-| Incomplete        | Yes                                                                         | Yes                                   |
-| Resubmit          | No                                                                          | Yes                                   |
-| Reviewed          | Yes                                                                         | No                                    |
-| Reviewed Complete | Yes                                                                         | No                                    |
-| Submitted         | Yes                                                                         | No                                    | 
+| status            | edit census tabs with status submitted reviewed complete or review complete | edit census tabs with status resubmit |  
+| Complete          | Yes                                                                         | No                                    |  
+| Incomplete        | Yes                                                                         | Yes                                   |  
+| Resubmit          | No                                                                          | Yes                                   |  
+| Reviewed          | Yes                                                                         | No                                    |  
+| Reviewed Complete | Yes                                                                         | No                                    |  
+| Submitted         | Yes                                                                         | No                                    |  
