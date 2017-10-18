@@ -72,4 +72,8 @@ For Census Tabs editing:
 
 #Totalling
 
-Totals the board total and 
+Totals for tables on the following tabs:
+
+ + Employees and Board Members: Board members table totals by race and grand total
+ + Edit Contact Data (Direct, Indirect & Public): Public and Direct contact tables, totals by gender
+ + Civic Engagement: Tables for Voter Registration, Community Organizations, Community Forums, CRJA, Police Brutality, Advocacy
