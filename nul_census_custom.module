@@ -98,8 +98,8 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
         $form['#attached']['css'] = array(
           drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
         );
-        if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['tid']) && $node->nid == arg(1) && $node->type !== 'test_clean_census') {
-          $canEdit = nul_census_custom_check_tabstatus_permisions($node->field_tab_status[LANGUAGE_NONE][0]['tid']);
+        if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && $node->nid == arg(1) && $node->type !== 'test_clean_census') {
+          $canEdit = nul_census_custom_check_tabstatus_permisions($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name);
           if (!$canEdit) {
             drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/hideEdit.js');
             drupal_set_message("You do not have permission to edit this content at this stage", 'error');
@@ -200,8 +200,8 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
       // load totaling js
       drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/totaling.js');
 
-      if (!empty($form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']) && $form['#node']->type == $values['type'] && substr($form_id, 0, 7) !== 'comment') {
-        $canEdit = nul_census_custom_check_tabstatus_permisions($form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']);
+      if (!empty($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']]) && $form['#node']->type == $values['type'] && substr($form_id, 0, 7) !== 'comment') {
+        $canEdit = nul_census_custom_check_tabstatus_permisions($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']]);
         // If can't edit redirect to node in view mode.
         if (!$canEdit) {
           if (arg(0) == 'node' && arg(2) == 'edit') {
@@ -235,7 +235,7 @@ function nul_census_custom_permission() {
 
 /**
  * Check permissions of user and status of tab
- * @param  int $status status of tab
+ * @param  string $status status of tab
  * @return boolean        can they edit or not
  */
 function nul_census_custom_check_tabstatus_permisions($status) {
@@ -247,13 +247,11 @@ function nul_census_custom_check_tabstatus_permisions($status) {
   // If user is not admin check permissions
   if (!in_array('administrator', $user->roles)) {
     switch ($status) {
-      // Incomplete
-      case 10:
+      case 'Incomplete':
         $canEdit = TRUE;
         break;
 
-      // Complete
-      case 11:
+      case 'Complete':
         if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
           $canEdit = TRUE;
         }
@@ -262,8 +260,7 @@ function nul_census_custom_check_tabstatus_permisions($status) {
         }
         break;
 
-      // Resubmit
-      case 13:
+      case 'Resubmit':
         if (user_access('edit census tabs with status resubmit')) {
           $canEdit = TRUE;
         }
@@ -272,8 +269,7 @@ function nul_census_custom_check_tabstatus_permisions($status) {
         }
         break;
 
-      // Reviewed
-      case 14:
+      case 'Reviewed':
         if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
           $canEdit = TRUE;
         }
@@ -282,8 +278,7 @@ function nul_census_custom_check_tabstatus_permisions($status) {
         }
         break;
 
-      // Reviewed Complete
-      case 15:
+      case 'Reviewed Complete':
         if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
           $canEdit = TRUE;
         }
@@ -292,8 +287,7 @@ function nul_census_custom_check_tabstatus_permisions($status) {
         }
         break;
 
-      // Submitted
-      case 12:
+      case 'Submitted':
         if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
           $canEdit = TRUE;
         }
