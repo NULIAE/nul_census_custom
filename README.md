@@ -70,10 +70,15 @@ For Census Tabs editing:
 | Reviewed Complete | Yes                                                                         | No                                    |  
 | Submitted         | Yes                                                                         | No                                    |  
 
-#Totalling
+## Totalling
 
 Totals for tables on the following tabs:
 
  + Employees and Board Members: Board members table totals by race and grand total
  + Edit Contact Data (Direct, Indirect & Public): Public and Direct contact tables, totals by gender
  + Civic Engagement: Tables for Voter Registration, Community Organizations, Community Forums, CRJA, Police Brutality, Advocacy
+
+
+## Taxonomy Terms
+
+This module has an install file that creates the taxonomy terms needed for the feature
