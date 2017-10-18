@@ -1,0 +1,43 @@
+<?php
+
+/**
+ * [feature_name_install description]
+ */
+function nul_census_custom_install() {
+  // attempt to load vocab terms
+  $vocab = taxonomy_vocabulary_machine_name_load('census_tab_status');
+  // print_r($vocab); die();
+  // if vocab does not exisit create it
+  if (empty($vocab->vid)) {
+    $vocab = new stdClass();
+    $vocab->name = "Census Tab Status";
+    $vocab->machine_name = "census_tab_status";
+    taxonomy_vocabulary_save($vocab);
+  }
+  $vid = $vocab->vid;
+  $tree = taxonomy_get_tree($vid);
+  $statusOptions = array(
+    'Complete' => '1',
+    'Incomplete' => '2',
+    'Resubmit' => '3',
+    'Reviewed Complete' => '4',
+    'Reviewed' => '5',
+    'Submitted' => '6',
+  );
+  // check if vocab term exists already, if it does remove from status options array
+  foreach ($tree as $index => $value) {
+    if ($statusOptions[$value->name] > 0) {
+      unset($statusOptions[$value->name]);
+    }
+  }
+  // If not empty status options array (if term does not exist)
+  if (!empty($statusOptions)) {
+    // Create term
+    foreach ($statusOptions as $name => $doesNotMatter) {
+      $term = new stdClass();
+      $term->vid = $vid;
+      $term->name = $name;
+      taxonomy_term_save($term);
+    }
+  }
+}
