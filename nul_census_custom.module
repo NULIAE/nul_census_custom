@@ -201,7 +201,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
       // load totaling js
       drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/totaling.js');
 
-      if (!empty($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']]) && $form['#node']->type == $values['type'] && substr($form_id, 0, 7) !== 'comment') {
+      if (!empty($form['#node']->field_tab_status) && !empty($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']]) && $form['#node']->type == $values['type'] && substr($form_id, 0, 7) !== 'comment') {
         $canEdit = nul_census_custom_check_tabstatus_permisions($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']]);
         // If can't edit redirect to node in view mode.
         if (!$canEdit) {
