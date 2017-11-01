@@ -186,6 +186,9 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
         // Get the name of the content type
         $types = node_type_get_names();
         if (!empty($types[$form['type']['#value']])) {
+          if (!empty($form['field_parent_census'][LANGUAGE_NONE]['#options'][arg(3)])) {
+            $form['field_parent_census'][LANGUAGE_NONE]['#default_value'] = arg(3);
+          }
           // Check that its a tab content type by looking for the name in the vocabulary
           $vocabulary = taxonomy_vocabulary_machine_name_load('census_tabs');
           $censusTabs = taxonomy_get_tree($vocabulary->vid);
