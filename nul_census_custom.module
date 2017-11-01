@@ -157,6 +157,10 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
  * hook_form_alter()
  */
 function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
+  // float save to the bottom 
+  if (!empty($form['#node_edit_form']) && $form['#node_edit_form'] == TRUE) {
+    $form['actions']['#weight'] = 10000;
+  }
   $tabFields = nul_census_custom_tab_info('all');
   // Setting up new censuss
   if (!empty($form['#node']->type)) {
