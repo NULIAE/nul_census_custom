@@ -164,26 +164,36 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     $form['#attached']['css'] = array(
       drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
     );
-    if (arg(0) == 'node' && arg(1) == 'add' && arg(2) == 'test-clean-census' && arg(3) >= 1) {
-      $year = date("Y");
-      //TODO look up contact org name of arg(3) and print instead of id
-      // Update and disable title field
-      $form['title']['#default_value'] = arg(3) . " " . $year . " Census";
-      $form['title']['#disabled'] = TRUE;
-      // Update Year field and hide
-      $form['field_year'][LANGUAGE_NONE][0]['value']['#default_value'] = $year;
-      $form['field_year']['#type'] = 'hidden';
-      // Update affliate field and hide it
-      $form['field_affiliate_'][LANGUAGE_NONE][0]['value']['#default_value'] = arg(3);
-      $form['field_affiliate_']['#type'] = 'hidden';
-
-      // get all tab fields if they are unpopulated hide them (on new census node should all be empty)
-      // foreach ($tabFields as $tabField => $values) {
-      //   // hide fields to pick entity references
-      //   if (empty($form[$tabField][LANGUAGE_NONE][0]['value']['#default_value'])) {
-      //     $form[$tabField]['#type'] = 'hidden';
-      //   }
-      // }
+    if (arg(0) == 'node' && arg(1) == 'add' && arg(3) >= 1) {
+      if (arg(2) == 'test-clean-census') {
+        $year = date("Y");
+        //TODO look up contact org name of arg(3) and print instead of id
+        // Update and disable title field
+        $form['title']['#default_value'] = arg(3) . " " . $year . " Census";
+        $form['title']['#disabled'] = TRUE;
+        // Update Year field and hide
+        $form['field_year'][LANGUAGE_NONE][0]['value']['#default_value'] = $year;
+        $form['field_year']['#type'] = 'hidden';
+        // Update affliate field and hide it
+        $form['field_affiliate_'][LANGUAGE_NONE][0]['value']['#default_value'] = arg(3);
+        $form['field_affiliate_']['#type'] = 'hidden';
+      }
+      else {
+        // Get the name of the content type
+        $types = node_type_get_names();
+        if (!empty($types[$form['type']['#value']])) {
+          // Check that its a tab content type by looking for the name in the vocabulary
+          $vocabulary = taxonomy_vocabulary_machine_name_load('census_tabs');
+          $censusTabs = taxonomy_get_tree($vocabulary->vid);
+          foreach ($censusTabs as $key => $values) {
+            if ($values->name == $types[$form['type']['#value']]) {
+              // Set title to be name of content type
+              $form['title']['#default_value'] = $types[$form['type']['#value']];
+              $form['title']['#disabled'] = TRUE;
+            }
+          }
+        }
+      }
     }
     // make tooltips for all fields (most important for table fields)
     foreach ($form as $key => $value) {
