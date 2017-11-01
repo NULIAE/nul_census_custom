@@ -160,6 +160,10 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
   $tabFields = nul_census_custom_tab_info('all');
   // Setting up new censuss
   if (!empty($form['#node']->type)) {
+    // TODO uncomment if below to hide parent census field
+    // if (!empty($form['field_parent_census'])) {
+    //   $form['field_parent_census']['#type'] = 'hidden';
+    // }
     // Add css file to tab in edit mode
     $form['#attached']['css'] = array(
       drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
