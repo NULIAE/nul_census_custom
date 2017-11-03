@@ -66,31 +66,6 @@ function nul_census_custom_tab_info($format) {
  */
 function nul_census_custom_node_view($node, $view_mode, $langcode) {
   $tabFields = nul_census_custom_tab_info('all');
-  // if on the main census node check to see if the related tabs are populated, if not create a related node of that content type and assign it
-  // TODO write code to create node thru view
-  // if ($node->type == 'test_clean_census') {
-  //   // check if any tabs are set up yet
-  //   foreach ($tabFields as $field => $values) {
-  //     // TODO also check in database if there is a tab node that references this census node
-  //     if (!empty($node->$field)) {
-  //       unset($tabFields[$field]);
-  //     }
-  //   }
-  //   // If any tabs need to be set up do so here
-  //   if (!empty($tabFields)) {
-  //     $thisNode = node_load($node->nid);
-  //     foreach ($tabFields as $field => $values) {
-  //       $tabNodeId = nul_census_custom_node_create($node->nid, $tabFields[$field]['type'], $tabFields[$field]['title']);
-  //       $thisNode->{$field}[LANGUAGE_NONE][] = array(
-  //         'target_id' => $tabNodeId,
-  //         'target_type' => 'node',
-  //       );
-  //     }
-  //     node_save($thisNode);
-  //     $path = current_path();
-  //     drupal_goto($path);
-  //   }
-  // }
   if ($node->type !== 'test_clean_census') {
     // Check permissions, if do not have permission to edit complete tabs hide edit button
     foreach ($tabFields as $field => $values) {
@@ -116,48 +91,10 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
 }
 
 /**
- * function to create related tabs
- * @param  int $censusId  nid of census the node is related to
- * @param  string $type     type of node being created
- * @param  string $title    title of node being created
- * @return int           node id of node created
- */
-// function nul_census_custom_node_create($censusId, $type, $title) {
-//   global $user;
-//
-//   $node = new stdClass();
-//   $node->title = $title;
-//   $node->type = $type;
-//   // Sets some defaults. Invokes hook_prepare() and hook_node_prepare().
-//   node_object_prepare($node);
-//   $node->language = LANGUAGE_NONE;
-//   $node->uid = $user->uid;
-//   //(1 or 0): published or not
-//   $node->status = 1;
-//   //(1 or 0): promoted to front page
-//   $node->promote = 0;
-//   // 0 = comments disabled, 1 = read only, 2 = read/write
-//   $node->comment = 2;
-//
-//   // Entity reference field
-//   $node->field_census_id[$node->language][] = array(
-//     'target_id' => $censusId,
-//     'target_type' => 'node',
-//   );
-//   // Term reference (taxonomy) field
-//   $node->field_tab_status[$node->language][]['tid'] = 10;
-//
-//   $node = node_submit($node);
-//   // Prepare node for saving
-//   node_save($node);
-//   return $node->nid;
-// }
-
-/**
  * hook_form_alter()
  */
 function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
-  // float save to the bottom 
+  // float save to the bottom
   if (!empty($form['#node_edit_form']) && $form['#node_edit_form'] == TRUE) {
     $form['actions']['#weight'] = 10000;
   }
@@ -194,15 +131,14 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
             $form['field_parent_census'][LANGUAGE_NONE]['#default_value'] = arg(3);
           }
           if (!empty($form['field_program_area'][LANGUAGE_NONE]['#options'])) {
-          foreach ($form['field_program_area'][LANGUAGE_NONE]['#options'] as $tid => $option) {
-            if ($tid !== '_none') {
-              $taxonomy_term = taxonomy_term_load($tid);
-              if (!empty($taxonomy_term->field_content_type[LANGUAGE_NONE][0]['value']) && $taxonomy_term->field_content_type[LANGUAGE_NONE][0]['value'] == arg(4)) {
-                $form['field_program_area'][LANGUAGE_NONE]['#default_value'][] = $tid ;
+            foreach ($form['field_program_area'][LANGUAGE_NONE]['#options'] as $tid => $option) {
+              if ($tid !== '_none') {
+                $taxonomy_term = taxonomy_term_load($tid);
+                if (!empty($taxonomy_term->field_content_type[LANGUAGE_NONE][0]['value']) && $taxonomy_term->field_content_type[LANGUAGE_NONE][0]['value'] == arg(4)) {
+                  $form['field_program_area'][LANGUAGE_NONE]['#default_value'][] = $tid;
+                }
               }
             }
-          }
-
           }
           // Check that its a tab content type by looking for the name in the vocabulary
           $vocabulary = taxonomy_vocabulary_machine_name_load('census_tabs');
@@ -211,7 +147,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
             if ($values->name == $types[$form['type']['#value']]) {
               // Set title to be name of content type
               //$form['title']['#default_value'] = $types[$form['type']['#value']];
-            //  $form['title']['#disabled'] = TRUE;
+              //  $form['title']['#disabled'] = TRUE;
             }
           }
         }

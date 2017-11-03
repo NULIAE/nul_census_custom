@@ -4,40 +4,73 @@
  * [feature_name_install description]
  */
 function nul_census_custom_install() {
-  // attempt to load vocab terms
-  $vocab = taxonomy_vocabulary_machine_name_load('census_tab_status');
-  // print_r($vocab); die();
-  // if vocab does not exisit create it
-  if (empty($vocab->vid)) {
-    $vocab = new stdClass();
-    $vocab->name = "Census Tab Status";
-    $vocab->machine_name = "census_tab_status";
-    taxonomy_vocabulary_save($vocab);
-  }
-  $vid = $vocab->vid;
-  $tree = taxonomy_get_tree($vid);
-  $statusOptions = array(
-    'Complete' => '1',
-    'Incomplete' => '2',
-    'Resubmit' => '3',
-    'Reviewed Complete' => '4',
-    'Reviewed' => '5',
-    'Submitted' => '6',
+  $vocabDetails = array(
+    "Census Tab Status" => array(
+      'machine_name' => 'census_tab_status',
+      'name' => "Census Tab Status",
+      'list' => array(
+        'Complete' => '1',
+        'Incomplete' => '2',
+        'Resubmit' => '3',
+        'Reviewed Complete' => '4',
+        'Reviewed' => '5',
+        'Submitted' => '6',
+      ),
+    ),
+    "Census Tabs" => array(
+      'machine_name' => 'census_tabs',
+      'name' => "Census Tabs",
+      'list' => array(
+        'Civic Engagement' => array('machine_name' => 'civic_engagement'),
+        'Community Relations' => array('machine_name' => 'community_relations'),
+        'Contact Data (Direct, Indirect & Public)' => array('machine_name' => 'contact_data_direct_indirect_pub'),
+        'Contact Information' => array('machine_name' => 'contact_information'),
+        'Education Program Details' => array('machine_name' => 'program_education'),
+        'Emergency Relief Activities' => array('machine_name' => 'emergency_relief_activities'),
+        'Employees and Board Members' => array('machine_name' => 'employees_and_board_members'),
+        'Empowerment' => array('machine_name' => 'empowerment'),
+        'Entrepreneurship and Business Development Program Details' => array('machine_name' => 'program_entrepreneurship'),
+        'Expenditures' => array('machine_name' => 'expenditures'),
+        'Health and Quality of Life Program Details' => array('machine_name' => 'program_health'),
+        'Housing and Community Development' => array('machine_name' => 'program_housing'),
+        'Programs' => array('machine_name' => 'programs'),
+        'Revenue' => array('machine_name' => 'revenue'),
+        'Service Areas' => array('machine_name' => 'service_areas'),
+        'Survey Certification' => array('machine_name' => 'survey_certification'),
+        'Volunteers/Members' => array('machine_name' => 'volunteers_members'),
+        'Workforce Development Program Details' => array('machine_name' => 'program_workforce'),
+      ),
+    ),
   );
-  // check if vocab term exists already, if it does remove from status options array
-  foreach ($tree as $index => $value) {
-    if ($statusOptions[$value->name] > 0) {
-      unset($statusOptions[$value->name]);
+  foreach ($vocabDetails as $key => $detailsOfVocab) {
+    // attempt to load vocab terms
+    $vocab = taxonomy_vocabulary_machine_name_load($detailsOfVocab['machine_name']);
+    // print_r($vocab); die();
+    // if vocab does not exisit create it
+    if (empty($vocab->vid)) {
+      $vocab = new stdClass();
+      $vocab->name = $detailsOfVocab['name'];
+      $vocab->machine_name = $detailsOfVocab['machine_name'];
+      taxonomy_vocabulary_save($vocab);
     }
-  }
-  // If not empty status options array (if term does not exist)
-  if (!empty($statusOptions)) {
-    // Create term
-    foreach ($statusOptions as $name => $doesNotMatter) {
-      $term = new stdClass();
-      $term->vid = $vid;
-      $term->name = $name;
-      taxonomy_term_save($term);
+    $vid = $vocab->vid;
+    $tree = taxonomy_get_tree($vid);
+    $statusOptions = $detailsOfVocab['list'];
+    // check if vocab term exists already, if it does remove from status options array
+    foreach ($tree as $index => $value) {
+      if ($statusOptions[$value->name] > 0) {
+        unset($statusOptions[$value->name]);
+      }
+    }
+    // If not empty status options array (if term does not exist)
+    if (!empty($statusOptions)) {
+      // Create term
+      foreach ($statusOptions as $name => $doesNotMatter) {
+        $term = new stdClass();
+        $term->vid = $vid;
+        $term->name = $name;
+        taxonomy_term_save($term);
+      }
     }
   }
 }
