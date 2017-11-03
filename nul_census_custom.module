@@ -193,13 +193,16 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           if (!empty($form['field_parent_census'][LANGUAGE_NONE]['#options'][arg(3)])) {
             $form['field_parent_census'][LANGUAGE_NONE]['#default_value'] = arg(3);
           }
+          if (!empty($form['field_program_area'][LANGUAGE_NONE]['#options'])) {
           foreach ($form['field_program_area'][LANGUAGE_NONE]['#options'] as $tid => $option) {
             if ($tid !== '_none') {
-	      $taxonomy_term = taxonomy_term_load($tid);
+              $taxonomy_term = taxonomy_term_load($tid);
               if (!empty($taxonomy_term->field_content_type[LANGUAGE_NONE][0]['value']) && $taxonomy_term->field_content_type[LANGUAGE_NONE][0]['value'] == arg(4)) {
                 $form['field_program_area'][LANGUAGE_NONE]['#default_value'][] = $tid ;
               }
             }
+          }
+
           }
           // Check that its a tab content type by looking for the name in the vocabulary
           $vocabulary = taxonomy_vocabulary_machine_name_load('census_tabs');
