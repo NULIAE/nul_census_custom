@@ -9,36 +9,46 @@ function nul_census_custom_install() {
       'machine_name' => 'census_tab_status',
       'name' => "Census Tab Status",
       'list' => array(
-        'Complete' => '1',
-        'Incomplete' => '2',
-        'Resubmit' => '3',
-        'Reviewed Complete' => '4',
-        'Reviewed' => '5',
-        'Submitted' => '6',
+        'Complete' => array(),
+        'Incomplete' => array(),
+        'Resubmit' => array(),
+        'Reviewed Complete' => array(),
+        'Reviewed' => array(),
+        'Submitted' => array(),
+      ),
+    ),
+    "Status type for Census" => array(
+      'machine_name' => 'status_type_for_census',
+      'name' => "Status type for Census",
+      'list' => array(
+        'Complete' => array(),
+        'Incomplete' => array(),
+        'Reviewed Complete' => array(),
+        'Submitted' => array(),
       ),
     ),
     "Census Tabs" => array(
       'machine_name' => 'census_tabs',
       'name' => "Census Tabs",
       'list' => array(
-        'Civic Engagement' => array('machine_name' => 'civic_engagement'),
-        'Community Relations' => array('machine_name' => 'community_relations'),
-        'Contact Data (Direct, Indirect & Public)' => array('machine_name' => 'contact_data_direct_indirect_pub'),
-        'Contact Information' => array('machine_name' => 'contact_information'),
-        'Education Program Details' => array('machine_name' => 'program_education'),
-        'Emergency Relief Activities' => array('machine_name' => 'emergency_relief_activities'),
-        'Employees and Board Members' => array('machine_name' => 'employees_and_board_members'),
-        'Empowerment' => array('machine_name' => 'empowerment'),
-        'Entrepreneurship and Business Development Program Details' => array('machine_name' => 'program_entrepreneurship'),
-        'Expenditures' => array('machine_name' => 'expenditures'),
-        'Health and Quality of Life Program Details' => array('machine_name' => 'program_health'),
-        'Housing and Community Development' => array('machine_name' => 'program_housing'),
-        'Programs' => array('machine_name' => 'programs'),
-        'Revenue' => array('machine_name' => 'revenue'),
-        'Service Areas' => array('machine_name' => 'service_areas'),
-        'Survey Certification' => array('machine_name' => 'survey_certification'),
-        'Volunteers/Members' => array('machine_name' => 'volunteers_members'),
-        'Workforce Development Program Details' => array('machine_name' => 'program_workforce'),
+        'Civic Engagement' => array('field_content_type_machine_name' => 'civic_engagement'),
+        'Community Relations' => array('field_content_type_machine_name' => 'community_relations'),
+        'Contact Data (Direct, Indirect & Public)' => array('field_content_type_machine_name' => 'contact_data_direct_indirect_pub'),
+        'Contact Information' => array('field_content_type_machine_name' => 'contact_information'),
+        'Education Program Details' => array('field_content_type_machine_name' => 'program_education'),
+        'Emergency Relief Activities' => array('field_content_type_machine_name' => 'emergency_relief_activities'),
+        'Employees and Board Members' => array('field_content_type_machine_name' => 'employees_and_board_members'),
+        'Empowerment' => array('field_content_type_machine_name' => 'empowerment'),
+        'Entrepreneurship and Business Development Program Details' => array('field_content_type_machine_name' => 'program_entrepreneurship'),
+        'Expenditures' => array('field_content_type_machine_name' => 'expenditures'),
+        'Health and Quality of Life Program Details' => array('field_content_type_machine_name' => 'program_health'),
+        'Housing and Community Development' => array('field_content_type_machine_name' => 'program_housing'),
+        'Programs' => array('field_content_type_machine_name' => 'programs'),
+        'Revenue' => array('field_content_type_machine_name' => 'revenue'),
+        'Service Areas' => array('field_content_type_machine_name' => 'service_areas'),
+        'Survey Certification' => array('field_content_type_machine_name' => 'survey_certification'),
+        'Volunteers/Members' => array('field_content_type_machine_name' => 'volunteers_members'),
+        'Workforce Development Program Details' => array('field_content_type_machine_name' => 'program_workforce'),
       ),
     ),
   );
@@ -58,17 +68,21 @@ function nul_census_custom_install() {
     $statusOptions = $detailsOfVocab['list'];
     // check if vocab term exists already, if it does remove from status options array
     foreach ($tree as $index => $value) {
-      if ($statusOptions[$value->name] > 0) {
+      if (!empty($statusOptions[$value->name])) {
         unset($statusOptions[$value->name]);
       }
     }
     // If not empty status options array (if term does not exist)
     if (!empty($statusOptions)) {
       // Create term
-      foreach ($statusOptions as $name => $doesNotMatter) {
+      foreach ($statusOptions as $name => $fieldsOnTerm) {
         $term = new stdClass();
         $term->vid = $vid;
         $term->name = $name;
+        //TODO get to save machine name of conent type to field on taxonomy term
+        foreach ($fieldsOnTerm as $field => $value) {
+          $term->$field[LANGUAGE_NONE][0]['value'] = $value;
+        }
         taxonomy_term_save($term);
       }
     }
