@@ -1,6 +1,29 @@
 <?php
 
 /**
+ * Search Taxonomy by field on the taxonomy
+ * @param  str $vocabMachineName  machine name of the vocabulary
+ * @param  str $fieldName        name of field to search
+ * @param  str $valueOfField     value to match on
+ * @return array                 term object
+ */
+function nul_census_custom_searchTaxonomyByField($vocabMachineName, $fieldName, $valueOfField) {
+  $term = NULL;
+  $query = new EntityFieldQuery();
+  $vocabulary = taxonomy_vocabulary_machine_name_load($vocabMachineName);
+  $query->entityCondition('entity_type', 'taxonomy_term')
+    ->propertyCondition('vid', $vocabulary->vid)
+    ->fieldCondition($fieldName, 'value', $valueOfField);
+  $terms = $query->execute();
+  if (!empty($terms['taxonomy_term'])) {
+    foreach ($terms['taxonomy_term'] as $key => $termDetails) {
+      $term = taxonomy_term_load($termDetails->tid);
+    }
+  }
+  return $term;
+}
+
+/**
  * Census Tab Content Types
  * @param  string $format format to return array in
  * @return array        of census tab data
@@ -66,26 +89,28 @@ function nul_census_custom_tab_info($format) {
  * hook_node_view()
  */
 function nul_census_custom_node_view($node, $view_mode, $langcode) {
-  $tabFields = nul_census_custom_tab_info('all');
-  if ($node->type !== 'test_clean_census') {
-    // Check permissions, if do not have permission to edit complete tabs hide edit button
-    foreach ($tabFields as $field => $values) {
-      if ($node->type == $values['type']) {
-        // Add css file to tab in view mode
-        $form['#attached']['css'] = array(
-          drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
-        );
-        if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && $node->nid == arg(1) && $node->type !== 'test_clean_census') {
-          $canEdit = nul_census_custom_check_tabstatus_permisions($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name);
-          if (!$canEdit) {
-            drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/hideEdit.js');
-            drupal_set_message("You do not have permission to edit this content at this stage", 'error');
-          }
+  if ($node->type !== 'test_clean_census' && !empty($node->type)) {
+    // If on emergency_relief_activities view mode run this js to fix up table styling
+    if ($node->type == 'emergency_relief_activities') {
+      drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/formFix.js');
+    }
+    // lcheck if the content type is in the taxonomy for census tabs
+    $termDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $node->type);
+    if (!$termDetails) {
+      drupal_set_message(t('Not a Census Tab or unpopulated content type machine name on the taxonomy term'), 'error');
+    }
+    if ($termDetails) {
+      // Add css file to tab in view mode
+      $form['#attached']['css'] = array(
+        drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
+      );
+      // Check permissions, if do not have permission to edit complete tabs hide edit button
+      if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && $node->nid == arg(1) && $node->type !== 'test_clean_census') {
+        $canEdit = nul_census_custom_check_tabstatus_permisions($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name);
+        if (!$canEdit) {
+          drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/hideEdit.js');
+          drupal_set_message("You do not have permission to edit this content at this stage", 'error');
         }
-      }
-      // If on emergency_relief_activities view mode run this js to fix up table styling
-      if ($node->type == 'emergency_relief_activities') {
-        drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/formFix.js');
       }
     }
   }
@@ -99,7 +124,6 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
   if (!empty($form['#node_edit_form']) && $form['#node_edit_form'] == TRUE) {
     $form['actions']['#weight'] = 10000;
   }
-  $tabFields = nul_census_custom_tab_info('all');
   // Setting up new censuss
   if (!empty($form['#node']->type)) {
     // TODO uncomment if below to hide parent census field
@@ -166,15 +190,19 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
         }
       }
     }
-    // Permissioning on census tab content types in edit mode (also checks its not in comment mode)
-    foreach ($tabFields as $field => $values) {
+    // lcheck if the content type is in the taxonomy for census tabs
+    $termDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $form['#node']->type);
+    if (!$termDetails) {
+      drupal_set_message(t('Not a Census Tab or unpopulated content type machine name on the taxonomy term'), 'error');
+    }
+    if ($termDetails) {
       // hide title field on cenus tab content types in edit mode
       // $form['title']['#disabled'] = TRUE;
       // $form['title']['#type'] = 'hidden';
       // load totaling js
       drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/totaling.js');
 
-      if (!empty($form['#node']->field_tab_status) && !empty($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']]) && $form['#node']->type == $values['type'] && substr($form_id, 0, 7) !== 'comment') {
+      if (!empty($form['#node']->field_tab_status) && !empty($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']]) && substr($form_id, 0, 7) !== 'comment') {
         $canEdit = nul_census_custom_check_tabstatus_permisions($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']]);
         // If can't edit redirect to node in view mode.
         if (!$canEdit) {
