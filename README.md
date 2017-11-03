@@ -70,7 +70,7 @@ For Census Tabs editing:
 | Reviewed Complete | Yes                                                                         | No                                    |  
 | Submitted         | Yes                                                                         | No                                    |  
 
-## Totalling
+## Total-ing
 
 Totals for tables on the following tabs:
 
@@ -82,3 +82,16 @@ Totals for tables on the following tabs:
 ## Taxonomy Terms
 
 This module has an install file that creates the taxonomy terms needed for the feature
+
+## Views Configuration
+
+For the Back to Parent Census button:
+
+these blocks needs to be configured to go at the bottom of the content region for the theme that is being used for edit mode:
+
++ http://nuldemo.aghstrategies.net/admin/structure/views/view/back_to_census_button_for_new/edit
+
+These block needs to be configured to go to the bottom of the conent region for the front end theme and backend theme
+
++ http://nuldemo.aghstrategies.net/admin/structure/views/view/back_to_census_button/edit/
++ View: Go to Census in Status Mode
