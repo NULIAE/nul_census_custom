@@ -3,9 +3,9 @@
 /**
  * Search Taxonomy by field on the taxonomy
  * @param  str $vocabMachineName  machine name of the vocabulary
- * @param  str $fieldName        name of field to search
- * @param  str $valueOfField     value to match on
- * @return array                 term object
+ * @param  str $fieldName         name of field to search
+ * @param  str $valueOfField      value to match on
+ * @return obj                    term object
  */
 function nul_census_custom_searchTaxonomyByField($vocabMachineName, $fieldName, $valueOfField) {
   $term = NULL;
