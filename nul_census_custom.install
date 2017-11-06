@@ -69,6 +69,17 @@ function nul_census_custom_install() {
     // check if vocab term exists already, if it does remove from status options array
     foreach ($tree as $index => $value) {
       if (!empty($statusOptions[$value->name])) {
+        foreach ($statusOptions as $name => $fieldDetails) {
+          // remove from array
+          // load term to check if term has custom field set
+          $terms = taxonomy_get_term_by_name($name, NULL);
+          foreach ($terms as $key => $term) {
+            if (empty($term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])) {
+              $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'] = $fieldDetails['field_content_type_machine_name'];
+              taxonomy_term_save($term);
+            }
+          }
+        }
         unset($statusOptions[$value->name]);
       }
     }
@@ -81,7 +92,7 @@ function nul_census_custom_install() {
         $term->name = $name;
         //TODO get to save machine name of conent type to field on taxonomy term
         foreach ($fieldsOnTerm as $field => $value) {
-          $term->$field[LANGUAGE_NONE][0]['value'] = $value;
+          $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'] = $value;
         }
         taxonomy_term_save($term);
       }
