@@ -24,68 +24,6 @@ function nul_census_custom_searchTaxonomyByField($vocabMachineName, $fieldName, 
 }
 
 /**
- * Census Tab Content Types
- * @param  string $format format to return array in
- * @return array        of census tab data
- */
-function nul_census_custom_tab_info($format) {
-  // TODO no longer using fields should use taxonomy "Census Tabs" instead of this
-  $tabFields = array(
-    'field_tab_1_contact_information' => array(
-      'type' => "contact_information",
-      'title' => "Contact Information",
-    ),
-    'field_tab_2_service_areas' => array(
-      'type' => "service_areas",
-      'title' => "Service Areas",
-    ),
-    'field_tab_3_community_relations' => array(
-      'type' => "community_relations",
-      'title' => "Community Relations",
-    ),
-    'field_tab_4_employees_and_board_' => array(
-      'type' => "employees_and_board_members",
-      'title' => "Employees and Board Members",
-    ),
-    'field_tab_5_budget' => array(
-      'type' => "revenue",
-      'title' => "Revenue",
-    ),
-    'field_tab_6_expenditures' => array(
-      'type' => "expenditures",
-      'title' => "Expenditures",
-    ),
-    'field_tab_13_civic_engagement' => array(
-      'type' => "civic_engagement",
-      'title' => "Civic Engagement",
-    ),
-    'field_tab_14_emergency_relief_ac' => array(
-      'type' => "emergency_relief_activities",
-      'title' => "Emergency Relief Activities",
-    ),
-    'field_tab_15_contact_data_direct' => array(
-      'type' => "contact_data_direct_indirect_pub",
-      'title' => "Contact Data (Direct, Indirect & Public)",
-    ),
-    'field_tab_16_empowerment' => array(
-      'type' => "empowerment",
-      'title' => "Empowerment",
-    ),
-    'field_tab_17_volunteers_members' => array(
-      'type' => "volunteers_members",
-      'title' => "Volunteers/Members",
-    ),
-    'field_tab_18_survey_certificatio' => array(
-      'type' => "survey_certification",
-      'title' => "Survey Certification",
-    ),
-  );
-  if ($format == 'all') {
-    return $tabFields;
-  }
-}
-
-/**
  * hook_node_view()
  */
 function nul_census_custom_node_view($node, $view_mode, $langcode) {
