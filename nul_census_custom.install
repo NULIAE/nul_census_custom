@@ -43,7 +43,6 @@ function nul_census_custom_install() {
         'Expenditures' => array('field_content_type_machine_name' => 'expenditures'),
         'Health and Quality of Life Program Details' => array('field_content_type_machine_name' => 'program_health'),
         'Housing and Community Development' => array('field_content_type_machine_name' => 'program_housing'),
-        'Programs' => array('field_content_type_machine_name' => 'programs'),
         'Revenue' => array('field_content_type_machine_name' => 'revenue'),
         'Service Areas' => array('field_content_type_machine_name' => 'service_areas'),
         'Survey Certification' => array('field_content_type_machine_name' => 'survey_certification'),
