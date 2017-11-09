@@ -4,98 +4,117 @@
  * [feature_name_install description]
  */
 function nul_census_custom_install() {
-  $vocabDetails = array(
-    "Census Tab Status" => array(
-      'machine_name' => 'census_tab_status',
-      'name' => "Census Tab Status",
-      'list' => array(
-        'Complete' => array(),
-        'Incomplete' => array(),
-        'Resubmit' => array(),
-        'Reviewed Complete' => array(),
-        'Reviewed' => array(),
-        'Submitted' => array(),
+  function createTaxonomyListItems() {
+    $vocabDetails = array(
+      "Census Tab Status" => array(
+        'machine_name' => 'census_tab_status',
+        'name' => "Census Tab Status",
+        'list' => array(
+          'Complete' => array(),
+          'Incomplete' => array(),
+          'Resubmit' => array(),
+          'Reviewed Complete' => array(),
+          'Reviewed' => array(),
+          'Submitted' => array(),
+        ),
       ),
-    ),
-    "Status type for Census" => array(
-      'machine_name' => 'status_type_for_census',
-      'name' => "Status type for Census",
-      'list' => array(
-        'Complete' => array(),
-        'Incomplete' => array(),
-        'Reviewed Complete' => array(),
-        'Submitted' => array(),
+      "Status type for Census" => array(
+        'machine_name' => 'status_type_for_census',
+        'name' => "Status type for Census",
+        'list' => array(
+          'Complete' => array(),
+          'Incomplete' => array(),
+          'Reviewed Complete' => array(),
+          'Submitted' => array(),
+        ),
       ),
-    ),
-    "Census Tabs" => array(
-      'machine_name' => 'census_tabs',
-      'name' => "Census Tabs",
-      'list' => array(
-        'Civic Engagement' => array('field_content_type_machine_name' => 'civic_engagement'),
-        'Community Relations' => array('field_content_type_machine_name' => 'community_relations'),
-        'Contact Data (Direct, Indirect & Public)' => array('field_content_type_machine_name' => 'contact_data_direct_indirect_pub'),
-        'Contact Information' => array('field_content_type_machine_name' => 'contact_information'),
-        'Education Program Details' => array('field_content_type_machine_name' => 'program_education'),
-        'Emergency Relief Activities' => array('field_content_type_machine_name' => 'emergency_relief_activities'),
-        'Employees and Board Members' => array('field_content_type_machine_name' => 'employees_and_board_members'),
-        'Empowerment' => array('field_content_type_machine_name' => 'empowerment'),
-        'Entrepreneurship and Business Development Program Details' => array('field_content_type_machine_name' => 'program_entrepreneurship'),
-        'Expenditures' => array('field_content_type_machine_name' => 'expenditures'),
-        'Health and Quality of Life Program Details' => array('field_content_type_machine_name' => 'program_health'),
-        'Housing and Community Development' => array('field_content_type_machine_name' => 'program_housing'),
-        'Revenue' => array('field_content_type_machine_name' => 'revenue'),
-        'Service Areas' => array('field_content_type_machine_name' => 'service_areas'),
-        'Survey Certification' => array('field_content_type_machine_name' => 'survey_certification'),
-        'Volunteers/Members' => array('field_content_type_machine_name' => 'volunteers_members'),
-        'Workforce Development Program Details' => array('field_content_type_machine_name' => 'program_workforce'),
-        'Other Programs' => array('field_content_type_machine_name' => 'program_other'),
+      "Census Tabs" => array(
+        'machine_name' => 'census_tabs',
+        'name' => "Census Tabs",
+        'list' => array(
+          'Civic Engagement' => array('field_content_type_machine_name' => 'civic_engagement'),
+          'Community Relations' => array('field_content_type_machine_name' => 'community_relations'),
+          'Contact Data (Direct, Indirect & Public)' => array('field_content_type_machine_name' => 'contact_data_direct_indirect_pub'),
+          'Contact Information' => array('field_content_type_machine_name' => 'contact_information'),
+          'Education Program Details' => array('field_content_type_machine_name' => 'program_education'),
+          'Emergency Relief Activities' => array('field_content_type_machine_name' => 'emergency_relief_activities'),
+          'Employees and Board Members' => array('field_content_type_machine_name' => 'employees_and_board_members'),
+          'Empowerment' => array('field_content_type_machine_name' => 'empowerment'),
+          'Entrepreneurship and Business Development Program Details' => array('field_content_type_machine_name' => 'program_entrepreneurship'),
+          'Expenditures' => array('field_content_type_machine_name' => 'expenditures'),
+          'Health and Quality of Life Program Details' => array('field_content_type_machine_name' => 'program_health'),
+          'Housing and Community Development' => array('field_content_type_machine_name' => 'program_housing'),
+          'Revenue' => array('field_content_type_machine_name' => 'revenue'),
+          'Service Areas' => array('field_content_type_machine_name' => 'service_areas'),
+          'Survey Certification' => array('field_content_type_machine_name' => 'survey_certification'),
+          'Volunteers/Members' => array('field_content_type_machine_name' => 'volunteers_members'),
+          'Workforce Development Program Details' => array('field_content_type_machine_name' => 'program_workforce'),
+          'Other Programs' => array('field_content_type_machine_name' => 'program_other'),
+        ),
       ),
-    ),
-  );
-  foreach ($vocabDetails as $key => $detailsOfVocab) {
-    // attempt to load vocab terms
-    $vocab = taxonomy_vocabulary_machine_name_load($detailsOfVocab['machine_name']);
-    // print_r($vocab); die();
-    // if vocab does not exisit create it
-    if (empty($vocab->vid)) {
-      $vocab = new stdClass();
-      $vocab->name = $detailsOfVocab['name'];
-      $vocab->machine_name = $detailsOfVocab['machine_name'];
-      taxonomy_vocabulary_save($vocab);
-    }
-    $vid = $vocab->vid;
-    $tree = taxonomy_get_tree($vid);
-    $statusOptions = $detailsOfVocab['list'];
-    // check if vocab term exists already, if it does remove from status options array
-    foreach ($tree as $index => $value) {
-      if (!empty($statusOptions[$value->name])) {
-        foreach ($statusOptions as $name => $fieldDetails) {
-          // remove from array
-          // load term to check if term has custom field set
-          $terms = taxonomy_get_term_by_name($name, NULL);
-          foreach ($terms as $key => $term) {
-            if (empty($term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])) {
-              $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'] = $fieldDetails['field_content_type_machine_name'];
-              taxonomy_term_save($term);
+      "Program Areas" => array(
+        'machine_name' => ' program_areas',
+        'name' => "Program Areas",
+        'list' => array(
+          'Education and Youth Development' => array('field_content_type' => 'program_education'),
+          'Entrepreneurship and Business Development' => array('field_content_type' => 'program_entrepreneurship'),
+          'Health and Quality of Life' => array('field_content_type' => 'program_health'),
+          'Housing and Community Development' => array('field_content_type' => 'program_housing'),
+          'Other Program' => array('field_content_type' => 'program_other'),
+          'Workforce Development' => array('field_content_type' => 'program_workforce'),
+        ),
+      ),
+    );
+    foreach ($vocabDetails as $key => $detailsOfVocab) {
+      // attempt to load vocab terms
+      $vocab = taxonomy_vocabulary_machine_name_load($detailsOfVocab['machine_name']);
+      // print_r($vocab); die();
+      // if vocab does not exisit create it
+      if (empty($vocab->vid)) {
+        $vocab = new stdClass();
+        $vocab->name = $detailsOfVocab['name'];
+        $vocab->machine_name = $detailsOfVocab['machine_name'];
+        taxonomy_vocabulary_save($vocab);
+      }
+      $vid = $vocab->vid;
+      $tree = taxonomy_get_tree($vid);
+      $statusOptions = $detailsOfVocab['list'];
+      // check if vocab term exists already, if it does remove from status options array
+      foreach ($tree as $index => $value) {
+        if (!empty($statusOptions[$value->name])) {
+          foreach ($statusOptions as $name => $fieldDetails) {
+            if (!empty($fieldDetails)) {
+              // remove from array
+              // load term to check if term has custom field set
+              $terms = taxonomy_get_term_by_name($name, NULL);
+              foreach ($terms as $key => $term) {
+                if (empty($term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])) {
+                  foreach ($fieldDetails as $field => $valueOfField) {
+                    $term->{$field}[LANGUAGE_NONE][0]['value'] = $valueOfField;
+                  }
+                  taxonomy_term_save($term);
+                }
+              }
             }
           }
+          unset($statusOptions[$value->name]);
         }
-        unset($statusOptions[$value->name]);
       }
-    }
-    // If not empty status options array (if term does not exist)
-    if (!empty($statusOptions)) {
-      // Create term
-      foreach ($statusOptions as $name => $fieldsOnTerm) {
-        $term = new stdClass();
-        $term->vid = $vid;
-        $term->name = $name;
-        //TODO get to save machine name of conent type to field on taxonomy term
-        foreach ($fieldsOnTerm as $field => $value) {
-          $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'] = $value;
+      // If not empty status options array (if term does not exist)
+      if (!empty($statusOptions)) {
+        // Create term
+        foreach ($statusOptions as $name => $fieldsOnTerm) {
+          $term = new stdClass();
+          $term->vid = $vid;
+          $term->name = $name;
+          //TODO get to save machine name of conent type to field on taxonomy term
+          foreach ($fieldsOnTerm as $field => $value) {
+            $term->{$field}[LANGUAGE_NONE][0]['value'] = $value;
+          }
+          taxonomy_term_save($term);
         }
-        taxonomy_term_save($term);
       }
     }
   }
+  createTaxonomyListItems();
 }
