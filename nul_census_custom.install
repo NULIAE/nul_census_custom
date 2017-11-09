@@ -48,6 +48,7 @@ function nul_census_custom_install() {
         'Survey Certification' => array('field_content_type_machine_name' => 'survey_certification'),
         'Volunteers/Members' => array('field_content_type_machine_name' => 'volunteers_members'),
         'Workforce Development Program Details' => array('field_content_type_machine_name' => 'program_workforce'),
+        'Other Programs' => array('field_content_type_machine_name' => 'program_other'),
       ),
     ),
   );
