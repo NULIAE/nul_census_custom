@@ -34,8 +34,14 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
     }
     // lcheck if the content type is in the taxonomy for census tabs
     $termDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $node->type);
+    // TODO delete this... these error messages this is really just for debugging while developing
     if (!$termDetails) {
-      drupal_set_message(t('Not a Census Tab or unpopulated content type machine name on the taxonomy term'), 'error');
+      if ($node->type == 'test_clean_census') {
+        drupal_set_message(t('Main Census Node'), 'notice');
+      }
+      else {
+        drupal_set_message(t('Not a Census Tab or unpopulated content type machine name on the taxonomy term'), 'error');
+      }
     }
     if ($termDetails) {
       // Add css file to tab in view mode
