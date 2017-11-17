@@ -127,10 +127,38 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
       }
     }
     // Limit options for Program Type and Services Provided based on Program Area
-    // check that program area is populated both on add (default value) and edit (value)
-    if ($form['type']['#value'] == 'programs' && !empty($form['field_program_area'][LANGUAGE_NONE]['#default_value']) || !empty($form['field_program_area'][LANGUAGE_NONE]['#entity']->field_program_area[LANGUAGE_NONE][0]['tid'])) {
-// set services provided and program areas available here 
-}
+    // Check we are on a content type of programs
+    if ($form['type']['#value'] == 'programs') {
+      $programArea = 0;
+      // If in create mode check for program area default value as it has not been saved
+      if (!empty($form['field_program_area'][LANGUAGE_NONE]['#default_value'])) {
+        $programArea = $form['field_program_area'][LANGUAGE_NONE]['#default_value'];
+      }
+      // If in edit mode check for program area value
+      if (!empty($form['field_program_area'][LANGUAGE_NONE]['#entity']->field_program_area[LANGUAGE_NONE][0]['tid'])) {
+        $programArea = $form['field_program_area'][LANGUAGE_NONE]['#entity']->field_program_area[LANGUAGE_NONE][0]['tid'];
+      }
+      // If you find a program area
+      if ($programArea > 0) {
+        // Check the following fields options
+        $fieldsToLimitByProgramArea = array(
+          'field_service_provided',
+        );
+        foreach ($fieldsToLimitByProgramArea as $key => $fieldName) {
+          if (!empty($form[$fieldName][LANGUAGE_NONE]['#options'])) {
+            foreach ($form[$fieldName][LANGUAGE_NONE]['#options'] as $tid => $name) {
+              if ($tid > 0) {
+                $term = taxonomy_term_load($tid);
+                print_r($term); die();
+              }
+            }
+          }
+        }
+        // set services provided and program areas available here
+
+      }
+    }
+
     // make tooltips for all fields (most important for table fields)
     foreach ($form as $key => $value) {
       if (substr($key, 0, 6) == 'field_') {
