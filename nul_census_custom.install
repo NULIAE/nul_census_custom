@@ -53,7 +53,7 @@ function nul_census_custom_install() {
         ),
       ),
       "Program Areas" => array(
-        'machine_name' => ' program_areas',
+        'machine_name' => 'program_areas',
         'name' => "Program Areas",
         'list' => array(
           'Education and Youth Development' => array('field_content_type' => 'program_education'),

@@ -79,7 +79,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
       drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
     );
     if (arg(0) == 'node' && arg(1) == 'add' && arg(3) >= 1) {
-      if (arg(2) == 'test-clean-census') {
+      if (!empty(arg(2)) && arg(2) == 'test-clean-census') {
         $year = date("Y");
         //TODO look up contact org name of arg(3) and print instead of id
         // Update and disable title field
@@ -128,7 +128,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     }
     // Limit options for Program Type and Services Provided based on Program Area
     // Check we are on a content type of programs
-    if ($form['type']['#value'] == 'programs') {
+    if (!empty($form['type']['#value']) && $form['type']['#value'] == 'programs') {
       $programArea = 0;
       // If in create mode check for program area default value as it has not been saved
       if (!empty($form['field_program_area'][LANGUAGE_NONE]['#default_value'])) {
