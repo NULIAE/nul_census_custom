@@ -126,6 +126,11 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
         }
       }
     }
+    // Limit options for Program Type and Services Provided based on Program Area
+    // check that program area is populated both on add (default value) and edit (value)
+    if (!empty($form['field_program_area'][LANGUAGE_NONE]['#default_value']) || $form['field_program_area']) {
+      print_r($form['field_program_area']); die();
+    }
     // make tooltips for all fields (most important for table fields)
     foreach ($form as $key => $value) {
       if (substr($key, 0, 6) == 'field_') {
@@ -134,7 +139,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
         }
       }
     }
-    // lcheck if the content type is in the taxonomy for census tabs
+    // check if the content type is in the taxonomy for census tabs
     $termDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $form['#node']->type);
     if (!$termDetails) {
       drupal_set_message(t('Not a Census Tab or unpopulated content type machine name on the taxonomy term'), 'error');
