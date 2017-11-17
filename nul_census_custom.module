@@ -128,9 +128,9 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     }
     // Limit options for Program Type and Services Provided based on Program Area
     // check that program area is populated both on add (default value) and edit (value)
-    if (!empty($form['field_program_area'][LANGUAGE_NONE]['#default_value']) || $form['field_program_area']) {
-      print_r($form['field_program_area']); die();
-    }
+    if ($form['type']['#value'] == 'programs' && !empty($form['field_program_area'][LANGUAGE_NONE]['#default_value']) || !empty($form['field_program_area'][LANGUAGE_NONE]['#entity']->field_program_area[LANGUAGE_NONE][0]['tid'])) {
+// set services provided and program areas available here 
+}
     // make tooltips for all fields (most important for table fields)
     foreach ($form as $key => $value) {
       if (substr($key, 0, 6) == 'field_') {
