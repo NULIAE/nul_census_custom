@@ -79,7 +79,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
       drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
     );
     if (arg(0) == 'node' && arg(1) == 'add' && arg(3) >= 1) {
-      if (arg(2) == 'test-clean-census') {
+      if (!empty(arg(2)) && arg(2) == 'test-clean-census') {
         $year = date("Y");
         //TODO look up contact org name of arg(3) and print instead of id
         // Update and disable title field
@@ -126,6 +126,42 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
         }
       }
     }
+    // Limit options for Program Type and Services Provided based on Program Area
+    // Check we are on a content type of programs
+    if (!empty($form['type']['#value']) && $form['type']['#value'] == 'programs') {
+      $programArea = 0;
+      // If in create mode check for program area default value as it has not been saved
+      if (!empty($form['field_program_area'][LANGUAGE_NONE]['#default_value'])) {
+        $programArea = $form['field_program_area'][LANGUAGE_NONE]['#default_value'];
+      }
+      // If in edit mode check for program area value
+      if (!empty($form['field_program_area'][LANGUAGE_NONE]['#entity']->field_program_area[LANGUAGE_NONE][0]['tid'])) {
+        $programArea = $form['field_program_area'][LANGUAGE_NONE]['#entity']->field_program_area[LANGUAGE_NONE][0]['tid'];
+      }
+      // If you find a program area
+      if ($programArea > 0) {
+        // Check the following fields options
+        $fieldsToLimitByProgramArea = array(
+          'field_service_provided',
+          'field_program_types',
+        );
+        foreach ($fieldsToLimitByProgramArea as $key => $fieldName) {
+          if (!empty($form[$fieldName][LANGUAGE_NONE]['#options'])) {
+            foreach ($form[$fieldName][LANGUAGE_NONE]['#options'] as $tid => $name) {
+              if ($tid > 0) {
+                $term = taxonomy_term_load($tid);
+                if ($term->field_program_area[LANGUAGE_NONE][0]['tid'] !== $programArea) {
+                  unset($form[$fieldName][LANGUAGE_NONE]['#options'][$tid]);
+                }
+              }
+            }
+          }
+        }
+        // set services provided and program areas available here
+
+      }
+    }
+
     // make tooltips for all fields (most important for table fields)
     foreach ($form as $key => $value) {
       if (substr($key, 0, 6) == 'field_') {
@@ -134,7 +170,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
         }
       }
     }
-    // lcheck if the content type is in the taxonomy for census tabs
+    // check if the content type is in the taxonomy for census tabs
     $termDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $form['#node']->type);
     if (!$termDetails) {
       drupal_set_message(t('Not a Census Tab or unpopulated content type machine name on the taxonomy term'), 'error');
