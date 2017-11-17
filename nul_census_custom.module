@@ -143,13 +143,16 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
         // Check the following fields options
         $fieldsToLimitByProgramArea = array(
           'field_service_provided',
+          'field_program_types',
         );
         foreach ($fieldsToLimitByProgramArea as $key => $fieldName) {
           if (!empty($form[$fieldName][LANGUAGE_NONE]['#options'])) {
             foreach ($form[$fieldName][LANGUAGE_NONE]['#options'] as $tid => $name) {
               if ($tid > 0) {
                 $term = taxonomy_term_load($tid);
-                print_r($term); die();
+                if ($term->field_program_area[LANGUAGE_NONE][0]['tid'] !== $programArea) {
+                  unset($form[$fieldName][LANGUAGE_NONE]['#options'][$tid]);
+                }
               }
             }
           }
