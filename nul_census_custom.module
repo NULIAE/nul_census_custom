@@ -288,7 +288,11 @@ function nul_census_custom_check_tabstatus_permisions($status) {
 }
 
 function nul_census_custom_block_view_alter(&$data, $block) {
-  if ($block->delta == 'contact_information-block') {
+  if ($block->delta == 'census_tab_menu-block' || $block->delta == 'census_tab_menu-block_1') {
+    $displays = array(
+      'census_tab_menu-block_1' => 'block_1',
+      'census_tab_menu-block' => 'block',
+    );
     $censusTabsVocabulary = taxonomy_vocabulary_machine_name_load('census_tabs');
     $censusTabs = taxonomy_get_tree($censusTabsVocabulary->vid);
     $result = '';
@@ -298,11 +302,11 @@ function nul_census_custom_block_view_alter(&$data, $block) {
         if (!empty($data['content']['#views_contextual_links_info']['views_ui']['view']->args)) {
           $arguments = $data['content']['#views_contextual_links_info']['views_ui']['view']->args;
           $arguments[] = $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'];
-          $view = views_get_view('contact_information');
-          $view->set_display('block');
+          $view = views_get_view('census_tab_menu');
+          $view->set_display($displays[$block->delta]);
           $view->set_arguments($arguments);
           $view->execute();
-          $result .= $view->preview('block');
+          $result .= $view->preview($displays[$block->delta]);
         }
       }
       $data['content']['#markup'] = $result;
