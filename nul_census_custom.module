@@ -287,7 +287,11 @@ function nul_census_custom_check_tabstatus_permisions($status) {
   return $canEdit;
 }
 
+/**
+ * Massages census_tab_menu view to show all related tabs
+ */
 function nul_census_custom_block_view_alter(&$data, $block) {
+  // for the blocks that show the content tabs for the census or parent census pass correct contextual filters
   if ($block->delta == 'census_tab_menu-block' || $block->delta == 'census_tab_menu-block_1') {
     $displays = array(
       'census_tab_menu-block_1' => 'block_1',
