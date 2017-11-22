@@ -311,14 +311,7 @@ function nul_census_custom_block_view_alter(&$data, $block) {
       $term = taxonomy_term_load($object->tid);
       if (!empty($term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])) {
         if (!empty($data['content']['#views_contextual_links_info']['views_ui']['view']->args)) {
-          // send parent census as third argument to block when on census tab
-          if ($displays[$block->delta] == 'census_tab_menu-block') {
-            $node = node_load($data['content']['#views_contextual_links_info']['views_ui']['view']->args[0]);
-            if (!empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
-              $arguments[] = $node->field_parent_census[LANGUAGE_NONE][0]['target_id'];
-            }
-          }
-          $arguments[] = $data['content']['#views_contextual_links_info']['views_ui']['view']->args[0];
+          $arguments = $data['content']['#views_contextual_links_info']['views_ui']['view']->args;
           $arguments[] = $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'];
           // machine names of content types have _ switch them to - to redirect properly
           $arguments[] = str_replace('_', '-', $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value']);
