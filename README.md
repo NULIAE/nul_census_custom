@@ -118,3 +118,7 @@ This creates a link: <a href=/node/add/programs/[field_parent_census-target_id]/
 2. List of programs: http://nuldrupal.localhost/admin/structure/views/view/programs_for_program_area/edit
 
 This view shows the programs that have the same parent census as the program details tab AND have the related (thru the program areas taxonmy) program type.
+
+# Send Notification Emails when a new census is Created
+
+# Send Notification Emails when the census status changes to "completed" "approved" or "resubmit"

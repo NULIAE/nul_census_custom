@@ -329,3 +329,50 @@ function nul_census_custom_block_view_alter(&$data, $block) {
     }
   }
 }
+
+function nul_census_custom_node_update($node) {
+  // TODO 1. If censis status changes to "completed" "approved" or "resubmit" send a notification email
+  // if ($node->type == 'test_clean_census') {
+  //   // TODO check what the status was, and what it is becoming
+  //   // TODO if status changed to any of the three above send mail
+  //   $language = language_default();
+  //   $params = array(
+  //     'nid' => $node->nid,
+  //     'status' => $node->status,
+  //     'prev_status' => $node->previous_status,
+  //   );
+  //   drupal_mail('nul_census_custom', 'status change', 'alice@aghstrategies.com', $language, $params, 'alice@aghstrategies.com', TRUE);
+  // }
+}
+
+function nul_census_custom_node_insert($node) {
+  // Sends an email when a node of type census is created
+  // TODO talk to NUL about what info they want in this email. Is link enough? also who should the email go to?
+  if ($node->type == 'test_clean_census') {
+    $language = language_default();
+    $params = array(
+      'nid' => $node->nid,
+    );
+    drupal_mail('nul_census_custom', 'census_created', 'alice@aghstrategies.com', $language, $params, 'alice@aghstrategies.com', TRUE);
+  }
+}
+
+function nul_census_custom_mail($key, &$message, $params) {
+  global $base_url;
+  switch ($key) {
+    case 'status_change':
+      $link = $base_url . '/node/' . $params['nid'];
+      $message['subject'] = "Census {$params['nid']} Status Changed to {$params['status']}";
+      $message['body'][] = "Census {$params['nid']} Status Changed to {$params['status']} from {$params['prev_status']} to visit $link";
+      break;
+
+    case 'census_created':
+      $link = $base_url . '/node/' . $params['nid'];
+      $message['subject'] = "Census Created nid: {$params['nid']}";
+      $message['body'][] = "Census Created nid: {$params['nid']} visit at $link";
+      break;
+
+    default:
+      break;
+  }
+}
