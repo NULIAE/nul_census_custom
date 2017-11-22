@@ -300,12 +300,16 @@ function nul_census_custom_block_view_alter(&$data, $block) {
     $censusTabsVocabulary = taxonomy_vocabulary_machine_name_load('census_tabs');
     $censusTabs = taxonomy_get_tree($censusTabsVocabulary->vid);
     $result = '';
+    $currentNid = $data['content']['#views_contextual_links_info']['views_ui']['view']->args[0];
+    $currentNode = node_load($currentNid);
+    $parentCensusNid = $currentNode->field_parent_census[LANGUAGE_NONE][0]['target_id'];
     foreach ($censusTabs as $key => $object) {
       $term = taxonomy_term_load($object->tid);
       if (!empty($term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])) {
         if (!empty($data['content']['#views_contextual_links_info']['views_ui']['view']->args)) {
           $arguments = $data['content']['#views_contextual_links_info']['views_ui']['view']->args;
           $arguments[] = $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'];
+          $arguments[] = $parentCensusNid;
           $view = views_get_view('census_tab_menu');
           $view->set_display($displays[$block->delta]);
           $view->set_arguments($arguments);
