@@ -331,22 +331,33 @@ function nul_census_custom_block_view_alter(&$data, $block) {
 }
 
 function nul_census_custom_node_update($node) {
-  // TODO 1. If censis status changes to "completed" "approved" or "resubmit" send a notification email
-  // if ($node->type == 'test_clean_census') {
-  //   // TODO check what the status was, and what it is becoming
-  //   // TODO if status changed to any of the three above send mail
-  //   $language = language_default();
-  //   $params = array(
-  //     'nid' => $node->nid,
-  //     'status' => $node->status,
-  //     'prev_status' => $node->previous_status,
-  //   );
-  //   drupal_mail('nul_census_custom', 'status change', 'alice@aghstrategies.com', $language, $params, 'alice@aghstrategies.com', TRUE);
-  // }
+  // AGH #11267 If censis status changes to "completed" "approved" or "resubmit" send a notification email
+  // If updating a census
+  if ($node->type == 'test_clean_census') {
+    // if that census status field is populated
+    if (!empty($node->field_census_status[LANGUAGE_NONE][0]['tid'])) {
+      // and the status is not the same as it was originally (is being changed)
+      if ($node->original->field_census_status[LANGUAGE_NONE][0]['tid'] !== $node->field_census_status[LANGUAGE_NONE][0]['tid']) {
+        // look up the name of the status
+        $term = taxonomy_term_load($node->field_census_status[LANGUAGE_NONE][0]['tid']);
+        // check that the name is in the array of status we want to alert people of a status being changed to.
+        if (!empty($term->name) && in_array($term->name, array('Complete', 'Approved', 'Resubmit'))) {
+          // status has changed to Complete Approved or resubmit, we should email appropriate ppl
+          $language = language_default();
+          $params = array(
+            'nid' => $node->nid,
+            'status' => $node->status,
+            'prev_status' => $node->previous_status,
+          );
+          drupal_mail('nul_census_custom', 'status change', 'alice@aghstrategies.com', $language, $params, 'alice@aghstrategies.com', TRUE);
+        }
+      }
+    }
+  }
 }
 
 function nul_census_custom_node_insert($node) {
-  // Sends an email when a node of type census is created
+  // AGH #11267 Sends an email when a node of type census is created
   // TODO talk to NUL about what info they want in this email. Is link enough? also who should the email go to?
   if ($node->type == 'test_clean_census') {
     $language = language_default();
