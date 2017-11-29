@@ -79,7 +79,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
       drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
     );
     if (arg(0) == 'node' && arg(1) == 'add' && arg(3) >= 1) {
-      if (!empty(arg(2)) && arg(2) == 'test-clean-census') {
+      if (!empty(arg(2)) && arg(2) == 'census') {
         $year = date("Y");
         //TODO look up contact org name of arg(3) and print instead of id
         // Update and disable title field
@@ -87,10 +87,10 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
         $form['title']['#disabled'] = TRUE;
         // Update Year field and hide
         $form['field_year'][LANGUAGE_NONE][0]['value']['#default_value'] = $year;
-        $form['field_year']['#type'] = 'hidden';
+        $form['field_year']['#disabled'] = TRUE;
         // Update affliate field and hide it
         $form['field_affiliate_'][LANGUAGE_NONE][0]['value']['#default_value'] = arg(3);
-        $form['field_affiliate_']['#type'] = 'hidden';
+        $form['field_affiliate_']['#disabled'] = TRUE;
       }
       else {
         // Setting tab status to be incomplete since we are creating and we cant set default on the field since we can't export taxonomy terms with features
