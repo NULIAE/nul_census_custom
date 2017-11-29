@@ -4,129 +4,145 @@
  * [feature_name_install description]
  */
 function nul_census_custom_install() {
-  function createTaxonomyListItems() {
-    $vocabDetails = array(
-      "Census Tab Status" => array(
-        'machine_name' => 'census_tab_status',
-        'name' => "Census Tab Status",
-        'list' => array(
-          'Complete' => array('1'),
-          'Incomplete' => array('1'),
-          'Resubmit' => array('1'),
-          'Reviewed Complete' => array('1'),
-          'Reviewed' => array('1'),
-          'Submitted' => array('1'),
+  /**
+   * Return arrays of vocabulary terms
+   * @param string $type which array to return basic or the one that requires program areas
+   * @return array      array of vocab details
+   */
+  function vocabArrays($type) {
+    if ($type == 'basic') {
+      $vocabDetails = array(
+        "Census Tab Status" => array(
+          'machine_name' => 'census_tab_status',
+          'name' => "Census Tab Status",
+          'list' => array(
+            'Complete' => array('1'),
+            'Incomplete' => array('1'),
+            'Resubmit' => array('1'),
+            'Reviewed Complete' => array('1'),
+            'Reviewed' => array('1'),
+            'Submitted' => array('1'),
+          ),
         ),
-      ),
-      "Status type for Census" => array(
-        'machine_name' => 'status_type_for_census',
-        'name' => "Status type for Census",
-        'list' => array(
-          'Complete' => array('1'),
-          'Incomplete' => array('1'),
-          'Reviewed Complete' => array('1'),
-          'Submitted' => array('1'),
+        "Status type for Census" => array(
+          'machine_name' => 'status_type_for_census',
+          'name' => "Status type for Census",
+          'list' => array(
+            'Complete' => array('1'),
+            'Incomplete' => array('1'),
+            'Reviewed Complete' => array('1'),
+            'Submitted' => array('1'),
+          ),
         ),
-      ),
-      "Census Tabs" => array(
-        'machine_name' => 'census_tabs',
-        'name' => "Census Tabs",
-        'list' => array(
-          'Civic Engagement' => array('field_content_type_machine_name' => 'civic_engagement'),
-          'Community Relations' => array('field_content_type_machine_name' => 'community_relations'),
-          'Contact Data (Direct, Indirect & Public)' => array('field_content_type_machine_name' => 'contact_data_direct_indirect_pub'),
-          'Contact Information' => array('field_content_type_machine_name' => 'contact_information'),
-          'Education Program Details' => array('field_content_type_machine_name' => 'program_education'),
-          'Emergency Relief Activities' => array('field_content_type_machine_name' => 'emergency_relief_activities'),
-          'Employees and Board Members' => array('field_content_type_machine_name' => 'employees_and_board_members'),
-          'Empowerment' => array('field_content_type_machine_name' => 'empowerment'),
-          'Entrepreneurship and Business Development Program Details' => array('field_content_type_machine_name' => 'program_entrepreneurship'),
-          'Expenditures' => array('field_content_type_machine_name' => 'expenditures'),
-          'Health and Quality of Life Program Details' => array('field_content_type_machine_name' => 'program_health'),
-          'Housing and Community Development' => array('field_content_type_machine_name' => 'program_housing'),
-          'Revenue' => array('field_content_type_machine_name' => 'revenue'),
-          'Service Areas' => array('field_content_type_machine_name' => 'service_areas'),
-          'Survey Certification' => array('field_content_type_machine_name' => 'survey_certification'),
-          'Volunteers/Members' => array('field_content_type_machine_name' => 'volunteers_members'),
-          'Workforce Development Program Details' => array('field_content_type_machine_name' => 'program_workforce'),
-          'Other Programs' => array('field_content_type_machine_name' => 'program_other'),
+        "Census Tabs" => array(
+          'machine_name' => 'census_tabs',
+          'name' => "Census Tabs",
+          'list' => array(
+            'Civic Engagement' => array('field_content_type_machine_name' => 'civic_engagement'),
+            'Community Relations' => array('field_content_type_machine_name' => 'community_relations'),
+            'Contact Data (Direct, Indirect & Public)' => array('field_content_type_machine_name' => 'contact_data_direct_indirect_pub'),
+            'Contact Information' => array('field_content_type_machine_name' => 'contact_information'),
+            'Education Program Details' => array('field_content_type_machine_name' => 'program_education'),
+            'Emergency Relief Activities' => array('field_content_type_machine_name' => 'emergency_relief_activities'),
+            'Employees and Board Members' => array('field_content_type_machine_name' => 'employees_and_board_members'),
+            'Empowerment' => array('field_content_type_machine_name' => 'empowerment'),
+            'Entrepreneurship and Business Development Program Details' => array('field_content_type_machine_name' => 'program_entrepreneurship'),
+            'Expenditures' => array('field_content_type_machine_name' => 'expenditures'),
+            'Health and Quality of Life Program Details' => array('field_content_type_machine_name' => 'program_health'),
+            'Housing and Community Development' => array('field_content_type_machine_name' => 'program_housing'),
+            'Revenue' => array('field_content_type_machine_name' => 'revenue'),
+            'Service Areas' => array('field_content_type_machine_name' => 'service_areas'),
+            'Survey Certification' => array('field_content_type_machine_name' => 'survey_certification'),
+            'Volunteers/Members' => array('field_content_type_machine_name' => 'volunteers_members'),
+            'Workforce Development Program Details' => array('field_content_type_machine_name' => 'program_workforce'),
+            'Other Programs' => array('field_content_type_machine_name' => 'program_other'),
+          ),
         ),
-      ),
-      "Program Areas" => array(
-        'machine_name' => 'program_areas',
-        'name' => "Program Areas",
-        'list' => array(
-          'Education and Youth Development' => array('field_content_type' => 'program_education'),
-          'Entrepreneurship and Business Development' => array('field_content_type' => 'program_entrepreneurship'),
-          'Health and Quality of Life' => array('field_content_type' => 'program_health'),
-          'Housing and Community Development' => array('field_content_type' => 'program_housing'),
-          'Other Program' => array('field_content_type' => 'program_other'),
-          'Workforce Development' => array('field_content_type' => 'program_workforce'),
+        "Program Areas" => array(
+          'machine_name' => 'program_areas',
+          'name' => "Program Areas",
+          'list' => array(
+            'Education and Youth Development' => array('field_content_type' => 'program_education'),
+            'Entrepreneurship and Business Development' => array('field_content_type' => 'program_entrepreneurship'),
+            'Health and Quality of Life' => array('field_content_type' => 'program_health'),
+            'Housing and Community Development' => array('field_content_type' => 'program_housing'),
+            'Other Program' => array('field_content_type' => 'program_other'),
+            'Workforce Development' => array('field_content_type' => 'program_workforce'),
+          ),
         ),
-      ),
-      "Program Types" => array(
-        'machine_name' => "program_types",
-        'name' => 'Program Types',
-        'list' => array(
-          "Business Incubator" => array("field_program_area" => "21"),
-          "College Scholarship Program" => array("field_program_area" => "20"),
-          "Designated National Urban League Entrepreneurship Center" => array("field_program_area" => "21"),
-          "Early Childhood Education Program (other than Head Start)" => array("field_program_area" => "20"),
-          "Education Programing for Adults" => array("field_program_area" => "20"),
-          "Events Only" => array("field_program_area" => "21"),
-          "Head Start" => array("field_program_area" => "20"),
-          "Mentoring Programs for children and youth (1st – 12th grade)" => array("field_program_area" => "20"),
-          "Other Entrepreneurship Program" => array("field_program_area" => "21"),
-          "Pre-/Post-Loan Counseling or Small Business Lending" => array("field_program_area" => "21"),
+      );
+    }
+    // TODO update arrays to use program area names instead of tids AND TEST
+    if ($type == 'programAreas') {
+      $vocabDetails = array(
+        "Program Types" => array(
+          'machine_name' => "program_types",
+          'name' => 'Program Types',
+          'list' => array(
+            "Business Incubator" => array('field_program_area' => 'Entrepreneurship and Business Development'),
+            "College Scholarship Program" => array('field_program_area' => 'Education and Youth Development'),
+            "Designated National Urban League Entrepreneurship Center" => array('field_program_area' => 'Entrepreneurship and Business Development'),
+            "Early Childhood Education Program (other than Head Start)" => array('field_program_area' => 'Education and Youth Development'),
+            "Education Programing for Adults" => array('field_program_area' => 'Education and Youth Development'),
+            "Events Only" => array('field_program_area' => 'Entrepreneurship and Business Development'),
+            "Head Start" => array('field_program_area' => 'Education and Youth Development'),
+            "Mentoring Programs for children and youth (1st – 12th grade)" => array('field_program_area' => 'Education and Youth Development'),
+            "Other Entrepreneurship Program" => array('field_program_area' => 'Entrepreneurship and Business Development'),
+            "Pre-/Post-Loan Counseling or Small Business Lending" => array('field_program_area' => 'Entrepreneurship and Business Development'),
+          ),
         ),
-      ),
-      "Services Provided" => array(
-        'machine_name' => "services_provided",
-        'name' => 'Services Provided',
-        'list' => array(
-          'Affiliate is a HUD approved housing counseling agency' => array('field_program_area' => '23'),
-          'Business Lending' => array('field_program_area' => '21'),
-          'Charter School Facility' => array('field_program_area' => '20'),
-          'Community development, real estate development, and/or asset management' => array('field_program_area' => '23'),
-          'Community Health Worker or Navigator Program' => array('field_program_area' => '22'),
-          'Construction industry/building trade program (for adults)' => array('field_program_area' => '24'),
-          'Cultural competency training/programming' => array('field_program_area' => '22'),
-          'Education advocacy' => array('field_program_area' => '20'),
-          'Entrepreneurship Training (including certification workshops, i.e. MBE, WBE)' => array('field_program_area' => '21'),
-          'Events (networking, pitch competitions)' => array('field_program_area' => '21'),
-          'Financial literacy workshops' => array('field_program_area' => '23'),
-          'Food insecurity / hunger / food desert programming, services or support' => array('field_program_area' => '22'),
-          'Foreclosure prevention counseling' => array('field_program_area' => '23'),
-          'Foster Care Services' => array('field_program_area' => '20'),
-          'Health advocacy in your community' => array('field_program_area' => '22'),
-          'Health and Wellness Education Classes/Events/Seminars' => array('field_program_area' => '22'),
-          'Health Insurance Enrollment and Navigation Assistance' => array('field_program_area' => '22'),
-          'Health Screenings (blood pressure, vision, etc.)' => array('field_program_area' => '22'),
-          'Individual financial coaching/financial capability services' => array('field_program_area' => '23'),
-          'Individual job coaching for placement and retention' => array('field_program_area' => '24'),
-          'Meeting Space/Co-Location Services' => array('field_program_area' => '21'),
-          'Mentoring' => array('field_program_area' => '21'),
-          'Mentorships' => array('field_program_area' => '20'),
-          'One-on-one counseling' => array('field_program_area' => '21'),
-          'Post-purchase counseling' => array('field_program_area' => '23'),
-          'Pre-purchase counseling' => array('field_program_area' => '23'),
-          'Pre-purchase education workshops' => array('field_program_area' => '23'),
-          'Referrals to clinical care (primary, specialty, mental/emotional)' => array('field_program_area' => '22'),
-          'Rental Counseling' => array('field_program_area' => '23'),
-          'Resource referral (including loans, contract/bonding opportunities)' => array('field_program_area' => '21'),
-          'Scholarships' => array('field_program_area' => '20'),
-          'Services for Homeless Youth' => array('field_program_area' => '20'),
-          'Small Business Advocacy (policy work, lobbying)' => array('field_program_area' => '21'),
-          'Technical training in specific sectors' => array('field_program_area' => '24'),
-          'WIA/WIOA services delivery' => array('field_program_area' => '24'),
-          'Work readiness workshops' => array('field_program_area' => '24'),
-          'Workshops/Sessions on Academic Support (including mentoring)' => array('field_program_area' => '20'),
-          'Workshops/Sessions on Cultural Awareness (including mentoring)' => array('field_program_area' => '20'),
-          'Workshops/Sessions on Social Development (including mentoring)' => array('field_program_area' => '20'),
-          'Youth Build' => array('field_program_area' => '24'),
+        "Services Provided" => array(
+          'machine_name' => "services_provided",
+          'name' => 'Services Provided',
+          'list' => array(
+            'Affiliate is a HUD approved housing counseling agency' => array('field_program_area' => 'Housing and Community Development'),
+            'Business Lending' => array('field_program_area' => 'Entrepreneurship and Business Development'),
+            'Charter School Facility' => array('field_program_area' => 'Education and Youth Development'),
+            'Community development, real estate development, and/or asset management' => array('field_program_area' => 'Housing and Community Development'),
+            'Community Health Worker or Navigator Program' => array('field_program_area' => 'Health and Quality of Life'),
+            'Construction industry/building trade program (for adults)' => array('field_program_area' => '	Workforce Development'),
+            'Cultural competency training/programming' => array('field_program_area' => 'Health and Quality of Life'),
+            'Education advocacy' => array('field_program_area' => 'Education and Youth Development'),
+            'Entrepreneurship Training (including certification workshops, i.e. MBE, WBE)' => array('field_program_area' => 'Entrepreneurship and Business Development'),
+            'Events (networking, pitch competitions)' => array('field_program_area' => 'Entrepreneurship and Business Development'),
+            'Financial literacy workshops' => array('field_program_area' => 'Housing and Community Development'),
+            'Food insecurity / hunger / food desert programming, services or support' => array('field_program_area' => 'Health and Quality of Life'),
+            'Foreclosure prevention counseling' => array('field_program_area' => 'Housing and Community Development'),
+            'Foster Care Services' => array('field_program_area' => 'Education and Youth Development'),
+            'Health advocacy in your community' => array('field_program_area' => 'Health and Quality of Life'),
+            'Health and Wellness Education Classes/Events/Seminars' => array('field_program_area' => 'Health and Quality of Life'),
+            'Health Insurance Enrollment and Navigation Assistance' => array('field_program_area' => 'Health and Quality of Life'),
+            'Health Screenings (blood pressure, vision, etc.)' => array('field_program_area' => 'Health and Quality of Life'),
+            'Individual financial coaching/financial capability services' => array('field_program_area' => 'Housing and Community Development'),
+            'Individual job coaching for placement and retention' => array('field_program_area' => '	Workforce Development'),
+            'Meeting Space/Co-Location Services' => array('field_program_area' => 'Entrepreneurship and Business Development'),
+            'Mentoring' => array('field_program_area' => 'Entrepreneurship and Business Development'),
+            'Mentorships' => array('field_program_area' => 'Education and Youth Development'),
+            'One-on-one counseling' => array('field_program_area' => 'Entrepreneurship and Business Development'),
+            'Post-purchase counseling' => array('field_program_area' => 'Housing and Community Development'),
+            'Pre-purchase counseling' => array('field_program_area' => 'Housing and Community Development'),
+            'Pre-purchase education workshops' => array('field_program_area' => 'Housing and Community Development'),
+            'Referrals to clinical care (primary, specialty, mental/emotional)' => array('field_program_area' => 'Health and Quality of Life'),
+            'Rental Counseling' => array('field_program_area' => 'Housing and Community Development'),
+            'Resource referral (including loans, contract/bonding opportunities)' => array('field_program_area' => 'Entrepreneurship and Business Development'),
+            'Scholarships' => array('field_program_area' => 'Education and Youth Development'),
+            'Services for Homeless Youth' => array('field_program_area' => 'Education and Youth Development'),
+            'Small Business Advocacy (policy work, lobbying)' => array('field_program_area' => 'Entrepreneurship and Business Development'),
+            'Technical training in specific sectors' => array('field_program_area' => '	Workforce Development'),
+            'WIA/WIOA services delivery' => array('field_program_area' => '	Workforce Development'),
+            'Work readiness workshops' => array('field_program_area' => '	Workforce Development'),
+            'Workshops/Sessions on Academic Support (including mentoring)' => array('field_program_area' => 'Education and Youth Development'),
+            'Workshops/Sessions on Cultural Awareness (including mentoring)' => array('field_program_area' => 'Education and Youth Development'),
+            'Workshops/Sessions on Social Development (including mentoring)' => array('field_program_area' => 'Education and Youth Development'),
+            'Youth Build' => array('field_program_area' => '	Workforce Development'),
+          ),
         ),
-      ),
-    );
+      );
+    }
+    return $vocabDetails;
+  }
+
+  function createTaxonomyListItems($vocabDetails, $programAreasVocab = NULL) {
     foreach ($vocabDetails as $key => $detailsOfVocab) {
       // attempt to load vocab terms
       $vocab = taxonomy_vocabulary_machine_name_load($detailsOfVocab['machine_name']);
@@ -148,11 +164,20 @@ function nul_census_custom_install() {
             if (!empty($fieldDetails)) {
               // remove from array
               // load term to check if term has custom field set
-              $terms = taxonomy_get_term_by_name($name, NULL);
+              $terms = taxonomy_get_term_by_name($name, $detailsOfVocab['machine_name']);
               foreach ($terms as $key => $term) {
                 if (empty($term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])) {
                   foreach ($fieldDetails as $field => $valueOfField) {
-                    $term->{$field}[LANGUAGE_NONE][0]['value'] = $valueOfField;
+                    switch ($field) {
+                      case 'field_program_area':
+                        $tid = array_search($valueOfField, $programAreasVocab);
+                        $term->{$field}[LANGUAGE_NONE][0]['value'] = $tid;
+                        break;
+
+                      default:
+                        $term->{$field}[LANGUAGE_NONE][0]['value'] = $valueOfField;
+                        break;
+                    }
                   }
                   taxonomy_term_save($term);
                 }
@@ -178,5 +203,20 @@ function nul_census_custom_install() {
       }
     }
   }
-  createTaxonomyListItems();
+
+  function getProgramAreasVocabDets() {
+    $programAreasVocab = array();
+    $vocab = taxonomy_vocabulary_machine_name_load('program_areas');
+    $vid = $vocab->vid;
+    $tree = taxonomy_get_tree($vid);
+    foreach ($tree as $key => $values) {
+      $programAreasVocab[$values->tid] = $values->name;
+    }
+    return $programAreasVocab;
+  }
+
+  createTaxonomyListItems(vocabArrays('basic'), NULL);
+  // TODO look up program areas and oass to createTaxonomgList items
+  $programAreasVocab = getProgramAreasVocabDets();
+  createTaxonomyListItems(vocabArrays('programAreas'), $programAreasVocab);
 }
