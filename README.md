@@ -29,27 +29,13 @@ All field groups styled this way:
 5. Community Forum
 6. Community Organization
 
-## Notes on Config
-
-Because this node type is so large we needed to up the "max_input_vars" value to make everything save correctly. When using censusfeature and this custom module users should do the same. see documentation [here](https://stackoverflow.com/questions/9973555/setting-max-input-vars-php-ini-directive-using-ini-set) and below:
-
-To change the max input vars setting I added:
-
-```
-
-php_value max_input_vars 3000
-php_value suhosin.get.max_vars 3000
-php_value suhosin.post.max_vars 3000
-php_value suhosin.request.max_vars 3000
-
-```
-
-To the .htaccess file
-
 ## Census in edit mode
 
-When you visit: <url>/node/add/test-clean-census/<affiliateId>
-Hides tab fields affiliate and year
+When you visit: <url>/node/add/census/<affiliateId>
+
+Custom code:
+
+Hides the fields affiliate and year and populates them
 Populates the year to be the current year
 Populates title to be the affiliate id concatenated with the year
 
