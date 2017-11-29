@@ -27,7 +27,7 @@ function nul_census_custom_searchTaxonomyByField($vocabMachineName, $fieldName, 
  * hook_node_view()
  */
 function nul_census_custom_node_view($node, $view_mode, $langcode) {
-  if ($node->type !== 'test_clean_census' && !empty($node->type)) {
+  if ($node->type !== 'census' && !empty($node->type)) {
     // If on emergency_relief_activities view mode run this js to fix up table styling
     if ($node->type == 'emergency_relief_activities') {
       drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/formFix.js');
@@ -36,7 +36,7 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
     $termDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $node->type);
     // TODO delete this... these error messages this is really just for debugging while developing
     if (!$termDetails) {
-      if ($node->type == 'test_clean_census') {
+      if ($node->type == 'census') {
         drupal_set_message(t('Main Census Node'), 'notice');
       }
       else {
@@ -49,7 +49,7 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
         drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
       );
       // Check permissions, if do not have permission to edit complete tabs hide edit button
-      if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && $node->nid == arg(1) && $node->type !== 'test_clean_census') {
+      if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && $node->nid == arg(1) && $node->type !== 'census') {
         $canEdit = nul_census_custom_check_tabstatus_permisions($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name);
         if (!$canEdit) {
           drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/hideEdit.js');
@@ -333,7 +333,7 @@ function nul_census_custom_block_view_alter(&$data, $block) {
 function nul_census_custom_node_update($node) {
   // AGH #11267 If censis status changes to "completed" "approved" or "resubmit" send a notification email
   // If updating a census
-  if ($node->type == 'test_clean_census') {
+  if ($node->type == 'census') {
     // if that census status field is populated
     if (!empty($node->field_census_status[LANGUAGE_NONE][0]['tid'])) {
       // and the status is not the same as it was originally (is being changed)
@@ -359,7 +359,7 @@ function nul_census_custom_node_update($node) {
 function nul_census_custom_node_insert($node) {
   // AGH #11267 Sends an email when a node of type census is created
   // TODO talk to NUL about what info they want in this email. Is link enough? also who should the email go to?
-  if ($node->type == 'test_clean_census') {
+  if ($node->type == 'census') {
     $language = language_default();
     $params = array(
       'nid' => $node->nid,
