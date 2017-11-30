@@ -91,6 +91,9 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
         // Update affliate field and hide it
         $form['field_affiliate_'][LANGUAGE_NONE][0]['value']['#default_value'] = arg(3);
         $form['field_affiliate_']['#disabled'] = TRUE;
+        // set default status to inclomplete
+        $defaultStatus = array_search('Incomplete', $form['field_census_status'][LANGUAGE_NONE]['#options']);
+        $form['field_census_status'][LANGUAGE_NONE]['#default_value'][] = $defaultStatus;
       }
       else {
         // Setting tab status to be incomplete since we are creating and we cant set default on the field since we can't export taxonomy terms with features
