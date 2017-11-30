@@ -142,7 +142,7 @@ function nul_census_custom_install() {
     return $vocabDetails;
   }
 
-  function createTaxonomyListItems($vocabDetails, $programAreasVocab = NULL) {
+  function createTaxonomyListItems($vocabDetails, $programAreasVocab) {
     foreach ($vocabDetails as $key => $detailsOfVocab) {
       // attempt to load vocab terms
       $vocab = taxonomy_vocabulary_machine_name_load($detailsOfVocab['machine_name']);
@@ -170,8 +170,12 @@ function nul_census_custom_install() {
                   foreach ($fieldDetails as $field => $valueOfField) {
                     switch ($field) {
                       case 'field_program_area':
-                        $tid = array_search($valueOfField, $programAreasVocab);
-                        $term->{$field}[LANGUAGE_NONE][0]['value'] = $tid;
+                        if (!empty($programAreasVocab)) {
+                          if ($tid = array_search($valueOfField, $programAreasVocab)) {
+                            $term->{$field}[LANGUAGE_NONE][0]['tid'] = $tid;
+                          }
+                        }
+
                         break;
 
                       default:
@@ -196,27 +200,29 @@ function nul_census_custom_install() {
           $term->name = $name;
           //TODO get to save machine name of conent type to field on taxonomy term
           foreach ($fieldsOnTerm as $field => $value) {
-            $term->{$field}[LANGUAGE_NONE][0]['value'] = $value;
+            if ($field == 'field_program_area') {
+              if (!empty($programAreasVocab)) {
+                if ($tid = array_search($value, $programAreasVocab)) {
+                  $term->{$field}[LANGUAGE_NONE][0]['tid'] = $tid;
+                }
+              }
+            }
+            else {
+              $term->{$field}[LANGUAGE_NONE][0]['value'] = $value;
+            }
           }
           taxonomy_term_save($term);
         }
       }
     }
   }
-
-  function getProgramAreasVocabDets() {
-    $programAreasVocab = array();
-    $vocab = taxonomy_vocabulary_machine_name_load('program_areas');
-    $vid = $vocab->vid;
-    $tree = taxonomy_get_tree($vid);
-    foreach ($tree as $key => $values) {
-      $programAreasVocab[$values->tid] = $values->name;
-    }
-    return $programAreasVocab;
+  $programAreasVocab = array();
+  $basicvocab = taxonomy_vocabulary_machine_name_load('program_areas');
+  $vid = $vocab->vid;
+  $tree = taxonomy_get_tree($vid);
+  foreach ($tree as $key => $values) {
+    $programAreasVocab[$values->tid] = $values->name;
   }
-
-  createTaxonomyListItems(vocabArrays('basic'), NULL);
-  // TODO look up program areas and oass to createTaxonomgList items
-  $programAreasVocab = getProgramAreasVocabDets();
-  createTaxonomyListItems(vocabArrays('programAreas'), $programAreasVocab);
+  $vocabArray = vocabArrays('programAreas');
+  $programAreasVocabulary = createTaxonomyListItems($vocabArray, $programAreasVocab);
 }
