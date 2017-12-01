@@ -343,14 +343,21 @@ function nul_census_custom_node_update($node) {
         $term = taxonomy_term_load($node->field_census_status[LANGUAGE_NONE][0]['tid']);
         // check that the name is in the array of status we want to alert people of a status being changed to.
         if (!empty($term->name) && in_array($term->name, array('Complete', 'Approved', 'Resubmit'))) {
+
           // status has changed to Complete Approved or resubmit, we should email appropriate ppl
           $language = language_default();
           $params = array(
             'nid' => $node->nid,
-            'status' => $node->status,
-            'prev_status' => $node->previous_status,
+            'status' => $term->name,
+            'prev_status' => '',
+            'title' => $node->title,
           );
-          drupal_mail('nul_census_custom', 'status change', 'alice@aghstrategies.com', $language, $params, 'alice@aghstrategies.com', TRUE);
+          // get original status term name
+          $ogStatusTerm = taxonomy_term_load($node->original->field_census_status[LANGUAGE_NONE][0]['tid']);
+          if (!empty($ogStatusTerm->name)) {
+            $params['prev_status'] = $ogStatusTerm->name;
+          }
+          drupal_mail('nul_census_custom', 'status_change', 'alice@aghstrategies.com', $language, $params, 'alice@aghstrategies.com', TRUE);
         }
       }
     }
@@ -374,14 +381,16 @@ function nul_census_custom_mail($key, &$message, $params) {
   switch ($key) {
     case 'status_change':
       $link = $base_url . '/node/' . $params['nid'];
-      $message['subject'] = "Census {$params['nid']} Status Changed to {$params['status']}";
-      $message['body'][] = "Census {$params['nid']} Status Changed to {$params['status']} from {$params['prev_status']} to visit $link";
+      $message['subject'] = "{$params['title']} Status Changed to {$params['status']}";
+      $message['body'][] = "'{$params['title']}' Status Changed to {$params['status']} from {$params['prev_status']} see link below to visit this census: $link";
+      drupal_set_message(t('Status Change email sent'), 'notice');
       break;
 
     case 'census_created':
       $link = $base_url . '/node/' . $params['nid'];
       $message['subject'] = "Census Created nid: {$params['nid']}";
       $message['body'][] = "Census Created nid: {$params['nid']} visit at $link";
+      drupal_set_message(t('Census Created email sent'), 'notice');
       break;
 
     default:
