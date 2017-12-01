@@ -99,6 +99,24 @@ Configuration:
 + Census Tabs (on Census) - This should be configured to only show up on content type Census
 + Census Tabs (on Tab) -- This should be configured to only show up on the census content types.
 
+### View: link to full census
+
+This view creates a link to the page/view full-census (the view to see the full census) with the census id passed in the url.
+
+Configuration: This block should be configured to only show on pages content type "Census" after full content. The block title should be set to <none>
+
+### View: Full Parent Census
+
+This view is to show the parent census on the page/view full-census.
+
+Configuration: It should be configured to go above "Main page content" in the content section only on pages "full-census/ star"
+
+### Page: Full Census
+
+This is a view that will show all of the tabs with parent census XXX where XXX is a contextual filter passed thru the url.
+
+Configuration: None necessary
+
 ## Sends Notification Emails when a new census is Created
 
 ## Sends Notification Emails when the census status changes to "completed" "approved" or "resubmit"
