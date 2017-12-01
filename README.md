@@ -71,36 +71,34 @@ This module has an install file that creates the taxonomy terms needed for the f
 + Program Types - This is a field on the program that is limited by what program area the field program is designated as
 + Services Provided - This is a field on the program that is limited by what program area the field program is designated as
 
-## Views Configuration
+## Views Block Configuration:
 
-### For the Back to Parent Census button:
+### View: back to census button for new: Back to Census Button
+This block is used to create a button to return to the Parent Census when in edit mode of a new census tab.
 
-This blocks needs to be configured to go at the bottom of the content region for the theme that is being used for edit mode, It creates a button to return to the parent census:
+Configuration: This block should be added to the bottom of the content region of the theme being used for edit mode. And set title of the block to <none>
 
-+ http://nuldemo.aghstrategies.net/admin/structure/views/view/back_to_census_button_for_new/edit
+### View: Button to Add new Program
 
-### For the Programs Census Tabs??:
+This creates a link: <a href=/node/add/programs/[field_parent_census-target_id]/[type]>Add a Program</a> where [field_parent_census-target_id] is the id of the parent census and [type] is the content type. There is custom code on the add program content page that looks for these two parameters and sets the parent census value and the program type using the program area taxonomy.
 
-From the following 6 tabs one can create a program that is related to that tab:
+Configuration: This block should be configured to show at the bottom of the content region of the default theme. On all the program details content types (Education Program Details, Entrepreneurship and Business Development Program Details, Health and Quality of Life Program Details, Other Programs) and set title of block to <none>
 
-+ [Education and Youth Development](http://nuldemo.aghstrategies.net/admin/structure/views/view/education_details_view/edit/block)
-+ [Entrepreneurship and Business Development](http://nuldemo.aghstrategies.net/admin/structure/views/view/program_entrepreneurship/edit)
-+ [Health and Quality of Life](http://nuldemo.aghstrategies.net/admin/structure/views/view/program_health/edit)
-+ [Housing and Community Development](http://nuldemo.aghstrategies.net/admin/structure/views/view/program_housing/edit)
-+ [Workforce Development](http://nuldemo.aghstrategies.net/admin/structure/views/view/program_workforce/edit)
-+ [Other](http://nuldemo.aghstrategies.net/admin/structure/views/view/program_other/edit)
+### View: Programs for Program Area:
 
-To do so one needs to configure the taxonomy term [program_areas](http://nuldrupal.localhost/taxonomy/term/651/edit?destination=admin/structure/taxonomy/%20program_areas) where the Name is the name of the program type and teh content type is the machine name of the content type one can create that type of program from.
+This view shows the programs that have the same parent census as the program details tab AND have the related (thru the program areas taxonomy) program type.
 
-### To add a program: http://nuldrupal.localhost/admin/structure/views/view/button_to_add_new_program/edit
+Configuration: Configure this block to show on all Program Details Tabs
 
-This creates a link: <a href=/node/add/programs/[field_parent_census-target_id]/[type]>Add a Program</a> where [field_parent_census-target_id] is the id of the parent census and [type] is the content type. There is custom code on the add program content page that looks for these two parameters and sets the parent census value and the program type using the program area taxonomy
+### View: Census Tab Menu:
 
-### List of programs: http://nuldrupal.localhost/admin/structure/views/view/programs_for_program_area/edit
-### Census Tab Menu:
+This block produces the menu of census tabs. It uses the Taxonomy "Census Tabs" and checks for a node of the content type in the "content type machine name" field and the parent census. If it finds one it links to it with an additional url parameter of the parent census which is used by the "programs for programs area" block to display the programs. IF it does not find one it links to node/add/{content_type}/{parent_census} which will take you to add a node of that content type with the parent census field set. There are two blocks one for when you are on the Census it self and one for the census tabs.
 
-This view shows the programs that have the same parent census as the program details tab AND have the related (thru the program areas taxonmy) program type.
+Configuration:
 
-## Send Notification Emails when a new census is Created
++ Census Tabs (on Census) - This should be configured to only show up on content type Census
++ Census Tabs (on Tab) -- This should be configured to only show up on the census content types.
 
-## Send Notification Emails when the census status changes to "completed" "approved" or "resubmit"
+## Sends Notification Emails when a new census is Created
+
+## Sends Notification Emails when the census status changes to "completed" "approved" or "resubmit"
