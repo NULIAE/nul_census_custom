@@ -216,10 +216,12 @@ function nul_census_custom_install() {
       }
     }
   }
+  $vocabArrayBasic = vocabArrays('basic');
   $programAreasVocab = array();
-  $basicvocab = taxonomy_vocabulary_machine_name_load('program_areas');
-  $vid = $vocab->vid;
-  $tree = taxonomy_get_tree($vid);
+  $basicVocabulary = createTaxonomyListItems($vocabArrayBasic, $programAreasVocab);
+  $paVocab = taxonomy_vocabulary_machine_name_load('program_areas');
+  $PAvid = $paVocab->vid;
+  $tree = taxonomy_get_tree($PAvid);
   foreach ($tree as $key => $values) {
     $programAreasVocab[$values->tid] = $values->name;
   }
