@@ -23,6 +23,15 @@ function nul_census_custom_searchTaxonomyByField($vocabMachineName, $fieldName, 
   return $term;
 }
 
+function nul_census_custom_preprocess_views_view(&$vars) {
+  $view = $vars['view'];
+  // Make sure it's the correct view
+  if ($view->name == 'full_census') {
+    // add needed stylesheet
+    drupal_add_css(drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css');
+  }
+}
+
 /**
  * hook_node_view()
  */
