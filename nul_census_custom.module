@@ -223,6 +223,14 @@ function nul_census_custom_permission() {
       'title' => t('Edit census tabs with status resubmit'),
       'description' => t('Allows a user to edit census tabs with status rresubmit.'),
     ),
+    'edit census with status complete' => array(
+      'title' => t('Edit census with status complete'),
+      'description' => t('Allows a user to edit census with status complete'),
+    ),
+    'edit census with status submitted' => array(
+      'title' => t('Edit census with status submitted'),
+      'description' => t('Allows a user to edit census with status submitted'),
+    ),
   );
 }
 
