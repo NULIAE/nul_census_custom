@@ -38,6 +38,7 @@ function nul_census_custom_preprocess_views_view(&$vars) {
 function nul_census_custom_node_view($node, $view_mode, $langcode) {
   if (!empty($node->type)) {
     if ($node->type == 'census') {
+      // TODO check related nodes status's change to Complete if all required fields entered
       // Check permissions, if do not have permission to edit census hide edit button
       if (!empty($node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && $node->nid == arg(1)) {
         $canEdit = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'census');
@@ -52,7 +53,7 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
       if ($node->type == 'emergency_relief_activities') {
         drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/formFix.js');
       }
-      // lcheck if the content type is in the taxonomy for census tabs
+      // check if the content type is in the taxonomy for census tabs
       $termDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $node->type);
       // TODO delete this... these error messages this is really just for debugging while developing
       if (!$termDetails) {
