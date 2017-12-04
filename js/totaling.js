@@ -53,7 +53,7 @@
       totalBy: 'gender',
     },
   ];
-  var races = ['white', 'hispanic', 'asian', 'native', 'african-amer', 'other', 'african-am'];
+  var races = ['white', 'hispanic', 'asian-am', 'native-am', 'african-amer', 'other', 'african-am'];
   $(document).ready(function () {
     $(tableFieldBases).each(function (index, fieldBase) {
       $('input[id*="' + fieldBase.base + '"').keyup(function () {
