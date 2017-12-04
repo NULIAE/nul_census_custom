@@ -38,7 +38,6 @@ function nul_census_custom_preprocess_views_view(&$vars) {
 function nul_census_custom_node_view($node, $view_mode, $langcode) {
   if (!empty($node->type)) {
     if ($node->type == 'census') {
-      // TODO check related nodes status's change to Complete if all required fields entered
       // Check permissions, if do not have permission to edit census hide edit button
       if (!empty($node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && $node->nid == arg(1)) {
         $canEdit = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'census');
@@ -57,12 +56,7 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
       $termDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $node->type);
       // TODO delete this... these error messages this is really just for debugging while developing
       if (!$termDetails) {
-        if ($node->type == 'census') {
-          drupal_set_message(t('Main Census Node'), 'notice');
-        }
-        else {
-          drupal_set_message(t('Not a Census Tab or unpopulated content type machine name on the taxonomy term'), 'error');
-        }
+        drupal_set_message(t('Not a Census Tab or unpopulated content type machine name on the taxonomy term'), 'error');
       }
       if ($termDetails) {
         // Add css file to tab in view mode
@@ -198,7 +192,12 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     // check if the content type is in the taxonomy for census tabs
     $termDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $form['#node']->type);
     if (!$termDetails) {
-      drupal_set_message(t('Not a Census Tab or unpopulated content type machine name on the taxonomy term'), 'error');
+      if ($form['#node']->type == 'census') {
+        drupal_set_message(t('Main Census Node'), 'success');
+      }
+      else {
+        drupal_set_message(t('Not a Census Tab or unpopulated content type machine name on the taxonomy term'), 'error');
+      }
     }
     if ($termDetails) {
       // hide title field on cenus tab content types in edit mode
@@ -432,6 +431,21 @@ function nul_census_custom_node_update($node) {
       }
     }
   }
+  else {
+    // TODO update tab status to complete if all required fields calucllated then update census status
+    // TODO test that this will work when the last tab is changing to complete
+    // If on a node with a parent census check the status of this node and all others
+    if (!empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
+      // Tcheck status of parent census and update status if all tabs are completed
+      $tabsCompleted = nul_census_custom_check_tab_statuses($node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
+      if ($tabsCompleted == 'yes') {
+        $parentCensus = node_load($node->nid);
+        $parentCensus->field_census_status['und'][0]['tid'] = 7;
+        node_save($parentCensus);
+      }
+    }
+
+  }
 }
 
 function nul_census_custom_node_insert($node) {
@@ -466,4 +480,35 @@ function nul_census_custom_mail($key, &$message, $params) {
     default:
       break;
   }
+}
+
+function nul_census_custom_check_tab_statuses($nid) {
+  // TODO check the status of the census before continuing to make sure we need to do all this
+  $tabsAllCompleted = 'yes';
+  // load census tab vocabulary
+  $censusTabsVocabulary = taxonomy_vocabulary_machine_name_load('census_tabs');
+  $censusTabs = taxonomy_get_tree($censusTabsVocabulary->vid);
+  // foreach thru each term in census tab vocab
+  foreach ($censusTabs as $key => $object) {
+    if (!empty($object->tid)) {
+      // load term
+      $term = taxonomy_term_load($object->tid);
+      // if there is a machine name content type for that term
+      if (!empty($term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])) {
+        $completeTerm = taxonomy_get_term_by_name('Complete', 'census_tab_status');
+        // search for node of that type AND parent census with NID passed to the function
+        $query = new EntityFieldQuery();
+        $query->entityCondition('entity_type', 'node')
+          ->entityCondition('bundle', $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])
+          ->fieldCondition('field_parent_census', 'target_id', $nid)
+          ->fieldCondition('field_tab_status', 'tid', key($completeTerm));
+        $results = $query->execute();
+        // If even just one missing content type or with wrong status
+        if (empty($results['node'])) {
+          $tabsAllCompleted = 'no';
+        }
+      }
+    }
+  }
+  return $tabsAllCompleted;
 }
