@@ -133,31 +133,31 @@ Configuration: None necessary
 
 # Content Types info
 
-| Content Type                                              | Tables | Census Role   |
-|-----------------------------------------------------------|--------|---------------|
-| Census                                                    | None   | Parent Census |
-| Civic Engagement                                          | Yes    | Census Tab    |
-| Community Relations                                       | None   | Census Tab    |
-| Contact Data (Direct, Indirect & Public)                  | Yes    | Census Tab    |
-| Contact Information                                       |
-| Education Program Details                                 |
-| Emergency Relief Activities                               |
-| Employees and Board Members                               |
-| Empowerment                                               |
-| Entrepreneurship and Business Development Program Details |
-| Expenditures                                              |
-| Health and Quality of Life Program Details                |
-| Housing and Community Development                         |
-| Other Programs                                            |
-| Programs                                                  |
-| Revenue                                                   |
-| Service Areas                                             |
-| Survey Certification                                      |
-| Volunteers/Members                                        |
-| Workforce Development Program Details                     |
+| Content Type                                              | Tables | Census Role   | Programs Associated w/Tab | Paragraphs |
+|-----------------------------------------------------------|--------|---------------|---------------------------|------------|
+| Census                                                    | None   | Parent Census | No                        | None       |
+| Civic Engagement                                          | Yes    | Census Tab    | No                        | None       |
+| Community Relations                                       | None   | Census Tab    | No                        | None       |
+| Contact Data (Direct, Indirect & Public)                  | Yes    | Census Tab    | No                        | None       |
+| Contact Information                                       | None   | Census Tab    | No                        | None       |
+| Education Program Details                                 | None   | Census Tab    | Yes                       | None       |
+| Emergency Relief Activities                               | Yes    | Census Tab    | No                        | None       |
+| Employees and Board Members                               | Yes    | Census Tab    | No                        | None       |
+| Empowerment                                               | None   | Census Tab    | No                        | None       |
+| Entrepreneurship and Business Development Program Details | None   | Census Tab    | Yes                       | None       |
+| Expenditures                                              | None   | Census Tab    | No                        | None       |
+| Health and Quality of Life Program Details                | None   | Census Tab    | Yes                       | Yes        |
+| Housing and Community Development                         | None   | Census Tab    | Yes                       | None       |
+| Other Programs                                            | None   | Census Tab    | Yes                       | None       |
+| Programs                                                  | None   | Program       | No                        | Yes        |
+| Revenue                                                   | None   | Census Tab    | No                        | Yes        |
+| Service Areas                                             | None   | Census Tab    | No                        | None       |
+| Survey Certification                                      | None   | Census Tab    | No                        | None       |
+| Volunteers/Members                                        | Yes    | Census Tab    | No                        | None       |
+| Workforce Development Program Details                     | No     | Census Tab    | Yes                       | Yes        |
 
-Census Role's Custom Code:
+## Census Role's Custom Code:
 
 For Custom code on the Parent Census (census) see "Census in create mode" section
-
 For Custom Code on any content type with census role "census tab see"Census Tab in create mode" section
+For Custom Code on Programs see XXXX
