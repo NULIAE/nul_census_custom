@@ -107,7 +107,9 @@
           this.id.indexOf('female') < 0 &&
           this.id.indexOf(fieldBase.base) > 0) {
             $('input[id*="' + fieldBase.base + '"').each(function (index, field) {
-              if (field.id.indexOf('total') < 0 && field.id.indexOf('male') > 0) {
+              if (field.id.indexOf('total') < 0 &&
+              field.id.indexOf('male') > 0 &&
+              this.id.indexOf('female') < 0) {
                 if (parseInt($(field).val())) {
                   maleTotal = parseInt(maleTotal) + parseInt($(field).val());
                 }

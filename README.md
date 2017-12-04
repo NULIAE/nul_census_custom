@@ -29,7 +29,7 @@ All field groups styled this way:
 5. Community Forum
 6. Community Organization
 
-## Census in edit mode
+## Census in create mode
 
 When you visit: <url>/node/add/census/<affiliateId>
 
@@ -38,6 +38,15 @@ Custom code: disables the affiliate, year and title fields and populates them as
 + Affiliate to be the value passed as the 4th argument in the url (later this will be the civi contact id of the affiliate and be used for permissioning)
 + Year to be the current year
 + Populates the title to be the affiliate id concatenated with the year
+
+## Census Tab in create mode
+When you visit: <url>/node/add/<censusTab>/<parentCensus>
+ Set title and make it locked
+
+ set tab status to incomplete
+
+ set parent census to parentCensus node id passed in the url as the 4th argument
+
 
 ## Permissions
 For Census Tabs editing:
@@ -120,3 +129,35 @@ Configuration: None necessary
 ## Sends Notification Emails when a new census is Created
 
 ## Sends Notification Emails when the census status changes to "completed" "approved" or "resubmit"
+
+
+# Content Types info
+
+| Content Type                                              | Tables | Census Role   |
+|-----------------------------------------------------------|--------|---------------|
+| Census                                                    | None   | Parent Census |
+| Civic Engagement                                          | Yes    | Census Tab    |
+| Community Relations                                       | None   | Census Tab    |
+| Contact Data (Direct, Indirect & Public)                  | Yes    | Census Tab    |
+| Contact Information                                       |
+| Education Program Details                                 |
+| Emergency Relief Activities                               |
+| Employees and Board Members                               |
+| Empowerment                                               |
+| Entrepreneurship and Business Development Program Details |
+| Expenditures                                              |
+| Health and Quality of Life Program Details                |
+| Housing and Community Development                         |
+| Other Programs                                            |
+| Programs                                                  |
+| Revenue                                                   |
+| Service Areas                                             |
+| Survey Certification                                      |
+| Volunteers/Members                                        |
+| Workforce Development Program Details                     |
+
+Census Role's Custom Code:
+
+For Custom code on the Parent Census (census) see "Census in create mode" section
+
+For Custom Code on any content type with census role "census tab see"Census Tab in create mode" section
