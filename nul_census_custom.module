@@ -436,42 +436,46 @@ function nul_census_custom_node_update($node) {
     }
   }
   // else {
-    // TODO update tab status to complete if all required fields calucllated then update census status
-    // TODO test that this will work when the last tab is changing to complete
-    // If on a node with a parent census check the status of this node and all others
-    // if (!empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
-    //   // check status of parent census and update status if all tabs are completed
-    //   $tabsCompleted = nul_census_custom_check_tab_statuses($node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
-    //   if ($tabsCompleted == 'yes') {
-    //     $parentCensus = node_load($node->nid);
-    //     $parentCensus->field_census_status['und'][0]['tid'] = 7;
-    //     node_save($parentCensus);
-    //   }
-    // }
+  // TODO update tab status to complete if all required fields calucllated then update census status
+  // TODO test that this will work when the last tab is changing to complete
+  // If on a node with a parent census check the status of this node and all others
+  // if (!empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
+  //   // check status of parent census and update status if all tabs are completed
+  //   $tabsCompleted = nul_census_custom_check_tab_statuses($node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
+  //   if ($tabsCompleted == 'yes') {
+  //     $parentCensus = node_load($node->nid);
+  //     $parentCensus->field_census_status['und'][0]['tid'] = 7;
+  //     node_save($parentCensus);
+  //   }
+  // }
 
   // }
 }
-function nul_census_custom_node_submit($node, $form, &$form_state) {
-  // change status if all fake required fields complete
-  if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['tid'])) {
-    $currentTabStatus = taxonomy_term_load($node->field_tab_status[LANGUAGE_NONE][0]['tid']);
-    if ($currentTabStatus->name == 'Incomplete') {
-      // CHECK REQUIRED FIELDS
-      $requiredToCompleteFieldsMachineNames = nul_census_custom_fake_required_fields();
-      $allRequiredFieldsFilled = TRUE;
-      foreach ($requiredToCompleteFieldsMachineNames as $machineName => $value) {
-        if (empty($node->{$machineName}[LANGUAGE_NONE])) {
-          $allRequiredFieldsFilled = FALSE;
-        }
-      }
-      if ($allRequiredFieldsFilled) {
-        $completeTerm = taxonomy_get_term_by_name('Complete', 'census_tab_status');
-        $node->field_tab_status[LANGUAGE_NONE][0]['tid'] = key($completeTerm);
-      }
-    }
-  }
-}
+// function nul_census_custom_node_submit($node, $form, &$form_state) {
+//   // change status if all fake required fields complete
+//   if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['tid'])) {
+//     $currentTabStatus = taxonomy_term_load($node->field_tab_status[LANGUAGE_NONE][0]['tid']);
+//     if ($currentTabStatus->name == 'Incomplete') {
+//       // CHECK REQUIRED FIELDS
+//       $requiredToCompleteFieldsMachineNames = nul_census_custom_fake_required_fields();
+//       $allRequiredFieldsFilled = TRUE;
+//       foreach ($requiredToCompleteFieldsMachineNames as $machineName => $value) {
+//         if (empty($node->{$machineName}[LANGUAGE_NONE])) {
+//           $allRequiredFieldsFilled = FALSE;
+//         }
+//       }
+//       if ($allRequiredFieldsFilled) {
+//         $completeTerm = taxonomy_get_term_by_name('Complete', 'census_tab_status');
+//         $node->field_tab_status[LANGUAGE_NONE][0]['tid'] = key($completeTerm);
+//       }
+//     }
+//   }
+// }
 
+/**
+ * [nul_census_custom_node_insert description]
+ * @param  [type] $node [description]
+ */
 function nul_census_custom_node_insert($node) {
   // AGH #11267 Sends an email when a node of type census is created
   // TODO talk to NUL about what info they want in this email. Is link enough? also who should the email go to?
