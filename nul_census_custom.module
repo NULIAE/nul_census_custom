@@ -435,42 +435,46 @@ function nul_census_custom_node_update($node) {
       }
     }
   }
-  // else {
-  // TODO update tab status to complete if all required fields calucllated then update census status
-  // TODO test that this will work when the last tab is changing to complete
-  // If on a node with a parent census check the status of this node and all others
-  // if (!empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
-  //   // check status of parent census and update status if all tabs are completed
-  //   $tabsCompleted = nul_census_custom_check_tab_statuses($node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
-  //   if ($tabsCompleted == 'yes') {
-  //     $parentCensus = node_load($node->nid);
-  //     $parentCensus->field_census_status['und'][0]['tid'] = 7;
-  //     node_save($parentCensus);
-  //   }
-  // }
-
-  // }
 }
-// function nul_census_custom_node_submit($node, $form, &$form_state) {
-//   // change status if all fake required fields complete
-//   if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['tid'])) {
-//     $currentTabStatus = taxonomy_term_load($node->field_tab_status[LANGUAGE_NONE][0]['tid']);
-//     if ($currentTabStatus->name == 'Incomplete') {
-//       // CHECK REQUIRED FIELDS
-//       $requiredToCompleteFieldsMachineNames = nul_census_custom_fake_required_fields();
-//       $allRequiredFieldsFilled = TRUE;
-//       foreach ($requiredToCompleteFieldsMachineNames as $machineName => $value) {
-//         if (empty($node->{$machineName}[LANGUAGE_NONE])) {
-//           $allRequiredFieldsFilled = FALSE;
-//         }
-//       }
-//       if ($allRequiredFieldsFilled) {
-//         $completeTerm = taxonomy_get_term_by_name('Complete', 'census_tab_status');
-//         $node->field_tab_status[LANGUAGE_NONE][0]['tid'] = key($completeTerm);
-//       }
-//     }
-//   }
-// }
+
+function nul_census_custom_node_submit($node, $form, &$form_state) {
+  // change status from incomplete to complete if all fake required fields are complete
+  if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['tid'])) {
+    $currentTabStatus = taxonomy_term_load($node->field_tab_status[LANGUAGE_NONE][0]['tid']);
+    if ($currentTabStatus->name == 'Incomplete') {
+      // CHECK REQUIRED FIELDS
+      $requiredToCompleteFieldsMachineNames = nul_census_custom_fake_required_fields();
+      $allRequiredFieldsFilled = TRUE;
+      foreach ($requiredToCompleteFieldsMachineNames as $machineName => $value) {
+        if (empty($node->{$machineName}[LANGUAGE_NONE])) {
+          $allRequiredFieldsFilled = FALSE;
+        }
+      }
+      if ($allRequiredFieldsFilled) {
+        $completeTerm = key(taxonomy_get_term_by_name('Complete', 'census_tab_status'));
+        if (!empty($completeTerm)) {
+          $node->field_tab_status[LANGUAGE_NONE][0]['tid'] = $completeTerm;
+        }
+      }
+    }
+    // IF survey is being certified as complete update census to complete
+    if (!empty($node->field_survey_name_of_certifier[LANGUAGE_NONE][0]['value'])) {
+      // TODO check that all tabs are complete except survey certification
+      // $tabsCompleted = nul_census_custom_check_tab_statuses($node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
+      // if ($tabsCompleted == 'yes') {
+      // }
+      if (!empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
+        $completeCensusTerm = key(taxonomy_get_term_by_name('Complete', 'status_type_for_census'));
+        if ($completeCensusTerm) {
+          $parentCensus = node_load($node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
+          $parentCensus->field_census_status['und'][0]['tid'] = $completeCensusTerm;
+          node_save($parentCensus);
+        }
+
+      }
+    }
+  }
+}
 
 /**
  * [nul_census_custom_node_insert description]
@@ -518,40 +522,40 @@ function nul_census_custom_fake_required_fields() {
   return $fields;
 }
 
-// function nul_census_custom_check_tab_statuses($nid) {
-//   // TODO check the status of the census before continuing to make sure we need to do all this
-//   $parentCensus = node_load($nid);
-//   if (!empty($parentCensus->field_census_status[LANGUAGE_NONE][0]['tid'])) {
-//     $currentCensusStatus = taxonomy_term_load($parentCensus->field_census_status[LANGUAGE_NONE][0]['tid']);
-//     if ($currentCensusStatus->name !== '') {
-//
-//     }
-//   }
-//   $tabsAllCompleted = 'yes';
-//   // load census tab vocabulary
-//   $censusTabsVocabulary = taxonomy_vocabulary_machine_name_load('census_tabs');
-//   $censusTabs = taxonomy_get_tree($censusTabsVocabulary->vid);
-//   // foreach thru each term in census tab vocab
-//   foreach ($censusTabs as $key => $object) {
-//     if (!empty($object->tid)) {
-//       // load term
-//       $term = taxonomy_term_load($object->tid);
-//       // if there is a machine name content type for that term
-//       if (!empty($term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])) {
-//         $completeTerm = taxonomy_get_term_by_name('Complete', 'census_tab_status');
-//         // search for node of that type AND parent census with NID passed to the function
-//         $query = new EntityFieldQuery();
-//         $query->entityCondition('entity_type', 'node')
-//           ->entityCondition('bundle', $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])
-//           ->fieldCondition('field_parent_census', 'target_id', $nid)
-//           ->fieldCondition('field_tab_status', 'tid', key($completeTerm));
-//         $results = $query->execute();
-//         // If even just one missing content type or with wrong status
-//         if (empty($results['node'])) {
-//           $tabsAllCompleted = 'no';
-//         }
-//       }
-//     }
-//   }
-//   return $tabsAllCompleted;
-// }
+function nul_census_custom_check_tab_statuses($nid) {
+  // TODO check the status of the census before continuing to make sure we need to do all this
+  $parentCensus = node_load($nid);
+  if (!empty($parentCensus->field_census_status[LANGUAGE_NONE][0]['tid'])) {
+    $currentCensusStatus = taxonomy_term_load($parentCensus->field_census_status[LANGUAGE_NONE][0]['tid']);
+    if ($currentCensusStatus->name !== '') {
+
+    }
+  }
+  $tabsAllCompleted = 'yes';
+  // load census tab vocabulary
+  $censusTabsVocabulary = taxonomy_vocabulary_machine_name_load('census_tabs');
+  $censusTabs = taxonomy_get_tree($censusTabsVocabulary->vid);
+  // foreach thru each term in census tab vocab
+  foreach ($censusTabs as $key => $object) {
+    if (!empty($object->tid)) {
+      // load term
+      $term = taxonomy_term_load($object->tid);
+      // if there is a machine name content type for that term
+      if (!empty($term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])) {
+        $completeTerm = taxonomy_get_term_by_name('Complete', 'census_tab_status');
+        // search for node of that type AND parent census with NID passed to the function
+        $query = new EntityFieldQuery();
+        $query->entityCondition('entity_type', 'node')
+          ->entityCondition('bundle', $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])
+          ->fieldCondition('field_parent_census', 'target_id', $nid)
+          ->fieldCondition('field_tab_status', 'tid', key($completeTerm));
+        $results = $query->execute();
+        // If even just one missing content type or with wrong status
+        if (empty($results['node'])) {
+          $tabsAllCompleted = 'no';
+        }
+      }
+    }
+  }
+  return $tabsAllCompleted;
+}
