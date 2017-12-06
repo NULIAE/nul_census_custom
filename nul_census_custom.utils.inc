@@ -149,42 +149,39 @@ function nul_census_custom_fake_required_fields() {
  * @param int $nid parent census node id
  * @return array  array with one array of complete nodes and one array of machine names of not complete tab types
  */
-function nul_census_custom_check_tab_statuses($nid) {
+function nul_census_custom_check_tab_statuses($nid, $exceptThisType) {
   $tabsReport = array(
     'complete' => array(),
     'notComplete' => array(),
   );
   // TODO check the status of the census before continuing to make sure we need to do all this
   $parentCensus = node_load($nid);
-  if (!empty($parentCensus->field_census_status[LANGUAGE_NONE][0]['tid'])) {
-    $currentCensusStatus = taxonomy_term_load($parentCensus->field_census_status[LANGUAGE_NONE][0]['tid']);
-    if ($currentCensusStatus->name == 'Incomplete') {
-      // load census tab vocabulary
-      $censusTabsVocabulary = taxonomy_vocabulary_machine_name_load('census_tabs');
-      $censusTabs = taxonomy_get_tree($censusTabsVocabulary->vid);
-      // foreach thru each term in census tab vocab
-      foreach ($censusTabs as $key => $object) {
-        if (!empty($object->tid)) {
-          // load term
-          $term = taxonomy_term_load($object->tid);
-          // if there is a machine name content type for that term and it is not
-          if (!empty($term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])) {
-            $completeTerm = taxonomy_get_term_by_name('Complete', 'census_tab_status');
-            // search for node of that type AND parent census with NID passed to the function
-            $query = new EntityFieldQuery();
-            $query->entityCondition('entity_type', 'node')
-              ->entityCondition('bundle', $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])
-              ->fieldCondition('field_parent_census', 'target_id', $nid)
-              ->fieldCondition('field_tab_status', 'tid', key($completeTerm));
-            $results = $query->execute();
-            // If not found push machine name of not complete node
-            if (empty($results['node'])) {
-              $tabsReport['notComplete'][] = $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'];
-            }
-            // If found push data for complete tab to array
-            if (!empty($results['node'])) {
-              $tabsReport['complete'][] = $results['node'];
-            }
+  // load census tab vocabulary
+  $censusTabsVocabulary = taxonomy_vocabulary_machine_name_load('census_tabs');
+  $censusTabs = taxonomy_get_tree($censusTabsVocabulary->vid);
+  // foreach thru each term in census tab vocab
+  foreach ($censusTabs as $key => $object) {
+    if (!empty($object->tid)) {
+      // load term
+      $term = taxonomy_term_load($object->tid);
+      // if there is a machine name content type for that term and it is not
+      if (!empty($term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])) {
+        if ($term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'] !== $exceptThisType) {
+          $completeTerm = taxonomy_get_term_by_name('Complete', 'census_tab_status');
+          // search for node of that type AND parent census with NID passed to the function
+          $query = new EntityFieldQuery();
+          $query->entityCondition('entity_type', 'node')
+            ->entityCondition('bundle', $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])
+            ->fieldCondition('field_parent_census', 'target_id', $nid)
+            ->fieldCondition('field_tab_status', 'tid', key($completeTerm));
+          $results = $query->execute();
+          // If not found push machine name of not complete node
+          if (empty($results['node'])) {
+            $tabsReport['notComplete'][] = $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'];
+          }
+          // If found push data for complete tab to array
+          if (!empty($results['node'])) {
+            $tabsReport['complete'][key($results['node'])] = $results['node'][key($results['node'])];
           }
         }
       }
@@ -197,8 +194,11 @@ function nul_census_custom_check_tab_statuses($nid) {
  * update statuses of related tabs
  * @param  [type] $tabsCompleted   [description]
  * @param  [type] $parentCensusNid [description]
- * @return [type]                  [description]
  */
 function nul_census_custom_update_related_tabs_status($tabsCompleted, $parentCensusNid, $statusToChangeTo) {
-  print_r($tabsCompleted); die();
+  foreach ($tabsCompleted as $nid => $object) {
+    $tab = node_load($nid);
+    $tab->field_tab_status[LANGUAGE_NONE][0]['tid'] = $statusToChangeTo;
+    $tab = node_save($tab);
+  }
 }
