@@ -139,7 +139,7 @@ Configuration: None necessary
 | Civic Engagement                                          | Yes    | Census Tab    | No                        | None       |
 | Community Relations                                       | None   | Census Tab    | No                        | None       |
 | Contact Data (Direct, Indirect & Public)                  | Yes    | Census Tab    | No                        | None       |
-| Contact Information                                       | None   | Census Tab    | No                        | None       |
+| Contact Information                                       | None   | Census Info   | No                        | None       |
 | Education Program Details                                 | None   | Census Tab    | Yes                       | None       |
 | Emergency Relief Activities                               | Yes    | Census Tab    | No                        | None       |
 | Employees and Board Members                               | Yes    | Census Tab    | No                        | None       |
@@ -153,7 +153,7 @@ Configuration: None necessary
 | Revenue                                                   | None   | Census Tab    | No                        | Yes        |
 | Service Areas                                             | None   | Census Tab    | No                        | None       |
 | Survey Certification                                      | None   | Census Tab    | No                        | None       |
-| Volunteers/Members                                        | Yes    | Census Tab    | No                        | None       |
+| Volunteers/Members                                        | Yes    | Census Info   | No                        | None       |
 | Workforce Development Program Details                     | No     | Census Tab    | Yes                       | Yes        |
 
 ## Census Role's Custom Code:
@@ -161,3 +161,23 @@ Configuration: None necessary
 For Custom code on the Parent Census (census) see "Census in create mode" section
 For Custom Code on any content type with census role "census tab see"Census Tab in create mode" section
 For Custom Code on Programs see XXXX
+
+# WorkFlow Documentation
+
+## Status Changes
+
+### Census Tabs
+
+#### Incomplete to Complete:
+
+All Census tabs start as Incomplete they each tab changes to Complete on submit when all "required fields" (these fields are determined by nul_census_custom_fake_required_fields() function in nul_census_custom.module) on that tab are filled.
+
+#### Complete to Submitted:
+
+### Census
+
+#### Incomplete to Complete:
+
+When all tabs except survey certification are complete, census status changes to complete
+
+See google doc tables for more details: https://docs.google.com/spreadsheets/d/1yIXrF57oZwzyS-SwvjQZtqBBfj8VChroOL32euSY_xo/edit#gid=860260362
