@@ -174,10 +174,24 @@ All Census tabs start as Incomplete they each tab changes to Complete on submit 
 
 #### Complete to Submitted:
 
+When all tabs are complete and certify field on census is filled tabs switch from complete to submitted
+
+#### Submitted to Resubmit:
+
+If user has permission 'can mark census tabs resubmit and reviewed' and viewing a tab with status submitted there is a button at the top to click that will switch the status of the tab to resubmit
+
+#### Submitted to Reviewed:
+
+If user has permission 'can mark census tabs resubmit and reviewed' and viewing a tab with status submitted there is a button at the top to click that will switch the status of the tab to resubmit
+
 ### Census
 
 #### Incomplete to Complete:
 
 When all tabs except survey certification are complete, census status changes to complete
+
+#### Complete to Submitted:
+
+on submit of a census in status complete When the survey certification field is filled census status changes to submitted.
 
 See google doc tables for more details: https://docs.google.com/spreadsheets/d/1yIXrF57oZwzyS-SwvjQZtqBBfj8VChroOL32euSY_xo/edit#gid=860260362

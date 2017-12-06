@@ -191,14 +191,15 @@ function nul_census_custom_check_tab_statuses($nid, $exceptThisType) {
 }
 
 /**
- * update statuses of related tabs
- * @param  [type] $tabsCompleted   [description]
- * @param  [type] $parentCensusNid [description]
+ * update statuses of tabs
+ * @param  array $tabsCompleted   array of tabs where key is the nid
+ * @param  string $statusToChangeTo name of status to change to
  */
-function nul_census_custom_update_related_tabs_status($tabsCompleted, $parentCensusNid, $statusToChangeTo) {
+function nul_census_custom_update_related_tabs_status($tabsCompleted, $statusToChangeTo) {
+  $submittedTabTerm = key(taxonomy_get_term_by_name($statusToChangeTo, 'census_tab_status'));
   foreach ($tabsCompleted as $nid => $object) {
     $tab = node_load($nid);
-    $tab->field_tab_status[LANGUAGE_NONE][0]['tid'] = $statusToChangeTo;
+    $tab->field_tab_status[LANGUAGE_NONE][0]['tid'] = $submittedTabTerm;
     $tab = node_save($tab);
   }
 }

@@ -41,6 +41,18 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
         drupal_set_message(t('Not a Census Tab or unpopulated content type machine name on the taxonomy term'), 'error');
       }
       if ($termDetails) {
+        // IF on tab with status submitted and user has proper permissions add mark reviewed and resubmit buttons
+        // TODO THIS IS A HACKY WORKAROUND NOT TO USE AJAX SHOULD BE DONE USING AJAX WHEN TIME ALLOWS
+        if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && $node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name == 'Submitted' && user_access('can mark census tabs resubmit and reviewed')) {
+          drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/addButtons.js');
+          if (arg(0) == 'node' && arg(1) > 0 && in_array(arg(3), array('Reviewed', 'Resubmit'))) {
+            node_load($node->nid);
+            $tabsCompleted = array($node->nid => 'does not matter');
+            nul_census_custom_update_related_tabs_status($tabsCompleted, arg(3));
+            drupal_set_message('Tab saved as Reviewed', 'notice');
+            drupal_goto("node/" . arg(1) . '/' . arg(2));
+          }
+        }
         // Add css file to tab in view mode
         $form['#attached']['css'] = array(
           drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
@@ -55,7 +67,6 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
         }
       }
     }
-
   }
 }
 
@@ -231,6 +242,10 @@ function nul_census_custom_permission() {
       'title' => t('Edit census with status submitted'),
       'description' => t('Allows a user to edit census with status submitted'),
     ),
+    'can mark census tabs resubmit and reviewed' => array(
+      'title' => t('can mark census tabs resubmit and reviewed'),
+      'description' => t('Allows a user to mark census tabs as resubmit and reviewed'),
+    ),
   );
 }
 
@@ -368,10 +383,7 @@ function nul_census_custom_node_submit($node, $form, &$form_state) {
         $node->field_census_status['und'][0]['tid'] = $submittedCensusTerm;
       }
       // Updating all related tabs
-      $submittedTabTerm = key(taxonomy_get_term_by_name('Submitted', 'census_tab_status'));
-      if (!empty($submittedTabTerm)) {
-        nul_census_custom_update_related_tabs_status($tabsCompleted['complete'], $node->nid, $submittedTabTerm);
-      }
+      nul_census_custom_update_related_tabs_status($tabsCompleted['complete'], 'Submitted');
     }
   }
 }
