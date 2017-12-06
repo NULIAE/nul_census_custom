@@ -1,28 +1,10 @@
 <?php
 
-/**
- * Search Taxonomy by field on the taxonomy
- * @param  str $vocabMachineName  machine name of the vocabulary
- * @param  str $fieldName         name of field to search
- * @param  str $valueOfField      value to match on
- * @return obj                    term object
- */
-function nul_census_custom_searchTaxonomyByField($vocabMachineName, $fieldName, $valueOfField) {
-  $term = NULL;
-  $query = new EntityFieldQuery();
-  $vocabulary = taxonomy_vocabulary_machine_name_load($vocabMachineName);
-  $query->entityCondition('entity_type', 'taxonomy_term')
-    ->propertyCondition('vid', $vocabulary->vid)
-    ->fieldCondition($fieldName, 'value', $valueOfField);
-  $terms = $query->execute();
-  if (!empty($terms['taxonomy_term'])) {
-    foreach ($terms['taxonomy_term'] as $key => $termDetails) {
-      $term = taxonomy_term_load($termDetails->tid);
-    }
-  }
-  return $term;
-}
+module_load_include('inc', 'nul_census_custom', './nul_census_custom.utils');
 
+/**
+ * hook_preprocess_views_view()
+ */
 function nul_census_custom_preprocess_views_view(&$vars) {
   $view = $vars['view'];
   // Make sure it's the correct view
@@ -224,7 +206,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
 }
 
 /**
- * Implements hook_permission().
+ * hook_permission().
  */
 function nul_census_custom_permission() {
   // TODO add permissions for tabs view/edit based on status
@@ -253,116 +235,7 @@ function nul_census_custom_permission() {
 }
 
 /**
- * Check permissions of user and status of tab
- * @param  string $status status of tab
- * @param string $contentType census or tab
- * @return boolean        can they edit or not
- */
-function nul_census_custom_check_status_permisions($status, $contentType) {
-  global $user;
-  // IF user is an administrator they can edit whatever always
-  if (in_array('administrator', $user->roles)) {
-    $canEdit = TRUE;
-  }
-  // If user is not admin check permissions
-  if (!in_array('administrator', $user->roles)) {
-    if ($contentType == 'tab') {
-      switch ($status) {
-        case 'Incomplete':
-          $canEdit = TRUE;
-          break;
-
-        case 'Complete':
-          if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
-            $canEdit = TRUE;
-          }
-          else {
-            $canEdit = FALSE;
-          }
-          break;
-
-        case 'Resubmit':
-          if (user_access('edit census tabs with status resubmit')) {
-            $canEdit = TRUE;
-          }
-          else {
-            $canEdit = FALSE;
-          }
-          break;
-
-        case 'Reviewed':
-          if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
-            $canEdit = TRUE;
-          }
-          else {
-            $canEdit = FALSE;
-          }
-          break;
-
-        case 'Reviewed Complete':
-          if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
-            $canEdit = TRUE;
-          }
-          else {
-            $canEdit = FALSE;
-          }
-          break;
-
-        case 'Submitted':
-          if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
-            $canEdit = TRUE;
-          }
-          else {
-            $canEdit = FALSE;
-          }
-          break;
-
-        default:
-          $canEdit = FALSE;
-
-          break;
-      }
-    }
-    if ($contentType == 'census') {
-      switch ($status) {
-        case 'Incomplete':
-          $canEdit = TRUE;
-          break;
-
-        case 'Complete':
-          if (user_access('edit census with status complete')) {
-            $canEdit = TRUE;
-          }
-          else {
-            $canEdit = FALSE;
-          }
-          break;
-
-        case 'Reviewed Complete':
-          $canEdit = FALSE;
-          break;
-
-        case 'Submitted':
-          if (user_access('edit census with status submitted')) {
-            $canEdit = TRUE;
-          }
-          else {
-            $canEdit = FALSE;
-          }
-          break;
-
-        default:
-          $canEdit = FALSE;
-
-          break;
-      }
-    }
-  }
-  return $canEdit;
-}
-
-/**
- * Massages census_tab_menu view to show all related tabs
+ * hook_block_view_alter()
  */
 function nul_census_custom_block_view_alter(&$data, $block) {
   // for the blocks that show the content tabs for the census or parent census pass correct contextual filters
@@ -404,6 +277,9 @@ function nul_census_custom_block_view_alter(&$data, $block) {
   }
 }
 
+/**
+ * hook_node_update()
+ */
 function nul_census_custom_node_update($node) {
   // AGH #11267 If censis status changes to "completed" "approved" or "resubmit" send a notification email
   // If updating a census
@@ -437,6 +313,9 @@ function nul_census_custom_node_update($node) {
   }
 }
 
+/**
+ * hook_node_submit()
+ */
 function nul_census_custom_node_submit($node, $form, &$form_state) {
   // change status from incomplete to complete if all fake required fields are complete
   if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['tid'])) {
@@ -480,7 +359,7 @@ function nul_census_custom_node_submit($node, $form, &$form_state) {
         // Updating all related tabs
         $submittedTabTerm = key(taxonomy_get_term_by_name('Submitted', 'census_tab_status'));
         if (!empty($submittedTabTerm)) {
-          nul_census_custom_update_related_tabs_status($tabsCompleted, $node->nid);
+          nul_census_custom_update_related_tabs_status($tabsCompleted, $node->nid, $status);
         }
       }
     }
@@ -488,8 +367,7 @@ function nul_census_custom_node_submit($node, $form, &$form_state) {
 }
 
 /**
- * [nul_census_custom_node_insert description]
- * @param  [type] $node [description]
+ * hook_node_insert()
  */
 function nul_census_custom_node_insert($node) {
   // AGH #11267 Sends an email when a node of type census is created
@@ -503,6 +381,9 @@ function nul_census_custom_node_insert($node) {
   }
 }
 
+/**
+ * hook_mail()
+ */
 function nul_census_custom_mail($key, &$message, $params) {
   global $base_url;
   switch ($key) {
@@ -523,61 +404,4 @@ function nul_census_custom_mail($key, &$message, $params) {
     default:
       break;
   }
-}
-
-function nul_census_custom_fake_required_fields() {
-  $fields = array(
-    'field_advocacy_description' => 'civic_engagement',
-    // machine names
-  );
-  return $fields;
-}
-
-function nul_census_custom_check_tab_statuses($nid) {
-  $tabsReport = array(
-    'complete' => array(),
-    'notComplete' => array(),
-  );
-  // TODO check the status of the census before continuing to make sure we need to do all this
-  $parentCensus = node_load($nid);
-  if (!empty($parentCensus->field_census_status[LANGUAGE_NONE][0]['tid'])) {
-    $currentCensusStatus = taxonomy_term_load($parentCensus->field_census_status[LANGUAGE_NONE][0]['tid']);
-    if ($currentCensusStatus->name == 'Incomplete') {
-      // load census tab vocabulary
-      $censusTabsVocabulary = taxonomy_vocabulary_machine_name_load('census_tabs');
-      $censusTabs = taxonomy_get_tree($censusTabsVocabulary->vid);
-      // foreach thru each term in census tab vocab
-      foreach ($censusTabs as $key => $object) {
-        $results = nul_census_custom_get_related_complete_tabs($nid);
-        if (!empty($object->tid)) {
-          // load term
-          $term = taxonomy_term_load($object->tid);
-          // if there is a machine name content type for that term and it is not
-          if (!empty($term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])) {
-            $completeTerm = taxonomy_get_term_by_name('Complete', 'census_tab_status');
-            // search for node of that type AND parent census with NID passed to the function
-            $query = new EntityFieldQuery();
-            $query->entityCondition('entity_type', 'node')
-              ->entityCondition('bundle', $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])
-              ->fieldCondition('field_parent_census', 'target_id', $nid)
-              ->fieldCondition('field_tab_status', 'tid', key($completeTerm));
-            $results = $query->execute();
-            // If not found push machine name of not complete node
-            if (empty($results['node'])) {
-              $tabsReport['notComplete'][] = $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'];
-            }
-            // If found push data for complete tab to array
-            if (!empty($results['node'])) {
-              $tabsReport['complete'][] = $results['node'];
-            }
-          }
-        }
-      }
-    }
-  }
-  return $tabsReport;
-}
-
-function nul_census_custom_update_related_tabs_status($tabsCompleted, $parentCensusNid) {
-  print_r($tabsCompleted); die();
 }
