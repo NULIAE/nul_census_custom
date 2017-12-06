@@ -145,11 +145,13 @@ function nul_census_custom_fake_required_fields() {
 }
 
 /**
- * Checks related tabs statuses
- * @param int $nid parent census node id
- * @return array  array with one array of complete nodes and one array of machine names of not complete tab types
+ * checks status of related tabs
+ * @param  int $nid parent census nid
+ * @param  string $exceptThisType tab to skip
+ * @param  string $statusName     status name to check for
+ * @return array array with one complete array (tabs with the status) and one notComplete array (machine names of tabs that do not have the correct status)
  */
-function nul_census_custom_check_tab_statuses($nid, $exceptThisType) {
+function nul_census_custom_check_tab_statuses($nid, $exceptThisType, $statusName) {
   $tabsReport = array(
     'complete' => array(),
     'notComplete' => array(),
@@ -167,7 +169,7 @@ function nul_census_custom_check_tab_statuses($nid, $exceptThisType) {
       // if there is a machine name content type for that term and it is not
       if (!empty($term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])) {
         if ($term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'] !== $exceptThisType) {
-          $completeTerm = taxonomy_get_term_by_name('Complete', 'census_tab_status');
+          $completeTerm = taxonomy_get_term_by_name($statusName, 'census_tab_status');
           // search for node of that type AND parent census with NID passed to the function
           $query = new EntityFieldQuery();
           $query->entityCondition('entity_type', 'node')
@@ -191,15 +193,24 @@ function nul_census_custom_check_tab_statuses($nid, $exceptThisType) {
 }
 
 /**
- * update statuses of tabs
+ * update status fields on nodes
  * @param  array $tabsCompleted   array of tabs where key is the nid
  * @param  string $statusToChangeTo name of status to change to
+ * @param string $censusPart is it a census or a tab
  */
-function nul_census_custom_update_related_tabs_status($tabsCompleted, $statusToChangeTo) {
-  $submittedTabTerm = key(taxonomy_get_term_by_name($statusToChangeTo, 'census_tab_status'));
+function nul_census_custom_update_nodes_status_field($tabsCompleted, $statusToChangeTo, $censusPart) {
+  if ($censusPart = 'tab') {
+    $vocabMachineName = 'census_tab_status';
+    $fieldName = 'field_tab_status';
+  }
+  if ($censusPart = 'census') {
+    $vocabMachineName = 'status_type_for_census';
+    $fieldName = 'field_census_status';
+  }
+  $submittedTabTerm = key(taxonomy_get_term_by_name($statusToChangeTo, $vocabMachineName));
   foreach ($tabsCompleted as $nid => $object) {
     $tab = node_load($nid);
-    $tab->field_tab_status[LANGUAGE_NONE][0]['tid'] = $submittedTabTerm;
+    $tab->{$fieldName}[LANGUAGE_NONE][0]['tid'] = $submittedTabTerm;
     $tab = node_save($tab);
   }
 }
