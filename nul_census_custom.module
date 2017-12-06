@@ -446,7 +446,7 @@ function nul_census_custom_node_submit($node, $form, &$form_state) {
       $requiredToCompleteFieldsMachineNames = nul_census_custom_fake_required_fields();
       $allRequiredFieldsFilled = TRUE;
       foreach ($requiredToCompleteFieldsMachineNames as $machineName => $value) {
-        if (empty($node->{$machineName}[LANGUAGE_NONE])) {
+        if (!empty($node->{$machineName}) && empty($node->{$machineName}[LANGUAGE_NONE])) {
           $allRequiredFieldsFilled = FALSE;
         }
       }
