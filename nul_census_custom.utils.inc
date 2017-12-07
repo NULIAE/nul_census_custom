@@ -24,16 +24,18 @@ function nul_census_custom_searchTaxonomyByField($vocabMachineName, $fieldName, 
 }
 
 /**
- * Check permissions of user to edit a tab or census based on status
+ * Check permissions of user to edit or resubmit a tab or census based on status
  * @param  string $status status of tab
  * @param  string $contentType census or tab
- * @return boolean        can they edit or not
+ * @return array  can they edit or not, can they resubmit or not
  */
 function nul_census_custom_check_status_permisions($status, $contentType) {
   global $user;
+  $canResubmit = FALSE;
   // IF user is an administrator they can edit whatever always
   if (in_array('administrator', $user->roles)) {
     $canEdit = TRUE;
+    $canResubmit = TRUE;
   }
   // If user is not admin check permissions
   if (!in_array('administrator', $user->roles)) {
@@ -55,6 +57,7 @@ function nul_census_custom_check_status_permisions($status, $contentType) {
         case 'Resubmit':
           if (user_access('edit census tabs with status resubmit')) {
             $canEdit = TRUE;
+            $canResubmit = TRUE;
           }
           else {
             $canEdit = FALSE;
@@ -129,7 +132,10 @@ function nul_census_custom_check_status_permisions($status, $contentType) {
       }
     }
   }
-  return $canEdit;
+  return array(
+    'canEdit' => $canEdit,
+    'canResubmit' => $canResubmit,
+  );
 }
 
 /**

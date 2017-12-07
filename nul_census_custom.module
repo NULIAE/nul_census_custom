@@ -22,8 +22,8 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
     if ($node->type == 'census') {
       // Check permissions, if do not have permission to edit census hide edit button
       if (!empty($node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && $node->nid == arg(1)) {
-        $canEdit = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'census');
-        if (!$canEdit) {
+        $perms['canEdit'] = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'census');
+        if (!$perms['canEdit']) {
           drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/hideEdit.js');
           drupal_set_message("You do not have permission to edit this content at this stage", 'error');
         }
@@ -65,7 +65,6 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
           drupal_add_js(array('nul_census_custom' => array('censuspart' => 'tab')), array('type' => 'setting'));
           drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/addButtons.js');
           if (arg(0) == 'node' && arg(1) > 0 && in_array(arg(3), array('Reviewed', 'Resubmit'))) {
-            node_load($node->nid);
             $tabsCompleted = array($node->nid => 'does not matter');
             nul_census_custom_update_nodes_status_field($tabsCompleted, arg(3), 'tab');
             drupal_set_message('Tab status updated', 'notice');
@@ -78,8 +77,19 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
         );
         // Check permissions, if do not have permission to edit complete tabs hide edit button
         if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && $node->nid == arg(1) && $node->type !== 'census') {
-          $canEdit = nul_census_custom_check_status_permisions($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'tab');
-          if (!$canEdit) {
+          $perms = nul_census_custom_check_status_permisions($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'tab');
+          if ($perms['canResubmit'] && $node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name == 'Resubmit') {
+            // Add resubmit button
+            drupal_add_js(array('nul_census_custom' => array('censuspart' => 'resubmit')), array('type' => 'setting'));
+            drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/addButtons.js');
+            if (arg(0) == 'node' && arg(1) > 0 && in_array(arg(3), array('Submitted'))) {
+              $tabsCompleted = array($node->nid => 'does not matter');
+              nul_census_custom_update_nodes_status_field($tabsCompleted, arg(3), 'tab');
+              drupal_set_message('Tab status updated', 'notice');
+              drupal_goto("node/" . arg(1) . '/' . arg(2));
+            }
+          }
+          if (!$perms['canEdit']) {
             drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/hideEdit.js');
             drupal_set_message("You do not have permission to edit this content at this stage", 'error');
           }
@@ -220,9 +230,9 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
 
       if (!empty($form['#node']->field_tab_status) && !empty($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']]) && substr($form_id, 0, 7) !== 'comment') {
         // TODO check this is working
-        $canEdit = nul_census_custom_check_status_permisions($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']], 'tab');
+        $perms = nul_census_custom_check_status_permisions($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']], 'tab');
         // If can't edit redirect to node in view mode.
-        if (!$canEdit) {
+        if (!$perms['canEdit']) {
           if (arg(0) == 'node' && arg(2) == 'edit') {
             drupal_goto(arg(0) . '/' . arg(1));
           }

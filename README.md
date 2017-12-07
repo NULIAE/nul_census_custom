@@ -180,6 +180,10 @@ When all tabs are complete and certify field on census is filled tabs switch fro
 
 If user has permission 'can mark census tabs resubmit and reviewed' and viewing a tab with status submitted there is a button at the top to click that will switch the status of the tab to resubmit
 
+#### Resubmit to Submitted:
+
+If user has permission to edit in resubmit also has access to resubmit button when in view mode which will change status of tab to submitted
+
 #### Submitted to Reviewed:
 
 If user has permission 'can mark census tabs resubmit and reviewed' and viewing a tab with status submitted there is a button at the top to click that will switch the status of the tab to resubmit
