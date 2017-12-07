@@ -461,3 +461,58 @@ function nul_census_custom_mail($key, &$message, $params) {
       break;
   }
 }
+
+function nul_census_custom_menu() {
+  $items = array();
+  // Button on Census Tabs to mark tab reviewed
+  // Access only if have permission: 'can mark census tabs resubmit and reviewed'
+  $node = node_load(arg(1));
+  if (!empty($node->field_census_status[LANGUAGE_NONE][0]['tid'])) {
+
+  }
+  $node->field_census_status[LANGUAGE_NONE][0]['tid'];
+  if ($node->nid == 25) {
+    $items['node/%node/Reviewed'] = array(
+      'title' => 'Mark Reviewed',
+      'page callback' => 'node_page_reviewed',
+      'page arguments' => array(1),
+      'access arguments' => array('can mark census tabs resubmit and reviewed'),
+      'weight' => 0,
+      'type' => MENU_LOCAL_TASK,
+      'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+    );
+    $items['node/%node/Resubmit'] = array(
+      'title' => 'Mark Resubmit',
+      'page callback' => 'node_page_resubmit',
+      'page arguments' => array(1),
+      'access callback' => 'nul_census_custom_check_permissions',
+      'access arguments' => array('can mark census tabs resubmit and reviewed'),
+      'weight' => 0,
+      'type' => MENU_LOCAL_TASK,
+      'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+    );
+    $items['node/%node/ReviewComplete'] = array(
+      'title' => 'Mark Census Review Complete',
+      'page callback' => 'node_page_resubmit',
+      'page arguments' => array(1),
+      'access callback' => 'nul_census_custom_check_permissions',
+      'access arguments' => array('can mark census tabs resubmit and reviewed'),
+      'weight' => 0,
+      'type' => MENU_LOCAL_TASK,
+      'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+    );
+
+    $items['node/%node/Submitted'] = array(
+      'title' => 'Resubmit',
+      'page callback' => 'node_page_resubmit',
+      'page arguments' => array(1),
+      'access callback' => 'nul_census_custom_check_permissions',
+      'access arguments' => array('can mark census tabs resubmit and reviewed'),
+      'weight' => 0,
+      'type' => MENU_LOCAL_TASK,
+      'context' => MENU_CONTEXT_PAGE | MENU_CONTEXT_INLINE,
+    );
+  }
+
+  return $items;
+}
