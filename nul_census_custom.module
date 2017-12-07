@@ -104,135 +104,102 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
  * hook_form_alter()
  */
 function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
-  // float save to the bottom
-  if (!empty($form['#node_edit_form']) && $form['#node_edit_form'] == TRUE) {
-    $form['actions']['#weight'] = 10000;
-  }
-  // Setting up new censuss
-  if (!empty($form['#node']->type)) {
-    // TODO uncomment if below to hide parent census field
-    // if (!empty($form['field_parent_census'])) {
-    //   $form['field_parent_census']['#type'] = 'hidden';
-    // }
-    // Add css file to tab in edit mode
-    $form['#attached']['css'] = array(
-      drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
+  // If on Census node
+  if ($form_id == 'census_node_form') {
+    // Disable certifier field
+    $form['field_survey_name_of_certifier']['#disabled'] = TRUE;
+    $completeTerm = array_search('Complete', $form['field_census_status'][LANGUAGE_NONE]['#options']);
+    // Enable certifier field if user has permissions and the census is complete
+    if (!empty($form['field_survey_name_of_certifier']) &&
+    user_access('can certify census as complete') &&
+    !empty($form['field_census_status'][LANGUAGE_NONE]['#entity']->field_census_status[LANGUAGE_NONE][0]['tid']) &&
+    $form['field_census_status'][LANGUAGE_NONE]['#entity']->field_census_status[LANGUAGE_NONE][0]['tid'] == $completeTerm) {
+      $form['field_survey_name_of_certifier']['#disabled'] = FALSE;
+    }
+    // if user does not have access to magic fields disable them so user cannot change them
+    $fieldsToHideAndDisableOnCensus = array(
+      'title',
+      'field_year',
+      'field_affiliate_',
+      'field_census_status',
     );
-    // If on create census page with affiliate id passed
-    if (arg(0) == 'node' && arg(1) == 'add' && arg(3) >= 1) {
-      if (!empty(arg(2)) && arg(2) == 'census') {
-        //TODO look up contact org name of arg(3) and print instead of id
-        // TODO Update title field to be the name of the affliate and hide
-        $form['title']['#default_value'] = arg(3) . " " . $year . " Census";
-        $form['title']['#disabled'] = TRUE;
-        // set year to be current year
-        $year = date("Y");
-        // Update Year field and disable
-        $form['field_year'][LANGUAGE_NONE][0]['value']['#default_value'] = $year;
-        $form['field_year']['#disabled'] = TRUE;
-        // Update affliate field and disable
-        $form['field_affiliate_'][LANGUAGE_NONE][0]['value']['#default_value'] = arg(3);
-        $form['field_affiliate_']['#disabled'] = TRUE;
-        // set default status to inclomplete
-        $defaultStatus = array_search('Incomplete', $form['field_census_status'][LANGUAGE_NONE]['#options']);
-        $form['field_census_status'][LANGUAGE_NONE]['#default_value'][] = $defaultStatus;
-      }
-      else {
-        // Setting tab status to be incomplete since we are creating and we cant set default on the field since we can't export taxonomy terms with features
-        if (!empty($form['field_tab_status'][LANGUAGE_NONE]['#options']) && array_search("Incomplete", $form['field_tab_status'][LANGUAGE_NONE]['#options'])) {
-          $form['field_tab_status'][LANGUAGE_NONE]['#default_value'][0] = array_search("Incomplete", $form['field_tab_status'][LANGUAGE_NONE]['#options']);
-        }
-        // Get the name of the content type
-        $types = node_type_get_names();
-        if (!empty($types[$form['type']['#value']])) {
-          // set parent census based on value in url
-          if (!empty($form['field_parent_census'][LANGUAGE_NONE]['#options'][arg(3)])) {
-            $form['field_parent_census'][LANGUAGE_NONE]['#default_value'] = arg(3);
-          }
-          // set program area if needed
-          if (!empty($form['field_program_area'][LANGUAGE_NONE]['#options'])) {
-            foreach ($form['field_program_area'][LANGUAGE_NONE]['#options'] as $tid => $option) {
-              if ($tid !== '_none') {
-                $taxonomy_term = taxonomy_term_load($tid);
-                if (!empty($taxonomy_term->field_content_type[LANGUAGE_NONE][0]['value']) && $taxonomy_term->field_content_type[LANGUAGE_NONE][0]['value'] == arg(4)) {
-                  $form['field_program_area'][LANGUAGE_NONE]['#default_value'][] = $tid;
-                  $form['field_program_area'][LANGUAGE_NONE]['#disabled'] = 1;
-                }
-              }
-            }
-          }
-          // Check that its a tab content type by looking for the name in the vocabulary
-          $vocabulary = taxonomy_vocabulary_machine_name_load('census_tabs');
-          $censusTabs = taxonomy_get_tree($vocabulary->vid);
-          foreach ($censusTabs as $key => $values) {
-            if ($values->name == $types[$form['type']['#value']]) {
-              // Set title to be name of content type
-              $form['title']['#default_value'] = $types[$form['type']['#value']];
-              $form['title']['#disabled'] = TRUE;
-            }
-          }
+    nul_census_custom_hide_and_disable_fields($form, $fieldsToHideAndDisableOnCensus);
+
+    // IF ON A CENSUS IN CREATE MODE
+    if (
+    arg(0) == 'node' &&
+    arg(1) == 'add' &&
+    !empty(arg(2)) &&
+    arg(2) == 'census' &&
+    arg(3) >= 1) {
+      // set year to be current year
+      $year = date("Y");
+      //TODO look up contact org name of arg(3) and print instead of id
+      // TODO Update title field to be the name of the affliate and hide
+      $form['title']['#default_value'] = arg(3) . " " . $year . " Census";
+
+      // Update Year field and disable
+      $form['field_year'][LANGUAGE_NONE][0]['value']['#default_value'] = $year;
+      // Update affliate field and disable
+      $form['field_affiliate_'][LANGUAGE_NONE][0]['value']['#default_value'] = arg(3);
+      // set default status to inclomplete
+      $defaultStatus = array_search('Incomplete', $form['field_census_status'][LANGUAGE_NONE]['#options']);
+      $form['field_census_status'][LANGUAGE_NONE]['#default_value'][] = $defaultStatus;
+    }
+  }
+  // IF ON PROGRAMS TAB
+  // set program area if needed
+  if (!empty($form['field_program_area'][LANGUAGE_NONE]['#options'])) {
+    foreach ($form['field_program_area'][LANGUAGE_NONE]['#options'] as $tid => $option) {
+      if ($tid !== '_none') {
+        $taxonomy_term = taxonomy_term_load($tid);
+        if (!empty($taxonomy_term->field_content_type[LANGUAGE_NONE][0]['value']) && $taxonomy_term->field_content_type[LANGUAGE_NONE][0]['value'] == arg(4)) {
+          $form['field_program_area'][LANGUAGE_NONE]['#default_value'][] = $tid;
+          $form['field_program_area'][LANGUAGE_NONE]['#disabled'] = TRUE;
         }
       }
     }
-    // Limit options for Program Type and Services Provided based on Program Area
-    // Check we are on a content type of programs
-    if (!empty($form['type']['#value']) && $form['type']['#value'] == 'programs') {
-      $programArea = 0;
-      // If in create mode check for program area default value as it has not been saved
-      if (!empty($form['field_program_area'][LANGUAGE_NONE]['#default_value'])) {
-        $programArea = $form['field_program_area'][LANGUAGE_NONE]['#default_value'][0];
-      }
-      // If in edit mode check for program area value
-      if (!empty($form['field_program_area'][LANGUAGE_NONE]['#entity']->field_program_area[LANGUAGE_NONE][0]['tid'])) {
-        $programArea = $form['field_program_area'][LANGUAGE_NONE]['#entity']->field_program_area[LANGUAGE_NONE][0]['tid'];
-      }
-      // If you find a program area
-      if ($programArea > 0) {
-        // Check the following fields options
-        $fieldsToLimitByProgramArea = array(
-          'field_service_provided',
-          'field_program_types',
-        );
-        foreach ($fieldsToLimitByProgramArea as $key => $fieldName) {
-          if (!empty($form[$fieldName][LANGUAGE_NONE]['#options'])) {
-            foreach ($form[$fieldName][LANGUAGE_NONE]['#options'] as $optionId => $name) {
-              if ($optionId > 0) {
-                $term = taxonomy_term_load($optionId);
-                if (intval($term->field_program_area[LANGUAGE_NONE][0]['tid']) !== intval($programArea)) {
-                  unset($form[$fieldName][LANGUAGE_NONE]['#options'][$optionId]);
-                }
+  }
+  // Limit options for Program Type and Services Provided based on Program Area
+  // Check we are on a content type of programs
+  if (!empty($form['type']['#value']) && $form['type']['#value'] == 'programs') {
+    $programArea = 0;
+    // If in create mode check for program area default value as it has not been saved
+    if (!empty($form['field_program_area'][LANGUAGE_NONE]['#default_value'])) {
+      $programArea = $form['field_program_area'][LANGUAGE_NONE]['#default_value'][0];
+    }
+    // If in edit mode check for program area value
+    if (!empty($form['field_program_area'][LANGUAGE_NONE]['#entity']->field_program_area[LANGUAGE_NONE][0]['tid'])) {
+      $programArea = $form['field_program_area'][LANGUAGE_NONE]['#entity']->field_program_area[LANGUAGE_NONE][0]['tid'];
+    }
+    // If you find a program area
+    if ($programArea > 0) {
+      // Check the following fields options
+      $fieldsToLimitByProgramArea = array(
+        'field_service_provided',
+        'field_program_types',
+      );
+      foreach ($fieldsToLimitByProgramArea as $key => $fieldName) {
+        if (!empty($form[$fieldName][LANGUAGE_NONE]['#options'])) {
+          foreach ($form[$fieldName][LANGUAGE_NONE]['#options'] as $optionId => $name) {
+            if ($optionId > 0) {
+              $term = taxonomy_term_load($optionId);
+              if (intval($term->field_program_area[LANGUAGE_NONE][0]['tid']) !== intval($programArea)) {
+                unset($form[$fieldName][LANGUAGE_NONE]['#options'][$optionId]);
               }
             }
           }
         }
       }
     }
-
-    // make tooltips for all fields (most important for table fields)
-    foreach ($form as $key => $value) {
-      if (substr($key, 0, 6) == 'field_') {
-        if (!empty($form[$key][LANGUAGE_NONE][0]['value']['#title'])) {
-          $form[$key]['#attributes']['title'] = $form[$key][LANGUAGE_NONE][0]['value']['#title'];
-        }
-      }
-    }
-    // check if the content type is in the taxonomy for census tabs
-    $termDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $form['#node']->type);
-    if (!$termDetails) {
-      if ($form['#node']->type == 'census') {
-        drupal_set_message(t('Main Census Node'), 'success');
-      }
-      else {
-        drupal_set_message(t('Not a Census Tab or unpopulated content type machine name on the taxonomy term'), 'error');
-      }
-    }
-    if ($termDetails) {
-      // hide title field on cenus tab content types in edit mode
-      // $form['title']['#disabled'] = TRUE;
-      // $form['title']['#type'] = 'hidden';
-      // load totaling js
-      drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/totaling.js');
-
+  }
+  // ON TABS IN EDIT  or CREATE MODE
+  if (!empty($form['#node']->type)) {
+    $censusTab = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $form['#node']->type);
+  }
+  if (!empty($censusTab)) {
+    if ($form['#node']->type . '_node_form' == $form_id) {
+      // IF user does not have permission to edit this tab with this status redirect to home page
       if (!empty($form['#node']->field_tab_status) && !empty($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']]) && substr($form_id, 0, 7) !== 'comment') {
         // TODO check this is working
         $perms = nul_census_custom_check_status_permisions($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']], 'tab');
@@ -246,6 +213,50 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           }
         }
       }
+      // Add totaling js
+      drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/totaling.js');
+      // make tooltips for all fields (most important for table fields)
+      foreach ($form as $key => $value) {
+        if (substr($key, 0, 6) == 'field_') {
+          if (!empty($form[$key][LANGUAGE_NONE][0]['value']['#title'])) {
+            $form[$key]['#attributes']['title'] = $form[$key][LANGUAGE_NONE][0]['value']['#title'];
+          }
+        }
+      }
+      // float save to the bottom
+      if (!empty($form['#node_edit_form']) && $form['#node_edit_form'] == TRUE) {
+        $form['actions']['#weight'] = 10000;
+      }
+      // Add css file to tab in edit mode
+      $form['#attached']['css'] = array(
+        drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
+      );
+      // if user does not have access to magic fields on tab disable them so user cannot change them
+      $fieldsToHideAndDisableOnTab = array(
+        'title',
+        'field_parent_census',
+        'field_tab_status',
+        // 'field_program_area',
+      );
+      nul_census_custom_hide_and_disable_fields($form, $fieldsToHideAndDisableOnTab);
+      // IF ON A TAB IN CREATE MODE
+      if (
+      arg(0) == 'node' &&
+      arg(1) == 'add' &&
+      !empty(arg(2)) &&
+      arg(3) >= 1) {
+        // Setting tab status to be incomplete since we are creating and we cant set default on the field since we can't export taxonomy terms with features
+        if (!empty($form['field_tab_status'][LANGUAGE_NONE]['#options']) && array_search("Incomplete", $form['field_tab_status'][LANGUAGE_NONE]['#options'])) {
+          $form['field_tab_status'][LANGUAGE_NONE]['#default_value'][0] = array_search("Incomplete", $form['field_tab_status'][LANGUAGE_NONE]['#options']);
+        }
+        // set parent census based on value in url
+        if (!empty($form['field_parent_census'][LANGUAGE_NONE]['#options'][arg(3)])) {
+          $form['field_parent_census'][LANGUAGE_NONE]['#default_value'] = arg(3);
+        }
+        if ($censusTab->name) {
+          $form['title']['#default_value'] = $censusTab->name;
+        }
+      }
     }
   }
 }
@@ -256,30 +267,39 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
 function nul_census_custom_permission() {
   // TODO add permissions for tabs view/edit based on status
   return array(
+    'view affiliate censuses' => array(
+      'title' => t('View affiliate census and tabs'),
+      'description' => t('Allows a user to edit census tabs with status complete, submitted, reviewed or review complete.'),
+    ),
     'edit census tabs with status submitted reviewed complete or review complete' => array(
-      'title' => t('Edit census tabs with status submitted, complete, reviewed or review complete'),
+      'title' => t('Edit all census tabs with status submitted, complete, reviewed or review complete'),
       'description' => t('Allows a user to edit census tabs with status complete, submitted, reviewed or review complete.'),
     ),
     'edit census tabs with status resubmit' => array(
-      'title' => t('Edit census tabs with status resubmit'),
+      'title' => t('Edit Affiliate census tabs with status resubmit'),
       'description' => t('Allows a user to edit census tabs with status rresubmit.'),
     ),
     'edit census with status complete' => array(
-      'title' => t('Edit census with status complete'),
+      'title' => t('Edit affiliates censuses with status complete and incomplete'),
       'description' => t('Allows a user to edit census with status complete'),
     ),
     'edit census with status submitted' => array(
-      'title' => t('Edit census with status submitted'),
-      'description' => t('Allows a user to edit census with status submitted'),
-    ),
-    'edit affiliate census and tabs' => array(
-      'title' => t('Edit census with status submitted'),
+      'title' => t('Edit All censuses with status submitted'),
       'description' => t('Allows a user to edit census with status submitted'),
     ),
     'can mark census tabs resubmit and reviewed' => array(
-      'title' => t('can mark census tabs resubmit and reviewed and can mark census review complete'),
+      'title' => t('can mark all censuses tabs resubmit and reviewed and can mark census review complete'),
       'description' => t('Allows a user to mark census tabs as resubmit and reviewed'),
     ),
+    'can certify census as complete' => array(
+      'title' => t('Can mark affiliates census as complete'),
+      'description' => t('Allows a user to access the certify field if the census has a status of complete this moves the census to submitted'),
+    ),
+    'can edit magic census fields' => array(
+      'title' => t('can edit magic census fields'),
+      'description' => t('can edit magic census fields'),
+    ),
+
   );
 }
 
@@ -461,3 +481,7 @@ function nul_census_custom_mail($key, &$message, $params) {
       break;
   }
 }
+
+// function nul_census_custom_node_grants_alter(&$grants, $account, $op) {
+//   print_r($grants); die();
+// }

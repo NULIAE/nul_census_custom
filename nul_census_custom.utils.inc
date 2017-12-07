@@ -220,3 +220,14 @@ function nul_census_custom_update_nodes_status_field($tabsCompleted, $statusToCh
     $tab = node_save($tab);
   }
 }
+
+function nul_census_custom_hide_and_disable_fields(&$form, $fieldsToHideAndDisable) {
+  if (!user_access('can edit magic census fields')) {
+    foreach ($fieldsToHideAndDisable as $key => $value) {
+      if (!empty($form[$value])) {
+        $form[$value]['#disabled'] = TRUE;
+        // $form[$value]['#type'] = 'hidden';
+      }
+    }
+  }
+}
