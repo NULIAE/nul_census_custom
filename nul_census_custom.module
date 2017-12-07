@@ -319,26 +319,47 @@ function nul_census_custom_block_view_alter(&$data, $block) {
     // IF not on parent census look up the id of the parent census to pass as an argument to the view
     $parentCensusNid = 0;
     if ($block->delta == 'census_tab_menu-block') {
-      $currentNid = $data['content']['#views_contextual_links_info']['views_ui']['view']->args[0];
-      $currentNode = node_load($currentNid);
-      $parentCensusNid = $currentNode->field_parent_census[LANGUAGE_NONE][0]['target_id'];
+      if (!empty($data['content']['#views_contextual_links_info']['views_ui']['view']->args[0])) {
+        $currentNid = $data['content']['#views_contextual_links_info']['views_ui']['view']->args[0];
+        $currentNode = node_load($currentNid);
+        if (!empty($currentNode->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
+          $parentCensusNid = $currentNode->field_parent_census[LANGUAGE_NONE][0]['target_id'];
+        }
+      }
     }
+    // if ($parentCensusNid == 0) {
+    //   // TODO Check if on a census tab in edit mode and make census tab menu work from there
+    //   if (
+    //   arg(0) == 'node' &&
+    //   arg(1) == 'add' &&
+    //   !empty(arg(2)) &&
+    //   arg(3) >= 1) {
+    //     if (TRUE) {
+    //       $parentCensusNid = arg(3);
+    //     }
+    //   }
+    // }
     foreach ($censusTabs as $key => $object) {
       $term = taxonomy_term_load($object->tid);
+      // $arguments = array();
       if (!empty($term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])) {
         if (!empty($data['content']['#views_contextual_links_info']['views_ui']['view']->args)) {
+          // print_r($data['content']['#views_contextual_links_info']['views_ui']['view']->args); die();
           $arguments = $data['content']['#views_contextual_links_info']['views_ui']['view']->args;
           $arguments[] = $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'];
           // machine names of content types have _ switch them to - to redirect properly
           $arguments[] = str_replace('_', '-', $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value']);
           if ($parentCensusNid > 0) {
+            // print_r($arguments); die();
             $arguments[] = $parentCensusNid;
           }
           $view = views_get_view('census_tab_menu');
-          $view->set_display($displays[$block->delta]);
-          $view->set_arguments($arguments);
-          $view->execute();
-          $result .= $view->preview($displays[$block->delta]);
+          if (!empty($view)) {
+            $view->set_display($displays[$block->delta]);
+            $view->set_arguments($arguments);
+            $view->execute();
+            $result .= $view->preview($displays[$block->delta]);
+          }
         }
       }
       $data['content']['#markup'] = $result;
