@@ -199,11 +199,11 @@ function nul_census_custom_check_tab_statuses($nid, $exceptThisType, $statusName
  * @param string $censusPart is it a census or a tab
  */
 function nul_census_custom_update_nodes_status_field($tabsCompleted, $statusToChangeTo, $censusPart) {
-  if ($censusPart = 'tab') {
+  if ($censusPart == 'tab') {
     $vocabMachineName = 'census_tab_status';
     $fieldName = 'field_tab_status';
   }
-  if ($censusPart = 'census') {
+  if ($censusPart == 'census') {
     $vocabMachineName = 'status_type_for_census';
     $fieldName = 'field_census_status';
   }

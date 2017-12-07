@@ -184,6 +184,10 @@ If user has permission 'can mark census tabs resubmit and reviewed' and viewing 
 
 If user has permission 'can mark census tabs resubmit and reviewed' and viewing a tab with status submitted there is a button at the top to click that will switch the status of the tab to resubmit
 
+#### Reviewed to Reviewed Complete:
+
+when user with permission clicks button on census to "Mark Census as Review Complete" census and all tabs statuss are updated to reviewed complete
+
 ### Census
 
 #### Incomplete to Complete:
@@ -193,5 +197,10 @@ When all tabs except survey certification are complete, census status changes to
 #### Complete to Submitted:
 
 on submit of a census in status complete When the survey certification field is filled census status changes to submitted.
+
+#### Submitted to Reviewed Complete
+
+when user with permission clicks button on census to "Mark Census as Review Complete" census and all tabs statuss are updated to reviewed complete
+
 
 See google doc tables for more details: https://docs.google.com/spreadsheets/d/1yIXrF57oZwzyS-SwvjQZtqBBfj8VChroOL32euSY_xo/edit#gid=860260362
