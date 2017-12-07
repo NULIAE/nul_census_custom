@@ -148,6 +148,15 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     }
   }
   // IF ON PROGRAMS TAB
+  $fieldsToHideAndDisableOnProgram = array(
+    'field_parent_census',
+    'field_program_area',
+  );
+  nul_census_custom_hide_and_disable_fields($form, $fieldsToHideAndDisableOnProgram);
+  // set parent census based on value in url
+  if (!empty($form['field_parent_census'][LANGUAGE_NONE]['#options'][arg(3)])) {
+    $form['field_parent_census'][LANGUAGE_NONE]['#default_value'] = arg(3);
+  }
   // set program area if needed
   if (!empty($form['field_program_area'][LANGUAGE_NONE]['#options'])) {
     foreach ($form['field_program_area'][LANGUAGE_NONE]['#options'] as $tid => $option) {
@@ -155,7 +164,6 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
         $taxonomy_term = taxonomy_term_load($tid);
         if (!empty($taxonomy_term->field_content_type[LANGUAGE_NONE][0]['value']) && $taxonomy_term->field_content_type[LANGUAGE_NONE][0]['value'] == arg(4)) {
           $form['field_program_area'][LANGUAGE_NONE]['#default_value'][] = $tid;
-          $form['field_program_area'][LANGUAGE_NONE]['#disabled'] = TRUE;
         }
       }
     }
