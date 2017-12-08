@@ -105,7 +105,7 @@ This block produces the menu of census tabs. It uses the Taxonomy "Census Tabs" 
 
 Configuration:
 
-+ Census Tabs (on Census) - This should be configured to only show up on content type Census
++ Census Tabs (on Census)
 + Census Tabs (on Tab) -- This should be configured to only show up on the census content types.
 
 ### View: link to full census
