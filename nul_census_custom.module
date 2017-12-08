@@ -320,30 +320,40 @@ function nul_census_custom_block_view_alter(&$data, $block) {
         }
       }
     }
-    // if ($parentCensusNid == 0) {
-    //   // TODO Check if on a census tab in edit mode and make census tab menu work from there
-    //   if (
-    //   arg(0) == 'node' &&
-    //   arg(1) == 'add' &&
-    //   !empty(arg(2)) &&
-    //   arg(3) >= 1) {
-    //     if (TRUE) {
-    //       $parentCensusNid = arg(3);
-    //     }
-    //   }
-    // }
+     if ($parentCensusNid == 0) {
+       // TODO Check if on a census tab in edit mode and make census tab menu work from there
+       if (
+       arg(0) == 'node' &&
+       arg(1) == 'add' &&
+       !empty(arg(2)) &&
+       arg(3) >= 1) {
+         if ($block->delta == 'census_tab_menu-block_1') {
+           $arguments = array(arg(3));
+         }
+       }
+    }
     foreach ($censusTabs as $key => $object) {
+     if ($parentCensusNid == 0) {
+       // TODO Check if on a census tab in edit mode and make census tab menu work from there
+       if (
+       arg(0) == 'node' &&
+       arg(1) == 'add' &&
+       !empty(arg(2)) &&
+       arg(3) >= 1) {
+         if ($block->delta == 'census_tab_menu-block_1') {
+           $arguments = array(arg(3));
+         }
+       }
+    }
       $term = taxonomy_term_load($object->tid);
-      // $arguments = array();
       if (!empty($term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'])) {
         if (!empty($data['content']['#views_contextual_links_info']['views_ui']['view']->args)) {
-          // print_r($data['content']['#views_contextual_links_info']['views_ui']['view']->args); die();
           $arguments = $data['content']['#views_contextual_links_info']['views_ui']['view']->args;
+        }
           $arguments[] = $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value'];
           // machine names of content types have _ switch them to - to redirect properly
           $arguments[] = str_replace('_', '-', $term->field_content_type_machine_name[LANGUAGE_NONE][0]['value']);
           if ($parentCensusNid > 0) {
-            // print_r($arguments); die();
             $arguments[] = $parentCensusNid;
           }
           $view = views_get_view('census_tab_menu');
@@ -353,7 +363,6 @@ function nul_census_custom_block_view_alter(&$data, $block) {
             $view->execute();
             $result .= $view->preview($displays[$block->delta]);
           }
-        }
       }
       $data['content']['#markup'] = $result;
     }
