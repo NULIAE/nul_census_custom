@@ -196,6 +196,15 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
   }
   if (!empty($censusTab)) {
     if ($form['#node']->type . '_node_form' == $form_id) {
+      // Mark fake required fields
+      // CHECK REQUIRED FIELDS
+      $requiredToCompleteFieldsMachineNames = nul_census_custom_fake_required_fields();
+      $allRequiredFieldsFilled = TRUE;
+      foreach ($requiredToCompleteFieldsMachineNames as $machineName => $value) {
+        if (!empty($form[$machineName][LANGUAGE_NONE])) {
+          $form[$machineName][LANGUAGE_NONE]['#suffix'] = $form[$machineName][LANGUAGE_NONE]['#suffix'] . "<span class='nulCensusFakeRequiredField' style='color: purple;'>{$form[$machineName][LANGUAGE_NONE]['#title']} is required for this tab to be considered complete</span>";
+        }
+      }
       // IF user does not have permission to edit this tab with this status redirect to home page
       if (!empty($form['#node']->field_tab_status) && !empty($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']]) && substr($form_id, 0, 7) !== 'comment') {
         // TODO check this is working
