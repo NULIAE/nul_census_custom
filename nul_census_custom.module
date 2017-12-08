@@ -137,6 +137,10 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     }
   }
   // IF ON PROGRAMS TAB
+  // Add css for styling tables
+  $form['#attached']['css'] = array(
+    drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
+  );
   $fieldsToHideAndDisableOnProgram = array(
     'field_parent_census',
     'field_program_area',
