@@ -231,3 +231,24 @@ function nul_census_custom_hide_and_disable_fields(&$form, $fieldsToHideAndDisab
     }
   }
 }
+
+function nul_census_custom_button_to_update_status($statusOfTab, $statusTabMustBe, $permissionUserMustHave, $censusPart, $tabNid, $parentCensusId, $argumentsAllowed) {
+  // IF on tab with status submitted and user has proper permissions add mark reviewed and resubmit buttons
+  // TODO create tabs in menu hook instead of in js
+  if (!empty($statusOfTab) && $statusOfTab == $statusTabMustBe && user_access($permissionUserMustHave)) {
+    drupal_add_js(array('nul_census_custom' => array('censuspart' => $censusPart)), array('type' => 'setting'));
+    drupal_add_js(array('nul_census_custom' => array('nid' => $tabNid)), array('type' => 'setting'));
+    drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/addButtons.js');
+    if (arg(0) == 'node' && arg(1) > 0 && in_array(arg(2), $argumentsAllowed)) {
+      $tabsCompleted = array($tabNid => 'does not matter');
+      nul_census_custom_update_nodes_status_field($tabsCompleted, arg(2), 'tab');
+      drupal_set_message('Tab status updated', 'notice');
+      if (!empty($parentCensusId)) {
+        drupal_goto("node/" . $parentCensusId);
+      }
+      else {
+        drupal_goto("node/" . arg(1));
+      }
+    }
+  }
+}
