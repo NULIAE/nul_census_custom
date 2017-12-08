@@ -496,6 +496,21 @@ function nul_census_custom_mail($key, &$message, $params) {
   }
 }
 
+function nul_census_custom_node_validate($node, $form, &$form_state) {
+  // if on a content tab
+  $tabTermDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $node->type);
+  if ($tabTermDetails) {
+    // check if there is an existing node of the same content type with the same parent census
+    // search for node of that type AND parent census with NID passed to the function
+    $query = new EntityFieldQuery();
+    $query->entityCondition('entity_type', 'node')
+      ->entityCondition('bundle', $node->type)
+      ->fieldCondition('field_parent_census', 'target_id', $node->field_parent_census[LANGUAGE_NONE][0]['target_id'])
+    $results = $query->execute();
+
+    form_set_error('parent_census', t('A tab of this type already exists for this census'));
+  }
+}
 // function nul_census_custom_node_grants_alter(&$grants, $account, $op) {
 //   print_r($grants); die();
 // }
