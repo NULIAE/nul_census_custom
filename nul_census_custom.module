@@ -137,33 +137,33 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     }
   }
   // IF ON PROGRAMS TAB
-  // Add css for styling tables
-  $form['#attached']['css'] = array(
-    drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
-  );
-  $fieldsToHideAndDisableOnProgram = array(
-    'field_parent_census',
-    'field_program_area',
-  );
-  nul_census_custom_hide_and_disable_fields($form, $fieldsToHideAndDisableOnProgram);
-  // set parent census based on value in url
-  if (!empty($form['field_parent_census'][LANGUAGE_NONE]['#options'][arg(3)])) {
-    $form['field_parent_census'][LANGUAGE_NONE]['#default_value'] = arg(3);
-  }
-  // set program area if needed
-  if (!empty($form['field_program_area'][LANGUAGE_NONE]['#options'])) {
-    foreach ($form['field_program_area'][LANGUAGE_NONE]['#options'] as $tid => $option) {
-      if ($tid !== '_none') {
-        $taxonomy_term = taxonomy_term_load($tid);
-        if (!empty($taxonomy_term->field_content_type[LANGUAGE_NONE][0]['value']) && $taxonomy_term->field_content_type[LANGUAGE_NONE][0]['value'] == arg(4)) {
-          $form['field_program_area'][LANGUAGE_NONE]['#default_value'][] = $tid;
+  // Check we are on a content type of programs
+  if (!empty($form['type']['#value']) && $form['type']['#value'] == 'programs') {
+    // Add css for styling tables
+    $form['#attached']['css'] = array(
+      drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
+    );
+    $fieldsToHideAndDisableOnProgram = array(
+      'field_parent_census',
+      'field_program_area',
+    );
+    nul_census_custom_hide_and_disable_fields($form, $fieldsToHideAndDisableOnProgram);
+    // set parent census based on value in url
+    if (!empty($form['field_parent_census'][LANGUAGE_NONE]['#options'][arg(3)])) {
+      $form['field_parent_census'][LANGUAGE_NONE]['#default_value'] = arg(3);
+    }
+    // Limit options for Program Type and Services Provided based on Program Area
+    // set program area if needed
+    if (!empty($form['field_program_area'][LANGUAGE_NONE]['#options'])) {
+      foreach ($form['field_program_area'][LANGUAGE_NONE]['#options'] as $tid => $option) {
+        if ($tid !== '_none') {
+          $taxonomy_term = taxonomy_term_load($tid);
+          if (!empty($taxonomy_term->field_content_type[LANGUAGE_NONE][0]['value']) && $taxonomy_term->field_content_type[LANGUAGE_NONE][0]['value'] == arg(4)) {
+            $form['field_program_area'][LANGUAGE_NONE]['#default_value'][] = $tid;
+          }
         }
       }
     }
-  }
-  // Limit options for Program Type and Services Provided based on Program Area
-  // Check we are on a content type of programs
-  if (!empty($form['type']['#value']) && $form['type']['#value'] == 'programs') {
     $programArea = 0;
     // If in create mode check for program area default value as it has not been saved
     if (!empty($form['field_program_area'][LANGUAGE_NONE]['#default_value'])) {
