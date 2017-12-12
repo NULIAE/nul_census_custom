@@ -255,9 +255,31 @@ function nul_census_custom_button_to_update_status($statusOfTab, $statusTabMustB
  * Get Affliate (or affiliates) that the logged in user has access to
  * @return int $id contactId of the affilaite in civi
  */
-function nul_census_custom_get_affiliate() {
-  global $user;
-  // TODO using drupal user look up civi affiliate
-  $id = 18;
-  return $id;
+// function nul_census_custom_get_affiliate() {
+//   global $user;
+//   // TODO using drupal user look up civi affiliate
+//   $id = 18;
+//   return $id;
+// }
+
+/**
+ * [nul_census_custom_get_affiliate_from_tab description]
+ * @param  [type] $node [description]
+ * @return [type]       [description]
+ */
+function nul_census_custom_get_affiliate_from_node(&$node, $censusPart) {
+  $affiliate = NULL;
+  if ($censusPart == 'tab') {
+    if (!empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
+      $parentCensus = node_load($node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
+    }
+  }
+  if ($censusPart == 'census') {
+    $parentCensus = $node;
+  }
+  if (!empty($parentCensus->field_affiliate[LANGUAGE_NONE][0]['value'])) {
+    $affiliate = $parentCensus->field_affiliate[LANGUAGE_NONE][0]['value'];
+  }
+  // print_r($affiliate); die();
+  return $affiliate;
 }

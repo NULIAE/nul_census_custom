@@ -285,8 +285,8 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
 function nul_census_custom_permission() {
   // TODO add permissions for tabs view/edit based on status
   return array(
-    'view affiliate censuses' => array(
-      'title' => t('View affiliate census and tabs'),
+    'edit own affiliate censuses' => array(
+      'title' => t('edit own affiliate census and tabs'),
       'description' => t('Allows a user to edit census tabs with status complete, submitted, reviewed or review complete.'),
     ),
     'edit census tabs with status submitted reviewed complete or review complete' => array(
@@ -525,6 +525,59 @@ function nul_census_custom_node_validate($node, $form, &$form_state) {
   }
 }
 
-// function nul_census_custom_node_grants_alter(&$grants, $account, $op) {
-//   print_r($grants); die();
-// }
+/**
+ * Implements hook_node_access_records().
+ */
+function nul_census_custom_node_access_records($node) {
+
+  $grants = array();
+  $tabTermDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $node->type);
+  $affiliate = NULL;
+  // If on a tab
+  if (!empty($tabTermDetails)) {
+    $affiliate = nul_census_custom_get_affiliate_from_node($node, 'tab');
+  }
+  // If on a census
+  if ($node->type == 'census') {
+    $affiliate = nul_census_custom_get_affiliate_from_node($node, 'census');
+  }
+  if (!empty($affiliate)) {
+    $grants[] = array(
+      'realm' => 'nul_census_custom_realm_for_editing_own_affiliate_census',
+      'gid' => $affiliate,
+      'grant_view' => 1,
+      'grant_update' => 1,
+      'grant_delete' => 0,
+      'priority' => 0,
+    );
+  }
+  return $grants;
+}
+
+/**
+ * Implements hook_node_grants().
+ */
+function nul_census_custom_node_grants($account, $op) {
+  $grants = array();
+  $drupalUserId = $account->uid;
+  if (!civicrm_initialize()) {
+    return;
+  }
+  // TODO Update Catch
+  try {
+    $civiContact = civicrm_api3('UFMatch', 'getsingle', array(
+      'return' => array("contact_id.custom_7", "contact_id.id"),
+      'id' => $account->uid,
+    ));
+  }
+  catch (Exception $e) {
+
+  }
+  // TODO get real affiliate field from data.empowered
+  if (user_access('edit own affiliate censuses', $account) && !empty($civiContact['contact_id.custom_7'])) {
+    // gid to allow view access.
+    $grants['nul_census_custom_realm_for_editing_own_affiliate_census'][] = array($civiContact['contact_id.custom_7']);
+  }
+
+  return $grants;
+}
