@@ -139,18 +139,6 @@ function nul_census_custom_check_status_permisions($status, $contentType) {
 }
 
 /**
- * fields required to be filled to move from incomplete to complete
- * @return array field machine names
- */
-function nul_census_custom_fake_required_fields() {
-  $fields = array(
-    'field_advocacy_description' => 'civic_engagement',
-    // machine names
-  );
-  return $fields;
-}
-
-/**
  * checks status of related tabs
  * @param  int $nid parent census nid
  * @param  string $exceptThisType tab to skip
@@ -232,6 +220,16 @@ function nul_census_custom_hide_and_disable_fields(&$form, $fieldsToHideAndDisab
   }
 }
 
+/**
+ * adds button to change status of tab or node
+ * @param  string $statusOfTab   status before clicking button
+ * @param  string $statusTabMustBe  status to change to if button clicked
+ * @param  string $permissionUserMustHave permission needed to see button
+ * @param  string $censusPart    stage the census is in options tab = on tab with status submitted, census with status of submitted with all tabs with the status of reviewed, resubmit = tab with status of resubmit
+ * @param  int $tabNid         Node id of the tab the user is on
+ * @param  int $parentCensusId   Node id of the parent census
+ * @param  array $argumentsAllowed  array of statuses that the user can update to ex: Submitted, Resubmit, Reviewed, ReviewComplete
+ */
 function nul_census_custom_button_to_update_status($statusOfTab, $statusTabMustBe, $permissionUserMustHave, $censusPart, $tabNid, $parentCensusId, $argumentsAllowed) {
   // IF on tab with status submitted and user has proper permissions add mark reviewed and resubmit buttons
   // TODO create tabs in menu hook instead of in js
@@ -253,6 +251,10 @@ function nul_census_custom_button_to_update_status($statusOfTab, $statusTabMustB
   }
 }
 
+/**
+ * Get Affliate (or affiliates) that the logged in user has access to
+ * @return int $id contactId of the affilaite in civi
+ */
 function nul_census_custom_get_affiliate() {
   global $user;
   // TODO using drupal user look up civi affiliate
