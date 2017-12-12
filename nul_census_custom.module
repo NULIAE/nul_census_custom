@@ -79,6 +79,8 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
         if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && !empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id']) && !empty($node->nid)) {
           // IF on tab with status submitted and user has proper permissions add mark reviewed and resubmit buttons
           nul_census_custom_button_to_update_status($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'Submitted', 'can mark census tabs resubmit and reviewed', 'tab', $node->nid, $node->field_parent_census[LANGUAGE_NONE][0]['target_id'], array('Reviewed', 'Resubmit'));
+          // IF on tab with status incomplete and user has proper permissions add mark complete
+          nul_census_custom_button_to_update_status($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'Incomplete', 'can mark census tabs as complete', 'tabComplete', $node->nid, $node->field_parent_census[LANGUAGE_NONE][0]['target_id'], array('Complete'));
         }
 
         // Add css file to tab in view mode
@@ -306,6 +308,10 @@ function nul_census_custom_permission() {
     'can mark census tabs resubmit and reviewed' => array(
       'title' => t('can mark all censuses tabs resubmit and reviewed and can mark census review complete'),
       'description' => t('Allows a user to mark census tabs as resubmit and reviewed'),
+    ),
+    'can mark census tabs as complete' => array(
+      'title' => t('can mark census tabs as complete'),
+      'description' => t('Allows a user to mark census tabs as complete'),
     ),
     'can certify census as complete' => array(
       'title' => t('Can mark affiliates census as complete'),

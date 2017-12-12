@@ -22,6 +22,12 @@
        "/Submitted'>Resubmit</a></li";
     }
 
+    if (Drupal.settings.nul_census_custom.censuspart == 'tabComplete') {
+      var buttonsToAdd = "<li><a href='"
+       + href  +
+       "/Complete'>Mark Tab as Complete</a></li";
+    }
+
     // Insert buttons to mark as reviewed and resubmit
     $($('ul.tabs.primary')).prepend(buttonsToAdd);
   });
