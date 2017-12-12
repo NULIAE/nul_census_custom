@@ -252,3 +252,10 @@ function nul_census_custom_button_to_update_status($statusOfTab, $statusTabMustB
     }
   }
 }
+
+function nul_census_custom_get_affiliate() {
+  global $user;
+  // TODO using drupal user look up civi affiliate
+  $id = 18;
+  return $id;
+}
