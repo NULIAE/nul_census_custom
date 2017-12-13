@@ -317,7 +317,7 @@ function nul_census_custom_get_affiliate_from_user($drupalUserId = NULL) {
   $affiliate = NULL;
   $params = array(
     'return' => array($affiliateField, "contact_id.id"),
-    'cms_id' => $drupalUserId,
+    'uf_id' => $drupalUserId,
   );
   $civiContact = nul_census_custom_civi_api('UFMatch', 'getsingle', $params);
   if (!empty($civiContact[$affiliateField])) {
