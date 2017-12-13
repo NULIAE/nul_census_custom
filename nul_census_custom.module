@@ -266,7 +266,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
       !empty(arg(2)) &&
       arg(3) >= 1) {
         // look up affiliate associated with parent census
-        $affiliate = nul_census_custom_get_affiliate_from_node($node->nid, 'census');
+        $affiliate = nul_census_custom_get_affiliate_from_node(arg(3), 'census');
         $canCreate = nul_census_custom_census_creation_permissions($affiliate);
         if ($canCreate) {
           // Setting tab status to be incomplete since we are creating and we cant set default on the field since we can't export taxonomy terms with features
