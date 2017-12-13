@@ -313,13 +313,13 @@ function nul_census_custom_get_affiliate_from_user($drupalUserId = NULL) {
     global $user;
     $drupalUserId = $user->uid;
   }
+  $affiliateField = variable_get('affiliatefield');
   $affiliate = NULL;
   $params = array(
-    'return' => array("contact_id.custom_7", "contact_id.id"),
-    'id' => $drupalUserId,
+    'return' => array($affiliateField, "contact_id.id"),
+    'cms_id' => $drupalUserId,
   );
   $civiContact = nul_census_custom_civi_api('UFMatch', 'getsingle', $params);
-  $affiliateField = variable_get('affiliatefield');
   if (!empty($civiContact[$affiliateField])) {
     $affiliate = $civiContact[$affiliateField];
   }
