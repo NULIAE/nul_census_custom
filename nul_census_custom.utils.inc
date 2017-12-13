@@ -30,6 +30,11 @@ function nul_census_custom_searchTaxonomyByField($vocabMachineName, $fieldName, 
  * @return array  can they edit or not, can they resubmit or not
  */
 function nul_census_custom_check_status_permisions($status, $contentType) {
+  // IF tid then look up name
+  if (gettype($status) == 'integer') {
+    $term = taxonomy_term_load($status);
+    $status = $term->name;
+  }
   global $user;
   $canResubmit = FALSE;
   // IF user is an administrator they can edit whatever always
@@ -252,9 +257,10 @@ function nul_census_custom_button_to_update_status($statusOfTab, $statusTabMustB
 }
 
 /**
- * [nul_census_custom_get_affiliate_from_tab description]
- * @param  [type] $node [description]
- * @return [type]       [description]
+ * get affiliate from node
+ * @param  object $node node
+ * @param string $censusPart tab or census
+ * @return int $affiliate civicrm contact id of affiliate associated with this node
  */
 function nul_census_custom_get_affiliate_from_node(&$node, $censusPart) {
   $affiliate = NULL;
@@ -269,13 +275,20 @@ function nul_census_custom_get_affiliate_from_node(&$node, $censusPart) {
   if (!empty($parentCensus->field_affiliate[LANGUAGE_NONE][0]['value'])) {
     $affiliate = $parentCensus->field_affiliate[LANGUAGE_NONE][0]['value'];
   }
-  // print_r($affiliate); die();
   return $affiliate;
 }
 
+/**
+ * Make a CiviCRM API call
+ * @param  string $entity entity to target
+ * @param  string $action get, create etc.
+ * @param  array $params array of params to send
+ * @return array $results civicrm api results
+ */
 function nul_census_custom_civi_api($entity, $action, $params) {
+  $results = array();
   if (!civicrm_initialize()) {
-    return;
+    return NULL;
   }
   try {
     $results = civicrm_api3($entity, $action, $params);
@@ -290,10 +303,15 @@ function nul_census_custom_civi_api($entity, $action, $params) {
   return $results;
 }
 
+/**
+ * lookup the affiliate on the civicrm contact
+ * @param  id $drupalUserId drupal user id
+ * @return int    Civicrm Contact ID of the affiliate the user has on their contact record
+ */
 function nul_census_custom_get_affiliate_from_user($drupalUserId = NULL) {
   if ($drupalUserId == NULL) {
     global $user;
-    $drupalUserId == $user->id;
+    $drupalUserId == $user->uid;
   }
   $affiliate = NULL;
   $params = array(
@@ -301,12 +319,18 @@ function nul_census_custom_get_affiliate_from_user($drupalUserId = NULL) {
     'id' => $drupalUserId,
   );
   $civiContact = nul_census_custom_civi_api('UFMatch', 'getsingle', $params);
-  if (!empty($civiContact["contact_id.custom_7"])) {
-    $affiliate = $civiContact["contact_id.custom_7"];
+  $affiliateField = variable_get('affiliatefield');
+  if (!empty($civiContact[$affiliateField])) {
+    $affiliate = $civiContact[$affiliateField];
   }
   return $affiliate;
 }
 
+/**
+ * Check if user has permission to create a census for that affiliate
+ * @param  int $affiliateId id of affiliate
+ * @return boolean             true or false, can edit or can't
+ */
 function nul_census_custom_census_creation_permissions($affiliateId) {
   $canCreate = FALSE;
   // If can only create censuses for their affiliate check that this is their affiliate

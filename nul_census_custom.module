@@ -25,7 +25,6 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
         $perms = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'census');
         if (!$perms['canEdit']) {
           drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/hideEdit.js');
-          drupal_set_message("You do not have permission to edit this content at this stage", 'error');
         }
       }
       // If all tabs are reviewed and census is submitted and user has permission add button to mark census as review complete
@@ -76,7 +75,6 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
           }
           if (!$perms['canEdit']) {
             drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/hideEdit.js');
-            drupal_set_message("You do not have permission to edit this content at this stage", 'error');
           }
         }
       }
@@ -103,7 +101,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     // if user does not have access to magic fields disable them so user cannot change them
     $fieldsToHideAndDisableOnCensus = array(
       'field_year',
-      'field_affiliate_',
+      'field_affiliate',
       'field_census_status',
     );
     nul_census_custom_hide_and_disable_fields($form, $fieldsToHideAndDisableOnCensus);
@@ -121,7 +119,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
       $query = new EntityFieldQuery();
       $results = $query->entityCondition('entity_type', 'node')
         ->entityCondition('bundle', 'census')
-        ->fieldCondition('field_affiliate_', 'value', arg(3))
+        ->fieldCondition('field_affiliate', 'value', arg(3))
         ->fieldCondition('field_year', 'value', $year)
         ->execute();
       // If you find one go to it
@@ -147,13 +145,16 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           // Update Year field and disable
           $form['field_year'][LANGUAGE_NONE][0]['value']['#default_value'] = $year;
           // Update affliate field and disable
-          $form['field_affiliate_'][LANGUAGE_NONE][0]['value']['#default_value'] = arg(3);
+          $form['field_affiliate'][LANGUAGE_NONE][0]['value']['#default_value'] = arg(3);
           // set default status to inclomplete
           $defaultStatus = array_search('Incomplete', $form['field_census_status'][LANGUAGE_NONE]['#options']);
           if (empty($form['field_census_status'][LANGUAGE_NONE]['#default_value'])) {
             $form['field_census_status'][LANGUAGE_NONE]['#default_value'][] = $defaultStatus;
           }
         }
+      }
+      else {
+        drupal_set_message(t('You do not have permission to create a census for this affiliate'), 'error');
       }
     }
   }
@@ -549,12 +550,13 @@ function nul_census_custom_node_access_records($node) {
   // If on a tab
   if (!empty($tabTermDetails)) {
     $affiliate = nul_census_custom_get_affiliate_from_node($node, 'tab');
-    $perms = nul_census_custom_check_status_permisions($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'tab');
+    $perms = nul_census_custom_check_status_permisions($node->field_tab_status[LANGUAGE_NONE][0]['tid'], 'tab');
   }
   // If on a census
   if ($node->type == 'census') {
     $affiliate = nul_census_custom_get_affiliate_from_node($node, 'census');
-    $perms = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'census');
+    // TODO Check this value
+    $perms = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['tid'], 'census');
   }
   if (!empty($affiliate) && $perms['canEdit'] == TRUE) {
     $grants[] = array(
@@ -581,4 +583,28 @@ function nul_census_custom_node_grants($account, $op) {
     $grants['nul_census_custom_realm_for_editing_own_affiliate_census'][] = array($affiliate);
   }
   return $grants;
+}
+
+function nul_census_custom_menu() {
+  $items['admin/config/nul_census_custom'] = array(
+    'title' => 'NUL Census Custom',
+    'description' => 'Adjust NUL Census Settings',
+    'position' => 'right',
+    'weight' => '-10',
+    'page callback' => 'system_admin_menu_block_page',
+    'access arguments' => array('administer civicrm'),
+    'file' => 'system.admin.inc',
+    'file path' => drupal_get_path('module', 'system'),
+  );
+  $items['admin/config/nul_census_custom/settings'] = array(
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nul_census_custom_settings_form'),
+    'access arguments' => array('administer civicrm'),
+    'title' => 'NUL Census Custom Settings',
+    'type' => MENU_NORMAL_ITEM,
+    'file' => 'nul_census_custom.admin.inc',
+    'file path' => drupal_get_path('module', 'nul_census_custom'),
+  );
+
+  return $items;
 }

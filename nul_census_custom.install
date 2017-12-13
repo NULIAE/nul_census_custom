@@ -4,6 +4,33 @@
  * [feature_name_install description]
  */
 function nul_census_custom_install() {
+  function odb_incomelimits_schema() {
+    $schema['nul_census_custom_settings'] = array(
+      'description' => 'Settings for nul_census_custom',
+      'fields' => array(
+        'emailnotification' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'not null' => TRUE,
+          'description' => 'Email to Send Notification to',
+        ),
+        'affiliatefield' => array(
+          'type' => 'varchar',
+          'length' => 255,
+          'description' => 'Field in Civi to use to find users affiliate',
+          'not null' => TRUE,
+          'default' => '',
+        ),
+      ),
+      'primary key' => array(
+        'emailnotification',
+        'affiliatefield',
+      ),
+    );
+
+    return $schema;
+  }
+
   /**
    * Return arrays of vocabulary terms
    * @param string $type which array to return basic or the one that requires program areas

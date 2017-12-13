@@ -3,6 +3,7 @@ description = Styles Census fields for a better user experience
 core = 7.x
 files[] = nul_census_custom.module
 files[] = nul_census_custom.utils.inc
+files[] = nul_census_custom.admin.inc
 version = "7.x-1.0"
 core = "7.x"
 package = NUL
