@@ -18,33 +18,17 @@ function nul_census_custom_preprocess_views_view(&$vars) {
  * hook_node_view()
  */
 function nul_census_custom_node_view($node, $view_mode, $langcode) {
-  // TODO write code to add mark tab as complete button to view mode of tabs see code below for guidance
-  // $exceptThisType = $node->type;
-  // // if on tab check that all tabs are complete except the one you are on are complete
-  // $tabsCompleted = nul_census_custom_check_tab_statuses($node->field_parent_census[LANGUAGE_NONE][0]['target_id'], $exceptThisType, 'Complete');
-  // if (empty($tabsCompleted['notComplete'])) {
-  //   if (!empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
-  //     $completeCensusTerm = key(taxonomy_get_term_by_name('Complete', 'status_type_for_census'));
-  //     // If so update census to be complete
-  //     if ($completeCensusTerm) {
-  //       $parentCensus = node_load($node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
-  //       $parentCensus->field_census_status[LANGUAGE_NONE][0]['tid'] = $completeCensusTerm;
-  //       node_save($parentCensus);
-  //     }
-  //   }
-  // }
   if (!empty($node->type)) {
     if ($node->type == 'census') {
       // Check permissions, if do not have permission to edit census hide edit button
       if (!empty($node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && $node->nid == arg(1)) {
-        $perms['canEdit'] = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'census');
+        $perms = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'census');
         if (!$perms['canEdit']) {
           drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/hideEdit.js');
           drupal_set_message("You do not have permission to edit this content at this stage", 'error');
         }
       }
       // If all tabs are reviewed and census is submitted and user has permission add button to mark census as review complete
-      // TODO THIS IS A HACKY WORKAROUND NOT TO USE AJAX SHOULD BE DONE USING AJAX WHEN TIME ALLOWS
       if (!empty($node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && $node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name == 'Submitted' && user_access('can mark census tabs resubmit and reviewed')) {
         // check that all tabs have status reviewed
         $tabsCompleted = nul_census_custom_check_tab_statuses($node->nid, '', 'Reviewed');
@@ -70,10 +54,6 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
       }
       // check if the content type is in the taxonomy for census tabs
       $termDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $node->type);
-      // TODO delete this... these error messages this is really just for debugging while developing
-      if (!$termDetails) {
-        drupal_set_message(t('Not a Census Tab or unpopulated content type machine name on the taxonomy term'), 'error');
-      }
       // IF on a census tab
       if ($termDetails) {
         if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && !empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id']) && !empty($node->nid)) {
@@ -122,13 +102,12 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     }
     // if user does not have access to magic fields disable them so user cannot change them
     $fieldsToHideAndDisableOnCensus = array(
-      'title',
       'field_year',
       'field_affiliate_',
       'field_census_status',
     );
     nul_census_custom_hide_and_disable_fields($form, $fieldsToHideAndDisableOnCensus);
-
+    $form['title']['#disabled'] = TRUE;
     // IF ON A CENSUS IN CREATE MODE
     if (
     arg(0) == 'node' &&
@@ -138,18 +117,43 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     arg(3) >= 1) {
       // set year to be current year
       $year = date("Y");
-      //TODO look up contact org name of arg(3) and print instead of id
-      // TODO Update title field to be the name of the affliate and hide
-      $form['title']['#default_value'] = arg(3) . " " . $year . " Census";
-
-      // Update Year field and disable
-      $form['field_year'][LANGUAGE_NONE][0]['value']['#default_value'] = $year;
-      // Update affliate field and disable
-      $form['field_affiliate_'][LANGUAGE_NONE][0]['value']['#default_value'] = arg(3);
-      // set default status to inclomplete
-      $defaultStatus = array_search('Incomplete', $form['field_census_status'][LANGUAGE_NONE]['#options']);
-      if (empty($form['field_census_status'][LANGUAGE_NONE]['#default_value'])) {
-        $form['field_census_status'][LANGUAGE_NONE]['#default_value'][] = $defaultStatus;
+      // CHECK for existing Census
+      $query = new EntityFieldQuery();
+      $results = $query->entityCondition('entity_type', 'node')
+        ->entityCondition('bundle', 'census')
+        ->fieldCondition('field_affiliate_', 'value', arg(3))
+        ->fieldCondition('field_year', 'value', $year)
+        ->execute();
+      // If you find one go to it
+      if (!empty($results['node'])) {
+        drupal_goto('/node/' . key($results['node']));
+      }
+      $canCreate = nul_census_custom_census_creation_permissions(arg(3));
+      // If no existing census for that affiliate check user permissions
+      if ($canCreate) {
+        $affiliate = '';
+        // look up display name
+        $params = array(
+          'return' => array("display_name"),
+          'id' => arg(3),
+        );
+        $affiliateInfo = nul_census_custom_civi_api('Contact', 'getsingle', $params);
+        if (!empty($affiliateInfo['display_name'])) {
+          $affiliateName = $affiliateInfo['display_name'];
+        }
+        if (!empty($affiliateName)) {
+          // make title field to be the name of the affliate and hide
+          $form['title']['#default_value'] = $affiliateName . " " . $year . " Census";
+          // Update Year field and disable
+          $form['field_year'][LANGUAGE_NONE][0]['value']['#default_value'] = $year;
+          // Update affliate field and disable
+          $form['field_affiliate_'][LANGUAGE_NONE][0]['value']['#default_value'] = arg(3);
+          // set default status to inclomplete
+          $defaultStatus = array_search('Incomplete', $form['field_census_status'][LANGUAGE_NONE]['#options']);
+          if (empty($form['field_census_status'][LANGUAGE_NONE]['#default_value'])) {
+            $form['field_census_status'][LANGUAGE_NONE]['#default_value'][] = $defaultStatus;
+          }
+        }
       }
     }
   }
@@ -289,6 +293,14 @@ function nul_census_custom_permission() {
       'title' => t('edit own affiliate census and tabs'),
       'description' => t('Allows a user to edit census tabs with status complete, submitted, reviewed or review complete.'),
     ),
+    'can create census for own affiliate' => array(
+      'title' => t('edit own affiliate census and tabs'),
+      'description' => t('Allows a user to edit census tabs with status complete, submitted, reviewed or review complete.'),
+    ),
+    'can create census for any affiliate' => array(
+      'title' => t('edit own affiliate census and tabs'),
+      'description' => t('Allows a user to edit census tabs with status complete, submitted, reviewed or review complete.'),
+    ),
     'edit census tabs with status submitted reviewed complete or review complete' => array(
       'title' => t('Edit all census tabs with status submitted, complete, reviewed or review complete'),
       'description' => t('Allows a user to edit census tabs with status complete, submitted, reviewed or review complete.'),
@@ -350,7 +362,7 @@ function nul_census_custom_block_view_alter(&$data, $block) {
       }
     }
     if ($parentCensusNid == 0) {
-      // TODO Check if on a census tab in edit mode and make census tab menu work from there
+      // checks if on a census tab in create mode and make census tab menu work from there
       if (
         arg(0) == 'node' &&
         arg(1) == 'add' &&
@@ -363,7 +375,7 @@ function nul_census_custom_block_view_alter(&$data, $block) {
     }
     foreach ($censusTabs as $key => $object) {
       if ($parentCensusNid == 0) {
-        // TODO Check if on a census tab in edit mode and make census tab menu work from there
+        // Checks if on a census tab in edit mode and make census tab menu work from there
         if (
         arg(0) == 'node' &&
         arg(1) == 'add' &&
@@ -523,25 +535,28 @@ function nul_census_custom_node_validate($node, $form, &$form_state) {
       form_set_error('parent_census', t('A tab of this type already exists for this census. Please update that tab instead'));
     }
   }
+  // TODO do not let user create duplicate census
 }
 
 /**
  * Implements hook_node_access_records().
  */
 function nul_census_custom_node_access_records($node) {
-
+  // If user is limited to editing their own affiliate do not let them edit others
   $grants = array();
   $tabTermDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $node->type);
   $affiliate = NULL;
   // If on a tab
   if (!empty($tabTermDetails)) {
     $affiliate = nul_census_custom_get_affiliate_from_node($node, 'tab');
+    $perms = nul_census_custom_check_status_permisions($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'tab');
   }
   // If on a census
   if ($node->type == 'census') {
     $affiliate = nul_census_custom_get_affiliate_from_node($node, 'census');
+    $perms = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'census');
   }
-  if (!empty($affiliate)) {
+  if (!empty($affiliate) && $perms['canEdit'] == TRUE) {
     $grants[] = array(
       'realm' => 'nul_census_custom_realm_for_editing_own_affiliate_census',
       'gid' => $affiliate,
@@ -559,25 +574,11 @@ function nul_census_custom_node_access_records($node) {
  */
 function nul_census_custom_node_grants($account, $op) {
   $grants = array();
-  $drupalUserId = $account->uid;
-  if (!civicrm_initialize()) {
-    return;
-  }
-  // TODO Update Catch
-  try {
-    $civiContact = civicrm_api3('UFMatch', 'getsingle', array(
-      'return' => array("contact_id.custom_7", "contact_id.id"),
-      'id' => $account->uid,
-    ));
-  }
-  catch (Exception $e) {
-
-  }
+  $affiliate = nul_census_custom_get_affiliate_from_user($account->uid);
   // TODO get real affiliate field from data.empowered
-  if (user_access('edit own affiliate censuses', $account) && !empty($civiContact['contact_id.custom_7'])) {
+  if (user_access('edit own affiliate censuses', $account) && !empty($affiliate)) {
     // gid to allow view access.
-    $grants['nul_census_custom_realm_for_editing_own_affiliate_census'][] = array($civiContact['contact_id.custom_7']);
+    $grants['nul_census_custom_realm_for_editing_own_affiliate_census'][] = array($affiliate);
   }
-
   return $grants;
 }

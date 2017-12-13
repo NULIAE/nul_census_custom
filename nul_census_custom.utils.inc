@@ -214,7 +214,7 @@ function nul_census_custom_hide_and_disable_fields(&$form, $fieldsToHideAndDisab
     foreach ($fieldsToHideAndDisable as $key => $value) {
       if (!empty($form[$value])) {
         $form[$value]['#disabled'] = TRUE;
-        // $form[$value]['#type'] = 'hidden';
+        $form[$value]['#type'] = 'hidden';
       }
     }
   }
@@ -252,17 +252,6 @@ function nul_census_custom_button_to_update_status($statusOfTab, $statusTabMustB
 }
 
 /**
- * Get Affliate (or affiliates) that the logged in user has access to
- * @return int $id contactId of the affilaite in civi
- */
-// function nul_census_custom_get_affiliate() {
-//   global $user;
-//   // TODO using drupal user look up civi affiliate
-//   $id = 18;
-//   return $id;
-// }
-
-/**
  * [nul_census_custom_get_affiliate_from_tab description]
  * @param  [type] $node [description]
  * @return [type]       [description]
@@ -282,4 +271,55 @@ function nul_census_custom_get_affiliate_from_node(&$node, $censusPart) {
   }
   // print_r($affiliate); die();
   return $affiliate;
+}
+
+function nul_census_custom_civi_api($entity, $action, $params) {
+  if (!civicrm_initialize()) {
+    return;
+  }
+  try {
+    $results = civicrm_api3($entity, $action, $params);
+  }
+  catch (CiviCRM_API3_Exception $e) {
+    $error = $e->getMessage();
+    CRM_Core_Error::debug_log_message(ts('API Error %1', array(
+      'domain' => 'nul_census_custom',
+      1 => $error,
+    )));
+  }
+  return $results;
+}
+
+function nul_census_custom_get_affiliate_from_user($drupalUserId = NULL) {
+  if ($drupalUserId == NULL) {
+    global $user;
+    $drupalUserId == $user->id;
+  }
+  $affiliate = NULL;
+  $params = array(
+    'return' => array("contact_id.custom_7", "contact_id.id"),
+    'id' => $drupalUserId,
+  );
+  $civiContact = nul_census_custom_civi_api('UFMatch', 'getsingle', $params);
+  if (!empty($civiContact["contact_id.custom_7"])) {
+    $affiliate = $civiContact["contact_id.custom_7"];
+  }
+  return $affiliate;
+}
+
+function nul_census_custom_census_creation_permissions($affiliateId) {
+  $canCreate = FALSE;
+  // If can only create censuses for their affiliate check that this is their affiliate
+  if (user_access('can create census for own affiliate')) {
+    // get Affiliate of user (on civi Contact record)
+    $loggedInUserAffiliate = nul_census_custom_get_affiliate_from_user();
+    if ($affiliateId == $loggedInUserAffiliate) {
+      $canCreate = TRUE;
+    }
+  }
+  // If an admin user can create
+  if (user_access('can create census for any affiliate') || user_access('can edit magic census fields')) {
+    $canCreate = TRUE;
+  }
+  return $canCreate;
 }
