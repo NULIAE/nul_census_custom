@@ -311,7 +311,7 @@ function nul_census_custom_civi_api($entity, $action, $params) {
 function nul_census_custom_get_affiliate_from_user($drupalUserId = NULL) {
   if ($drupalUserId == NULL) {
     global $user;
-    $drupalUserId == $user->uid;
+    $drupalUserId = $user->uid;
   }
   $affiliate = NULL;
   $params = array(

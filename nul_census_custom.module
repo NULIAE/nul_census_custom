@@ -40,7 +40,7 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
             nul_census_custom_update_nodes_status_field($censusCompleted, 'Reviewed Complete', 'census');
             // Updating all related tabs
             nul_census_custom_update_nodes_status_field($tabsCompleted['complete'], 'Reviewed Complete', 'tab');
-            drupal_set_message('Census saved as Review Complete', 'notice');
+            drupal_set_message('Census saved as Review Complete', 'success');
             drupal_goto("node/" . arg(1));
           }
         }
@@ -295,12 +295,12 @@ function nul_census_custom_permission() {
       'description' => t('Allows a user to edit census tabs with status complete, submitted, reviewed or review complete.'),
     ),
     'can create census for own affiliate' => array(
-      'title' => t('edit own affiliate census and tabs'),
-      'description' => t('Allows a user to edit census tabs with status complete, submitted, reviewed or review complete.'),
+      'title' => t('can create census for own affiliate'),
+      'description' => t('Allows a user to create a census for the affiliate on their contact record.'),
     ),
     'can create census for any affiliate' => array(
-      'title' => t('edit own affiliate census and tabs'),
-      'description' => t('Allows a user to edit census tabs with status complete, submitted, reviewed or review complete.'),
+      'title' => t('can create census for any affiliate'),
+      'description' => t('Allows a user to create a census for any affiliate'),
     ),
     'edit census tabs with status submitted reviewed complete or review complete' => array(
       'title' => t('Edit all census tabs with status submitted, complete, reviewed or review complete'),
@@ -327,7 +327,7 @@ function nul_census_custom_permission() {
       'description' => t('Allows a user to mark census tabs as complete'),
     ),
     'can certify census as complete' => array(
-      'title' => t('Can mark affiliates census as complete'),
+      'title' => t('Can certify a census is complete'),
       'description' => t('Allows a user to access the certify field if the census has a status of complete this moves the census to submitted'),
     ),
     'can edit magic census fields' => array(
@@ -444,7 +444,8 @@ function nul_census_custom_node_update($node) {
           if (!empty($ogStatusTerm->name)) {
             $params['prev_status'] = $ogStatusTerm->name;
           }
-          drupal_mail('nul_census_custom', 'status_change', 'alice@aghstrategies.com', $language, $params, 'alice@aghstrategies.com', TRUE);
+          $emailToNotify = variable_get('emailnotification');
+          drupal_mail('nul_census_custom', 'status_change', $emailToNotify, $language, $params, $emailToNotify, TRUE);
         }
       }
     }
@@ -482,7 +483,8 @@ function nul_census_custom_node_insert($node) {
     $params = array(
       'nid' => $node->nid,
     );
-    drupal_mail('nul_census_custom', 'census_created', 'alice@aghstrategies.com', $language, $params, 'alice@aghstrategies.com', TRUE);
+    $emailToNotify = variable_get('emailnotification');
+    drupal_mail('nul_census_custom', 'census_created', $emailToNotify, $language, $params, $emailToNotify, TRUE);
   }
 }
 
@@ -496,14 +498,14 @@ function nul_census_custom_mail($key, &$message, $params) {
       $link = $base_url . '/node/' . $params['nid'];
       $message['subject'] = "{$params['title']} Status Changed to {$params['status']}";
       $message['body'][] = "'{$params['title']}' Status Changed to {$params['status']} from {$params['prev_status']} see link below to visit this census: $link";
-      drupal_set_message(t('Status Change email sent'), 'notice');
+      drupal_set_message(t('Status Change email sent'), 'success');
       break;
 
     case 'census_created':
       $link = $base_url . '/node/' . $params['nid'];
       $message['subject'] = "Census Created nid: {$params['nid']}";
       $message['body'][] = "Census Created nid: {$params['nid']} visit at $link";
-      drupal_set_message(t('Census Created email sent'), 'notice');
+      drupal_set_message(t('Census Created email sent'), 'success');
       break;
 
     default:
