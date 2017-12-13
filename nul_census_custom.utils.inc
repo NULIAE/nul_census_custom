@@ -258,19 +258,19 @@ function nul_census_custom_button_to_update_status($statusOfTab, $statusTabMustB
 
 /**
  * get affiliate from node
- * @param  object $node node
+ * @param  int $nid node id
  * @param string $censusPart tab or census
  * @return int $affiliate civicrm contact id of affiliate associated with this node
  */
-function nul_census_custom_get_affiliate_from_node(&$node, $censusPart) {
+function nul_census_custom_get_affiliate_from_node($nid, $censusPart) {
   $affiliate = NULL;
   if ($censusPart == 'tab') {
-    if (!empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
-      $parentCensus = node_load($node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
+    if (!empty($nid)) {
+      $parentCensus = node_load($nid);
     }
   }
   if ($censusPart == 'census') {
-    $parentCensus = $node;
+    $parentCensus = node_load($nid);
   }
   if (!empty($parentCensus->field_affiliate[LANGUAGE_NONE][0]['value'])) {
     $affiliate = $parentCensus->field_affiliate[LANGUAGE_NONE][0]['value'];

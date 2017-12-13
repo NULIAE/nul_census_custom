@@ -265,16 +265,23 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
       arg(1) == 'add' &&
       !empty(arg(2)) &&
       arg(3) >= 1) {
-        // Setting tab status to be incomplete since we are creating and we cant set default on the field since we can't export taxonomy terms with features
-        if (!empty($form['field_tab_status'][LANGUAGE_NONE]['#options']) && array_search("Incomplete", $form['field_tab_status'][LANGUAGE_NONE]['#options'])) {
-          $form['field_tab_status'][LANGUAGE_NONE]['#default_value'][0] = array_search("Incomplete", $form['field_tab_status'][LANGUAGE_NONE]['#options']);
+        $affiliate = nul_census_custom_get_affiliate_from_node($node->nid, 'tab');
+        $canCreate = nul_census_custom_census_creation_permissions($affiliate);
+        if ($canCreate) {
+          // Setting tab status to be incomplete since we are creating and we cant set default on the field since we can't export taxonomy terms with features
+          if (!empty($form['field_tab_status'][LANGUAGE_NONE]['#options']) && array_search("Incomplete", $form['field_tab_status'][LANGUAGE_NONE]['#options'])) {
+            $form['field_tab_status'][LANGUAGE_NONE]['#default_value'][0] = array_search("Incomplete", $form['field_tab_status'][LANGUAGE_NONE]['#options']);
+          }
+          // set parent census based on value in url
+          if (!empty($form['field_parent_census'][LANGUAGE_NONE]['#options'][arg(3)])) {
+            $form['field_parent_census'][LANGUAGE_NONE]['#default_value'] = arg(3);
+          }
+          if ($censusTab->name) {
+            $form['title']['#default_value'] = $censusTab->name;
+          }
         }
-        // set parent census based on value in url
-        if (!empty($form['field_parent_census'][LANGUAGE_NONE]['#options'][arg(3)])) {
-          $form['field_parent_census'][LANGUAGE_NONE]['#default_value'] = arg(3);
-        }
-        if ($censusTab->name) {
-          $form['title']['#default_value'] = $censusTab->name;
+        else {
+          drupal_goto('403');
         }
       }
     }
@@ -549,12 +556,12 @@ function nul_census_custom_node_access_records($node) {
   $affiliate = NULL;
   // If on a tab
   if (!empty($tabTermDetails)) {
-    $affiliate = nul_census_custom_get_affiliate_from_node($node, 'tab');
+    $affiliate = nul_census_custom_get_affiliate_from_node($node->field_tab_status[LANGUAGE_NONE][0]['tid'], 'tab');
     $perms = nul_census_custom_check_status_permisions($node->field_tab_status[LANGUAGE_NONE][0]['tid'], 'tab');
   }
   // If on a census
   if ($node->type == 'census') {
-    $affiliate = nul_census_custom_get_affiliate_from_node($node, 'census');
+    $affiliate = nul_census_custom_get_affiliate_from_node($node->nid, 'census');
     // TODO Check this value
     $perms = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['tid'], 'census');
   }
