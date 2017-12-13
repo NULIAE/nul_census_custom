@@ -462,6 +462,9 @@ function nul_census_custom_node_update($node) {
  * hook_node_submit()
  */
 function nul_census_custom_node_submit($node, $form, &$form_state) {
+  if (!empty($node->field_parent_census) && empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id']) && arg(3) >= 1) {
+    $node->field_parent_census[LANGUAGE_NONE][0]['target_id'] = arg(3);
+  }
   // IF on parent census and survey is being certified as complete update census and all reated tabs to submitted
   if (!empty($node->field_survey_name_of_certifier[LANGUAGE_NONE][0]['value'])) {
     // check that all tabs are completed
@@ -537,7 +540,7 @@ function nul_census_custom_node_validate($node, $form, &$form_state) {
       $allowParentCensus = TRUE;
     }
     // there is only one tab and it is this one
-    if (!empty($node->nid) && count($results['node']) == 1 && key($results['node']) == $node->nid) {
+    if (!empty($results['node']) && count($results['node']) == 1 && key($results['node']) == $node->nid) {
       $allowParentCensus = TRUE;
     }
     if ($allowParentCensus == FALSE) {
