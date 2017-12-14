@@ -218,9 +218,10 @@ function nul_census_custom_hide_and_disable_fields(&$form, $fieldsToHideAndDisab
   if (!user_access('can edit magic census fields')) {
     foreach ($fieldsToHideAndDisable as $key => $value) {
       if (!empty($form[$value])) {
-        // TODO when disabling fields this way content types with paragraphs with content entered do not save properly when logged in as a staff person
+        // TODO when disabling fields the drupal way content types with paragraphs do not save appropriately so using js workaround
         // $form[$value]['#disabled'] = TRUE;
-        $form[$value]['#type'] = 'hidden';
+        // $form[$value]['#type'] = 'hidden';
+        $form[$value]['#attributes']['class'][] = 'hide';
       }
     }
   }
