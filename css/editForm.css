@@ -67,6 +67,7 @@ padding: 5px;
   font-weight: bold;
 }
 
+/*hide form elements*/
 .hide {
   display: none;
 }

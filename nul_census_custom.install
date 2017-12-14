@@ -4,6 +4,7 @@
  * [feature_name_install description]
  */
 function nul_census_custom_install() {
+  // Sets up nul custom settings data base table
   function odb_incomelimits_schema() {
     $schema['nul_census_custom_settings'] = array(
       'description' => 'Settings for nul_census_custom',
@@ -166,7 +167,11 @@ function nul_census_custom_install() {
     }
     return $vocabDetails;
   }
-
+  /**
+   * Creates taxonomy terms
+   * @param  array $vocabDetails    of name and any fields needed
+   * @param  array $programAreasVocab for taxonmy terms that are dependent on the program Areas vocab sends Program Area Terms
+   */
   function createTaxonomyListItems($vocabDetails, $programAreasVocab) {
     foreach ($vocabDetails as $key => $detailsOfVocab) {
       // attempt to load vocab terms
@@ -241,6 +246,7 @@ function nul_census_custom_install() {
       }
     }
   }
+  // Create taxonomy list terms as needed
   $vocabArrayBasic = vocabArrays('basic');
   $programAreasVocab = array();
   $basicVocabulary = createTaxonomyListItems($vocabArrayBasic, $programAreasVocab);

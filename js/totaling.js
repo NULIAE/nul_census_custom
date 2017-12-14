@@ -1,4 +1,5 @@
 (function ($) {
+  // THIS JS handles tables with total fields that need to be calcualted
   // TODO add all table bases and total field Ids to this array for tables with one total
   var tableFieldBases = [
      {

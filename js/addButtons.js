@@ -1,4 +1,6 @@
 (function ($) {
+  // TODO JS to add butons to update the status of tabs
+  //  and the census... move to hook menu when possible
   $(document).ready(function () {
     var nid = Drupal.settings.nul_census_custom.nid;
     var href = '/node/' + nid;
