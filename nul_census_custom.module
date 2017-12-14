@@ -526,6 +526,32 @@ function nul_census_custom_node_validate($node, $form, &$form_state) {
   // Validate that this is the only tab of this type for this parent census (do not let ppl create duplicate tabs)
   $tabTermDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $node->type);
   if ($tabTermDetails) {
+    // Make sure percentages add up to 100
+    if ($node->type == 'service_areas') {
+      $raceFields = array(
+        'field_service_area_native_am',
+        'field_service_area_white',
+        'field_service_area_hispanic',
+        'field_service_area_asian_am',
+        'field_service_area_african_am',
+        'field_service_area_other',
+      );
+      if (!empty($form['field_service_areas'][LANGUAGE_NONE])) {
+        foreach ($form['field_service_areas'][LANGUAGE_NONE] as $key => $paragraph) {
+          $totalPercentage = 0;
+          foreach ($raceFields as $key => $fieldName) {
+            if (!empty($paragraph['#entity']->{$fieldName}[LANGUAGE_NONE][0]['value'])) {
+              // print_r($paragraph['#entity']->{$fieldName}[LANGUAGE_NONE][0]['value']);
+              $totalPercentage = settype($totalPercentage, 'int') + settype($paragraph['#entity']->{$fieldName}[LANGUAGE_NONE][0]['value'], 'int');
+            }
+          }
+          if ($totalPercentage !== 100) {
+            form_set_error('field_service_areas', t('All Service Areas fields need to add up to 100'));
+          }
+        }
+        // die();
+      }
+    }
     // check if there is an existing node of the same content type with the same parent census
     // search for node of that type AND parent census with NID passed to the function
     $query = new EntityFieldQuery();

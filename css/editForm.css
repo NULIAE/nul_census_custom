@@ -71,3 +71,8 @@ padding: 5px;
 .hide {
   display: none;
 }
+
+/*making funding sources paragraphs less wide*/
+.group-funding-row.nulTableRow .form-select {
+  width: 150px;
+}
