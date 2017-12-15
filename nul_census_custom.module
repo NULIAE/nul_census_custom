@@ -482,7 +482,7 @@ function nul_census_custom_node_update($node) {
         $term = taxonomy_term_load($node->field_census_status[LANGUAGE_NONE][0]['tid']);
         // check that the name is in the array of status we want to alert people of a status being changed to.
         if (!empty($term->name) && in_array($term->name, array('Complete', 'Approved', 'Resubmit'))) {
-
+          $toAndFrom = nul_census_custom_get_emails_to_notify($node);
           // status has changed to Complete Approved or resubmit, we should email appropriate ppl
           $language = language_default();
           $params = array(
@@ -496,8 +496,7 @@ function nul_census_custom_node_update($node) {
           if (!empty($ogStatusTerm->name)) {
             $params['prev_status'] = $ogStatusTerm->name;
           }
-          $emailToNotify = variable_get('emailnotification');
-          drupal_mail('nul_census_custom', 'status_change', $emailToNotify, $language, $params, $emailToNotify, TRUE);
+          drupal_mail('nul_census_custom', 'status_change', $toAndFrom['to'], $language, $params, $toAndFrom['from'], TRUE);
         }
       }
     }
@@ -535,8 +534,8 @@ function nul_census_custom_node_insert($node) {
     $params = array(
       'nid' => $node->nid,
     );
-    $emailToNotify = variable_get('emailnotification');
-    drupal_mail('nul_census_custom', 'census_created', $emailToNotify, $language, $params, $emailToNotify, TRUE);
+    $toAndFrom = nul_census_custom_get_emails_to_notify($node);
+    drupal_mail('nul_census_custom', 'census_created', $toAndFrom['to'], $language, $params, $toAndFrom['from'], TRUE);
   }
 }
 

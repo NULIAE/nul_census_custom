@@ -379,3 +379,35 @@ function nul_census_custom_check_all_fields_populated(&$node) {
   }
   return $unfilledFields;
 }
+
+/**
+ * [nul_census_custom_get_emails_to_notify description]
+ * @param  [type] $node [description]
+ * @return [type]       [description]
+ */
+function nul_census_custom_get_emails_to_notify($node) {
+  $toAndFrom = array(
+    'to' => '',
+    'from' => '',
+  );
+  // emails to notify
+  $emailFields = array(
+    'field_survey_email_address',
+    'field_email_address',
+  );
+  $from = variable_get('emailnotification');
+  $to = array($from);
+  foreach ($emailFields as $key => $field) {
+    if (!empty($node->{$field}[LANGUAGE_NONE][0]['value'])) {
+      $affiliateContactEmails[] = $node->{$field}[LANGUAGE_NONE][0]['value'];
+    }
+  }
+  $to = implode(', ', $to);
+  if (!empty($from)) {
+    $toAndFrom['from'] = $from;
+  }
+  if (!empty($to)) {
+    $toAndFrom['to'] = $to;
+  }
+  return $toAndFrom;
+}
