@@ -149,11 +149,6 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     $form['#attached']['css'] = array(
       drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
     );
-    $fieldsToHideAndDisableOnProgram = array(
-      'field_parent_census',
-      'field_program_area',
-    );
-    nul_census_custom_hide_and_disable_fields($form, $fieldsToHideAndDisableOnProgram);
     // set parent census based on value in url
     if (!empty($form['field_parent_census'][LANGUAGE_NONE]['#options'][arg(3)])) {
       $form['field_parent_census'][LANGUAGE_NONE]['#default_value'] = arg(3);
@@ -179,6 +174,10 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     if (!empty($form['field_program_area'][LANGUAGE_NONE]['#entity']->field_program_area[LANGUAGE_NONE][0]['tid'])) {
       $programArea = $form['field_program_area'][LANGUAGE_NONE]['#entity']->field_program_area[LANGUAGE_NONE][0]['tid'];
     }
+    $fieldsToHideAndDisableOnProgram = array(
+      'field_parent_census',
+      'field_program_area',
+    );
     // If you find a program area
     if ($programArea > 0) {
       // Check the following fields options
@@ -197,8 +196,13 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
             }
           }
         }
+        // IF no options for this program type hide the field
+        if (count($form[$fieldName][LANGUAGE_NONE]['#options']) == 1 && !empty($form[$fieldName][LANGUAGE_NONE]['#options']['_none'])) {
+          $fieldsToHideAndDisableOnProgram[] = $fieldName;
+        }
       }
     }
+    nul_census_custom_hide_and_disable_fields($form, $fieldsToHideAndDisableOnProgram);
   }
   // ON TABS IN EDIT  or CREATE MODE
   if (!empty($form['#node']->type)) {
