@@ -10,8 +10,8 @@ function nul_census_custom_settings_form($form, &$form_state) {
   // TODO also send emails to CEO/Contact email
   $form['emailnotification'] = array(
     '#type' => 'textfield',
-    '#title' => t('Email to send Notifications to'),
-    '#description' => t('List the emails that should be notified when censuses change statuses'),
+    '#title' => t('From Email Address for Census Status update Notifications'),
+    '#description' => t('List the emails that should be notified when censuses change statuses separted by commas, in addtion to emails listed here email notifications will be sent to the email addresses on the census'),
     '#default_value' => variable_get('emailnotification'),
   );
 
