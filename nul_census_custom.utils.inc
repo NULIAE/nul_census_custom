@@ -333,19 +333,36 @@ function nul_census_custom_get_affiliate_from_user($drupalUserId = NULL) {
  * @param  int $affiliateId id of affiliate
  * @return boolean             true or false, can edit or can't
  */
-function nul_census_custom_census_creation_permissions($affiliateId) {
-  $canCreate = FALSE;
-  // If can only create censuses for their affiliate check that this is their affiliate
-  if (user_access('can create census for own affiliate')) {
-    // get Affiliate of user (on civi Contact record)
+function nul_census_custom_census_creation_permissions($affiliateId, $year) {
+  $canCreate = array();
+  // If can only create censuses for their affiliate check that the id passed from the url is for an affiliate the user has access to
+  if (user_access('can create census for own affiliate') && !user_access('can create census for any affiliate') && !user_access('can edit magic census fields')) {
+    // get Affiliate of user (on civi Contact record) no matter what direct to censuses of that affiliate
     $loggedInUserAffiliate = nul_census_custom_get_affiliate_from_user();
-    if ($affiliateId == $loggedInUserAffiliate) {
-      $canCreate = TRUE;
+    // If user does not have an affiliate direct to home page
+    if (empty($loggedInUserAffiliate)) {
+      drupal_goto('/');
+    }
+    // IF user has an affiliate set it
+    else {
+      $canCreate['affiliateId'] = $loggedInUserAffiliate;
     }
   }
   // If an admin user can create
   if (user_access('can create census for any affiliate') || user_access('can edit magic census fields')) {
-    $canCreate = TRUE;
+    $canCreate['affiliateId'] = $affiliateId;
+  }
+  // CHECK for existing Census
+  $query = new EntityFieldQuery();
+  $results = $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'census')
+    ->fieldCondition('field_affiliate', 'value', $canCreate['affiliateId'])
+    ->fieldCondition('field_year', 'value', $year)
+    ->execute();
+  // If you find one go to it
+  if (!empty($results['node'])) {
+    $canCreate['existingCesus'] = key($results['node']);
+    drupal_goto('/node/' . key($results['node']));
   }
   return $canCreate;
 }

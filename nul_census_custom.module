@@ -112,46 +112,29 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
     arg(3) >= 1) {
       // set year to be current year
       $year = date("Y");
-      // CHECK for existing Census
-      $query = new EntityFieldQuery();
-      $results = $query->entityCondition('entity_type', 'node')
-        ->entityCondition('bundle', 'census')
-        ->fieldCondition('field_affiliate', 'value', arg(3))
-        ->fieldCondition('field_year', 'value', $year)
-        ->execute();
-      // If you find one go to it
-      if (!empty($results['node'])) {
-        drupal_goto('/node/' . key($results['node']));
-      }
-      $canCreate = nul_census_custom_census_creation_permissions(arg(3));
-      // If no existing census for that affiliate check user permissions
-      if ($canCreate) {
-        $affiliate = '';
+      $canCreate = nul_census_custom_census_creation_permissions(arg(3), $year);
+      // If an affiliate id for which the logged in user has access to is found
+      if ($canCreate['affiliateId'] >= 1) {
         // look up display name
         $params = array(
           'return' => array("display_name"),
-          'id' => arg(3),
+          'id' => $affiliateId,
         );
         $affiliateInfo = nul_census_custom_civi_api('Contact', 'getsingle', $params);
         if (!empty($affiliateInfo['display_name'])) {
-          $affiliateName = $affiliateInfo['display_name'];
+          $displayName = $affiliateInfo['display_name'];
         }
-        if (!empty($affiliateName)) {
-          // make title field to be the name of the affliate and hide
-          $form['title']['#default_value'] = $affiliateName . " " . $year . " Census";
-          // Update Year field and disable
-          $form['field_year'][LANGUAGE_NONE][0]['value']['#default_value'] = $year;
-          // Update affliate field and disable
-          $form['field_affiliate'][LANGUAGE_NONE][0]['value']['#default_value'] = arg(3);
-          // set default status to inclomplete
-          $defaultStatus = array_search('Incomplete', $form['field_census_status'][LANGUAGE_NONE]['#options']);
-          if (empty($form['field_census_status'][LANGUAGE_NONE]['#default_value'])) {
-            $form['field_census_status'][LANGUAGE_NONE]['#default_value'][] = $defaultStatus;
-          }
+        // make title field to be the name of the affliate and hide
+        $form['title']['#default_value'] = $displayName . " " . $year . " Census";
+        // Update Year field and disable
+        $form['field_year'][LANGUAGE_NONE][0]['value']['#default_value'] = $year;
+        // Update affliate field and disable
+        $form['field_affiliate'][LANGUAGE_NONE][0]['value']['#default_value'] = $canCreate['affiliateId'];
+        // set default status to inclomplete
+        $defaultStatus = array_search('Incomplete', $form['field_census_status'][LANGUAGE_NONE]['#options']);
+        if (empty($form['field_census_status'][LANGUAGE_NONE]['#default_value'])) {
+          $form['field_census_status'][LANGUAGE_NONE]['#default_value'][] = $defaultStatus;
         }
-      }
-      else {
-        drupal_set_message(t('You do not have permission to create a census for this affiliate'), 'error');
       }
     }
   }
@@ -526,13 +509,13 @@ function nul_census_custom_node_validate($node, $form, &$form_state) {
   // Validate that this is the only tab of this type for this parent census (do not let ppl create duplicate tabs)
   $tabTermDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $node->type);
   if ($tabTermDetails) {
-    // Make sure percentages add up to 100
+    // TODO Make sure percentages add up to 100
     if ($node->type == 'service_areas') {
       $raceFields = array(
-        'field_service_area_native_am',
         'field_service_area_white',
         'field_service_area_hispanic',
         'field_service_area_asian_am',
+        'field_service_area_native_am',
         'field_service_area_african_am',
         'field_service_area_other',
       );
@@ -541,11 +524,11 @@ function nul_census_custom_node_validate($node, $form, &$form_state) {
           $totalPercentage = 0;
           foreach ($raceFields as $key => $fieldName) {
             if (!empty($paragraph['#entity']->{$fieldName}[LANGUAGE_NONE][0]['value'])) {
-              // print_r($paragraph['#entity']->{$fieldName}[LANGUAGE_NONE][0]['value']);
-              $totalPercentage = settype($totalPercentage, 'int') + settype($paragraph['#entity']->{$fieldName}[LANGUAGE_NONE][0]['value'], 'int');
+              $totalPercentage = $totalPercentage + $paragraph['#entity']->{$fieldName}[LANGUAGE_NONE][0]['value'];
             }
           }
-          if ($totalPercentage !== 100) {
+          print_r(settype($paragraph['#entity']->{$fieldName}[LANGUAGE_NONE][0]['value'], 'int')); die();
+          if ($totalPercentage !== 100 || $totalPercentage !== 0) {
             form_set_error('field_service_areas', t('All Service Areas fields need to add up to 100'));
           }
         }
