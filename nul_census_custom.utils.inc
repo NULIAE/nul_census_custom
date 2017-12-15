@@ -366,3 +366,16 @@ function nul_census_custom_census_creation_permissions($affiliateId, $year) {
   }
   return $canCreate;
 }
+
+function nul_census_custom_check_all_fields_populated(&$node) {
+  // TODO look up paragraphs fields and skip them
+  $unfilledFields = array();
+  foreach ($node as $property => $value) {
+    if (substr($property, 0, 6) == 'field_') {
+      if (empty($node->$property)) {
+        $unfilledFields[] = $property;
+      }
+    }
+  }
+  return $unfilledFields;
+}

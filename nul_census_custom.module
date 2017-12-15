@@ -58,8 +58,12 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
         if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && !empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id']) && !empty($node->nid)) {
           // IF on tab with status submitted and user has proper permissions add mark reviewed and resubmit buttons
           nul_census_custom_button_to_update_status($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'Submitted', 'can mark census tabs resubmit and reviewed', 'tab', $node->nid, $node->field_parent_census[LANGUAGE_NONE][0]['target_id'], array('Reviewed', 'Resubmit'));
+          // Check if all fields filled
+          // $unfilledFields = nul_census_custom_check_all_fields_populated($node);
+          // if (empty($unfilledFields)) {
           // IF on tab with status incomplete and user has proper permissions add mark complete
           nul_census_custom_button_to_update_status($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'Incomplete', 'can mark census tabs as complete', 'tabComplete', $node->nid, $node->field_parent_census[LANGUAGE_NONE][0]['target_id'], array('Complete'));
+          // }
         }
         // Add css file to tab in view mode
         drupal_add_css(drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css');
@@ -408,6 +412,34 @@ function nul_census_custom_block_view_alter(&$data, $block) {
  * hook_node_update()
  */
 function nul_census_custom_node_update($node) {
+  // If updating a tab to complete check if its the last one for its census.
+  // When all tabs are complete update census to complete
+  $censusTab = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $node->type);
+  if (!empty($censusTab) && !empty($node->field_tab_status[LANGUAGE_NONE][0]['tid']) && !empty($node->original->field_tab_status[LANGUAGE_NONE][0]['tid'])) {
+    // Make sure the status is changing
+    if ($node->original->field_tab_status[LANGUAGE_NONE][0]['tid'] !== $node->field_tab_status[LANGUAGE_NONE][0]['tid']) {
+      // Get statuses info
+      $OGstatus = taxonomy_term_load($node->original->field_tab_status[LANGUAGE_NONE][0]['tid']);
+      $status = taxonomy_term_load($node->field_tab_status[LANGUAGE_NONE][0]['tid']);
+      // If changing from incomplete to complete
+      if ($OGstatus->name == 'Incomplete' && $status->name == 'Complete') {
+        $exceptThisType = $node->type;
+        // if on tab check that all tabs are complete except the one you are on are complete
+        $tabsCompleted = nul_census_custom_check_tab_statuses($node->field_parent_census[LANGUAGE_NONE][0]['target_id'], $exceptThisType, 'Complete');
+        if (empty($tabsCompleted['notComplete'])) {
+          if (!empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
+            $completeCensusTerm = key(taxonomy_get_term_by_name('Complete', 'status_type_for_census'));
+            // If so update census to be complete
+            if ($completeCensusTerm) {
+              $parentCensus = node_load($node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
+              $parentCensus->field_census_status[LANGUAGE_NONE][0]['tid'] = $completeCensusTerm;
+              node_save($parentCensus);
+            }
+          }
+        }
+      }
+    }
+  }
   // AGH #11267 If census status changes to "completed" "approved" or "resubmit" send a notification email
   // If updating a census
   if ($node->type == 'census') {
@@ -445,9 +477,6 @@ function nul_census_custom_node_update($node) {
  * hook_node_submit()
  */
 function nul_census_custom_node_submit($node, $form, &$form_state) {
-  if (!empty($node->field_parent_census) && empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id']) && arg(3) >= 1) {
-    $node->field_parent_census[LANGUAGE_NONE][0]['target_id'] = arg(3);
-  }
   // IF on parent census and survey is being certified as complete update census and all reated tabs to submitted
   if (!empty($node->field_survey_name_of_certifier[LANGUAGE_NONE][0]['value'])) {
     // check that all tabs are completed
@@ -506,35 +535,59 @@ function nul_census_custom_mail($key, &$message, $params) {
 }
 
 function nul_census_custom_node_validate($node, $form, &$form_state) {
-  // Validate that this is the only tab of this type for this parent census (do not let ppl create duplicate tabs)
   $tabTermDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $node->type);
   if ($tabTermDetails) {
+    // Check all fields are full if dealing with a census tab with a status of 'Complete', 'Submitted', 'Resubmit', 'Reviewed', or 'Reviewed Complete'
+    // $status = taxonomy_term_load($node->field_tab_status[LANGUAGE_NONE][0]['tid']);
+    // if (in_array($status->name, array('Complete', 'Submitted', 'Resubmit', 'Reviewed', 'Reviewed Complete'))) {
+    //   foreach ($form as $key => $value) {
+    //     if (substr($key, 0, 6) == 'field_') {
+    //       $fieldValue = NULL;
+    //       if (!empty($value[LANGUAGE_NONE]['#title'])) {
+    //         $fieldTitle = $value[LANGUAGE_NONE]['#title'];
+    //         if (!empty($value[LANGUAGE_NONE]['#value'])) {
+    //           $fieldValue = $value[LANGUAGE_NONE]['#value'];
+    //         }
+    //       }
+    //       if (!empty($value[LANGUAGE_NONE][0]['value']['#title'])) {
+    //         $fieldTitle = $value[LANGUAGE_NONE]['#title'];
+    //         if (!empty($value[LANGUAGE_NONE][0]['value']['#value'])) {
+    //           $fieldValue = $value[LANGUAGE_NONE][0]['value']['#value'];
+    //         }
+    //       }
+    //       if ($fieldValue == NULL) {
+    //         form_set_error($key, "$fieldTitle field must be filled because this tab has a status of {$status->name}");
+    //       }
+    //     }
+    //   }
+    // }
+
     // TODO Make sure percentages add up to 100
-    if ($node->type == 'service_areas') {
-      $raceFields = array(
-        'field_service_area_white',
-        'field_service_area_hispanic',
-        'field_service_area_asian_am',
-        'field_service_area_native_am',
-        'field_service_area_african_am',
-        'field_service_area_other',
-      );
-      if (!empty($form['field_service_areas'][LANGUAGE_NONE])) {
-        foreach ($form['field_service_areas'][LANGUAGE_NONE] as $key => $paragraph) {
-          $totalPercentage = 0;
-          foreach ($raceFields as $key => $fieldName) {
-            if (!empty($paragraph['#entity']->{$fieldName}[LANGUAGE_NONE][0]['value'])) {
-              $totalPercentage = $totalPercentage + $paragraph['#entity']->{$fieldName}[LANGUAGE_NONE][0]['value'];
-            }
-          }
-          print_r(settype($paragraph['#entity']->{$fieldName}[LANGUAGE_NONE][0]['value'], 'int')); die();
-          if ($totalPercentage !== 100 || $totalPercentage !== 0) {
-            form_set_error('field_service_areas', t('All Service Areas fields need to add up to 100'));
-          }
-        }
-        // die();
-      }
-    }
+    // if ($node->type == 'service_areas') {
+    //   $raceFields = array(
+    //     'field_service_area_white',
+    //     'field_service_area_hispanic',
+    //     'field_service_area_asian_am',
+    //     'field_service_area_native_am',
+    //     'field_service_area_african_am',
+    //     'field_service_area_other',
+    //   );
+    //   if (!empty($form['field_service_areas'][LANGUAGE_NONE])) {
+    //     foreach ($form['field_service_areas'][LANGUAGE_NONE] as $key => $paragraph) {
+    //       $totalPercentage = 0;
+    //       foreach ($raceFields as $key => $fieldName) {
+    //         if (!empty($paragraph['#entity']->{$fieldName}[LANGUAGE_NONE][0]['value'])) {
+    //           $totalPercentage = $totalPercentage + $paragraph['#entity']->{$fieldName}[LANGUAGE_NONE][0]['value'];
+    //         }
+    //       }
+    //       if ($totalPercentage !== 100 || $totalPercentage !== 0) {
+    //         form_set_error('field_service_areas', t('All Service Areas fields need to add up to 100'));
+    //       }
+    //     }
+    //   }
+    // }
+
+    // Validate that this is the only tab of this type for this parent census (do not let ppl create duplicate tabs)
     // check if there is an existing node of the same content type with the same parent census
     // search for node of that type AND parent census with NID passed to the function
     $query = new EntityFieldQuery();
