@@ -51,7 +51,7 @@ function nul_census_custom_check_status_permisions($status, $contentType) {
           break;
 
         case 'Complete':
-          if (user_access('edit census tabs with status submitted reviewed complete or review complete')) {
+          if (user_access('edit census tabs with status submitted reviewed complete or review complete') || user_access('edit census with status complete')) {
             $canEdit = TRUE;
           }
           else {
