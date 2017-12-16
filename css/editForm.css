@@ -72,6 +72,34 @@ padding: 5px;
   display: none;
 }
 
+/* styling add program button */
+div.censusPrograms a.button {
+  background: #54AFE9;
+  background-image: -webkit-linear-gradient(top, #54AFE9, #2980b9);
+  background-image: -moz-linear-gradient(top, #54AFE9, #2980b9);
+  background-image: -ms-linear-gradient(top, #54AFE9, #2980b9);
+  background-image: -o-linear-gradient(top, #54AFE9, #2980b9);
+  background-image: linear-gradient(to bottom, #54AFE9, #2980b9);
+  -webkit-border-radius: 14;
+  -moz-border-radius: 14;
+  border-radius: 14px;
+  font-family: 76%/170% Verdana, sans-serif;
+  color: #ffffff;
+  font-size: 14px;
+  padding: 5px 10px 5px 10px;
+  text-decoration: none;
+}
+
+div.censusPrograms a.button:hover {
+  background: #3cb0fd;
+  background-image: -webkit-linear-gradient(top, #3cb0fd, #54AFE9);
+  background-image: -moz-linear-gradient(top, #3cb0fd, #54AFE9);
+  background-image: -ms-linear-gradient(top, #3cb0fd, #54AFE9);
+  background-image: -o-linear-gradient(top, #3cb0fd, #54AFE9);
+  background-image: linear-gradient(to bottom, #3cb0fd, #54AFE9);
+  text-decoration: none;
+}
+
 /*making funding sources paragraphs less wide*/
 .group-funding-row.nulTableRow .form-select {
   width: 150px;
