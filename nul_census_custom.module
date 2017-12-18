@@ -47,6 +47,19 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
       }
     }
     if ($node->type !== 'census') {
+      // IF on a program
+      // look up status of its details tab and base permission to edit on that
+      if (
+      $node->type == 'programs' &&
+      !empty($node->field_program_area[LANGUAGE_NONE][0]['taxonomy_term']->field_content_type[LANGUAGE_NONE][0]['value']) &&
+      !empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id'])
+      ) {
+        $programDetailsTab = nul_census_custom_get_status_of_programs_parent_details_tab($node->field_program_area[LANGUAGE_NONE][0]['taxonomy_term']->field_content_type[LANGUAGE_NONE][0]['value'], $node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
+        $perms = nul_census_custom_check_status_permisions($programDetailsTab->nid, 'tab');
+        if (!$perms['canEdit']) {
+          drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/hideEdit.js');
+        }
+      }
       // If on emergency_relief_activities view mode run this js to fix up table styling
       if ($node->type == 'emergency_relief_activities') {
         drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/formFix.js');
@@ -174,6 +187,8 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
   // IF ON PROGRAMS TAB
   // Check we are on a content type of programs
   if (!empty($form['type']['#value']) && $form['type']['#value'] == 'programs') {
+    // if on a programs tab add a redirect to go to the program details tab on save
+    $form['actions']['submit']['#submit'][] = 'nul_census_custom_redirect_to_program_details_tab';
     // Add css for styling tables
     $form['#attached']['css'] = array(
       drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
@@ -658,7 +673,7 @@ function nul_census_custom_node_access_records($node) {
   $affiliate = NULL;
   // If on a tab
   if (!empty($tabTermDetails)) {
-    $affiliate = nul_census_custom_get_affiliate_from_node($node->field_tab_status[LANGUAGE_NONE][0]['tid'], 'tab');
+    $affiliate = nul_census_custom_get_affiliate_from_node($node->field_parent_census[LANGUAGE_NONE][0]['target_id'], 'tab');
     $perms = nul_census_custom_check_status_permisions($node->field_tab_status[LANGUAGE_NONE][0]['tid'], 'tab');
   }
   // If on a census
@@ -666,6 +681,13 @@ function nul_census_custom_node_access_records($node) {
     $affiliate = nul_census_custom_get_affiliate_from_node($node->nid, 'census');
     // TODO Check this value
     $perms = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['tid'], 'census');
+  }
+  // if on a program
+  if ($node->type == 'programs') {
+    $contentType = taxonomy_term_load($node->field_program_area[LANGUAGE_NONE][0]['tid'])->field_content_type[LANGUAGE_NONE][0]['value'];
+    $programDetailsTab = nul_census_custom_get_status_of_programs_parent_details_tab($contentType, $node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
+    $affiliate = nul_census_custom_get_affiliate_from_node($node->field_parent_census[LANGUAGE_NONE][0]['target_id'], 'tab');
+    $perms = nul_census_custom_check_status_permisions($programDetailsTab->nid, 'tab');
   }
   if (!empty($affiliate) && $perms['canEdit'] == TRUE) {
     $grants[] = array(

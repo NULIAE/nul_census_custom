@@ -412,3 +412,30 @@ function nul_census_custom_get_emails_to_notify($node) {
   }
   return $toAndFrom;
 }
+
+function nul_census_custom_get_status_of_programs_parent_details_tab($detailTabType, $parentCensus) {
+  $programDetailsTab = NULL;
+  // TODO look up program details
+  $query = new EntityFieldQuery();
+  $results = $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', $detailTabType)
+    ->fieldCondition('field_parent_census', 'target_id', $parentCensus)
+    ->execute();
+  if (!empty(key($results['node']))) {
+    $programDetailsTab = node_load(key($results['node']));
+  }
+  return $programDetailsTab;
+}
+
+function nul_census_custom_redirect_to_program_details_tab($form, &$form_state) {
+  $nodeToRedirectTo = '';
+  if (!empty($form['field_parent_census'][LANGUAGE_NONE]['#value'])) {
+    $nodeToRedirectTo = $form['field_parent_census'][LANGUAGE_NONE]['#value'];
+    $contentType = taxonomy_term_load($form['field_program_area'][LANGUAGE_NONE]['#value'])->field_content_type[LANGUAGE_NONE][0]['value'];
+    $parentProgramTab = nul_census_custom_get_status_of_programs_parent_details_tab($contentType, $form['field_parent_census'][LANGUAGE_NONE]['#value']);
+    if (!empty($parentProgramTab->nid)) {
+      $nodeToRedirectTo = $parentProgramTab->nid . "/" . $form['field_parent_census'][LANGUAGE_NONE]['#value'];
+    }
+  }
+  $form_state['redirect'] = "/node/$nodeToRedirectTo";
+}
