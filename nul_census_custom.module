@@ -115,6 +115,9 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
 function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
   // If on Census node
   if ($form_id == 'census_node_form') {
+    $form['#attached']['css'] = array(
+      drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
+    );
     // Disable certifier field
     $form['field_survey_name_of_certifier']['#disabled'] = TRUE;
     $completeTerm = array_search('Complete', $form['field_census_status'][LANGUAGE_NONE]['#options']);
@@ -148,7 +151,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
         // look up display name
         $params = array(
           'return' => array("display_name"),
-          'id' => $affiliateId,
+          'id' => $canCreate['affiliateId'],
         );
         $affiliateInfo = nul_census_custom_civi_api('Contact', 'getsingle', $params);
         if (!empty($affiliateInfo['display_name'])) {
