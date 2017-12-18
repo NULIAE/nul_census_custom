@@ -216,6 +216,7 @@ function nul_census_custom_update_nodes_status_field($tabsCompleted, $statusToCh
 
 function nul_census_custom_hide_and_disable_fields(&$form, $fieldsToHideAndDisable) {
   if (!user_access('can edit magic census fields')) {
+    drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/hideFieldLabel.js');
     foreach ($fieldsToHideAndDisable as $key => $value) {
       if (!empty($form[$value])) {
         // TODO when disabling fields the drupal way content types with paragraphs do not save appropriately so using js workaround
