@@ -301,9 +301,16 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
       !empty(arg(2)) &&
       arg(3) >= 1) {
         // look up affiliate associated with parent census
-        $affiliate = nul_census_custom_get_affiliate_from_node(arg(3), 'census');
-        $canCreate = nul_census_custom_census_creation_permissions($affiliate, 'tab');
-        if ($canCreate) {
+        $nodeAffiliate = nul_census_custom_get_affiliate_from_node(arg(3), 'census');
+        $userAffiliate = nul_census_custom_get_affiliate_from_user();
+        $canCreateTab = FALSE;
+        if ($nodeAffiliate == $userAffiliate && user_access('can create census for own affiliate')) {
+          $canCreateTab = TRUE;
+        }
+        if (user_access('can create census for any affiliate') || user_access('can edit magic census fields')) {
+          $canCreateTab = TRUE;
+        }
+        if ($canCreateTab) {
           // Setting tab status to be incomplete since we are creating and we cant set default on the field since we can't export taxonomy terms with features
           if (!empty($form['field_tab_status'][LANGUAGE_NONE]['#options']) && array_search("Incomplete", $form['field_tab_status'][LANGUAGE_NONE]['#options'])) {
             $form['field_tab_status'][LANGUAGE_NONE]['#default_value'][0] = array_search("Incomplete", $form['field_tab_status'][LANGUAGE_NONE]['#options']);
@@ -317,7 +324,8 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           }
         }
         else {
-          drupal_goto('403');
+          drupal_set_message('You do not have permission to create tabs for this census');
+          drupal_goto("/node/" . arg(3));
         }
       }
     }
@@ -529,6 +537,10 @@ function nul_census_custom_node_submit($node, $form, &$form_state) {
   if (!empty($node->field_survey_name_of_certifier[LANGUAGE_NONE][0]['value'])) {
     // check that all tabs are completed
     $tabsCompleted = nul_census_custom_check_tab_statuses($node->nid, '', 'Complete');
+    if (empty($tabsCompleted['complete'])) {
+      // If not all tabs are completed check that all tabs are submitted
+      $tabsCompleted = nul_census_custom_check_tab_statuses($node->nid, '', 'Submitted');
+    }
     if (!empty($tabsCompleted['complete']) && empty($tabsCompleted['notComplete'])) {
       // Updating census
       $submittedCensusTerm = key(taxonomy_get_term_by_name('Submitted', 'status_type_for_census'));
@@ -674,22 +686,22 @@ function nul_census_custom_node_access_records($node) {
   // If on a tab
   if (!empty($tabTermDetails)) {
     $affiliate = nul_census_custom_get_affiliate_from_node($node->field_parent_census[LANGUAGE_NONE][0]['target_id'], 'tab');
-    $perms = nul_census_custom_check_status_permisions($node->field_tab_status[LANGUAGE_NONE][0]['tid'], 'tab');
+    // $perms = nul_census_custom_check_status_permisions($node->field_tab_status[LANGUAGE_NONE][0]['tid'], 'tab');
   }
   // If on a census
   if ($node->type == 'census') {
     $affiliate = nul_census_custom_get_affiliate_from_node($node->nid, 'census');
     // TODO Check this value
-    $perms = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['tid'], 'census');
+    // $perms = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['tid'], 'census');
   }
   // if on a program
   if ($node->type == 'programs') {
-    $contentType = taxonomy_term_load($node->field_program_area[LANGUAGE_NONE][0]['tid'])->field_content_type[LANGUAGE_NONE][0]['value'];
-    $programDetailsTab = nul_census_custom_get_status_of_programs_parent_details_tab($contentType, $node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
+    // $contentType = taxonomy_term_load($node->field_program_area[LANGUAGE_NONE][0]['tid'])->field_content_type[LANGUAGE_NONE][0]['value'];
+    // $programDetailsTab = nul_census_custom_get_status_of_programs_parent_details_tab($contentType, $node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
     $affiliate = nul_census_custom_get_affiliate_from_node($node->field_parent_census[LANGUAGE_NONE][0]['target_id'], 'tab');
-    $perms = nul_census_custom_check_status_permisions($programDetailsTab->nid, 'tab');
+    // $perms = nul_census_custom_check_status_permisions($programDetailsTab->nid, 'tab');
   }
-  if (!empty($affiliate) && $perms['canEdit'] == TRUE) {
+  if (!empty($affiliate)) {
     $grants[] = array(
       'realm' => 'nul_census_custom_realm_for_editing_own_affiliate_census',
       'gid' => $affiliate,
@@ -705,14 +717,16 @@ function nul_census_custom_node_access_records($node) {
 /**
  * Implements hook_node_grants().
  */
-function nul_census_custom_node_grants($account, $op) {
-  $grants = array();
-  $affiliate = nul_census_custom_get_affiliate_from_user($account->uid);
-  if (user_access('edit own affiliate censuses', $account) && !empty($affiliate)) {
-    // gid to allow view access.
-    $grants['nul_census_custom_realm_for_editing_own_affiliate_census'][] = array($affiliate);
+function nul_census_custom_node_grants_alter($account, $op) {
+  if ($op != 'view') {
+    $grants = array();
+    $affiliate = nul_census_custom_get_affiliate_from_user($account->uid);
+    if (user_access('edit own affiliate censuses', $account) && !empty($affiliate)) {
+      // gid to allow view access.
+      $grants['nul_census_custom_realm_for_editing_own_affiliate_census'][] = array($affiliate);
+    }
+    return $grants;
   }
-  return $grants;
 }
 
 function nul_census_custom_menu() {

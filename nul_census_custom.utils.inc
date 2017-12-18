@@ -338,6 +338,7 @@ function nul_census_custom_census_creation_permissions($affiliateId, $year) {
   $canCreate = array();
   // If can only create censuses for their affiliate check that the id passed from the url is for an affiliate the user has access to
   if (user_access('can create census for own affiliate') && !user_access('can create census for any affiliate') && !user_access('can edit magic census fields')) {
+    $canCreate['any'] = FALSE;
     // get Affiliate of user (on civi Contact record) no matter what direct to censuses of that affiliate
     $loggedInUserAffiliate = nul_census_custom_get_affiliate_from_user();
     // If user does not have an affiliate direct to home page
@@ -352,6 +353,7 @@ function nul_census_custom_census_creation_permissions($affiliateId, $year) {
   // If an admin user can create
   if (user_access('can create census for any affiliate') || user_access('can edit magic census fields')) {
     $canCreate['affiliateId'] = $affiliateId;
+    $canCreate['any'] = TRUE;
   }
   // CHECK for existing Census
   $query = new EntityFieldQuery();
