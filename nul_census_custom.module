@@ -594,7 +594,6 @@ function nul_census_custom_node_validate($node, $form, &$form_state) {
 
     // Make sure percentages add up to 100
     if ($node->type == 'service_areas') {
-      form_set_error("field_service_areas[field_service_area_white", t('The numbers in the Composition % column for each Service Areas Race field must add up to 100'));
       $raceFields = array(
         'field_service_area_white',
         'field_service_area_hispanic',
