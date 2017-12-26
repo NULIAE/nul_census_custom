@@ -254,6 +254,10 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
   }
   if (!empty($censusTab)) {
     if ($form['#node']->type . '_node_form' == $form_id) {
+      // If on program details tab add js to hide and show fields based on checkbox
+      if (!empty($form['field_do_you_offer_programs_of_t'])) {
+        drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/programDetailsTab.js');
+      }
       // IF user does not have permission to edit this tab with this status redirect to home page
       if (!empty($form['#node']->field_tab_status) && !empty($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']]) && substr($form_id, 0, 7) !== 'comment') {
         // TODO check this is working
