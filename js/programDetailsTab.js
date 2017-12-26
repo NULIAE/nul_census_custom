@@ -17,6 +17,10 @@
             $(key).show();
           }
         });
+
+        $('div.field-group-div').each(function (index, key) {
+          $(key).show();
+        });
       }
 
       if ($('input#edit-field-do-you-offer-programs-of-t-und').attr('checked') == false) {
@@ -29,6 +33,10 @@
           !$(key).hasClass('form-item-field-tab-status-und')) {
             $(key).hide();
           }
+        });
+
+        $('div.field-group-div').each(function (index, key) {
+          $(key).hide();
         });
       }
     };
