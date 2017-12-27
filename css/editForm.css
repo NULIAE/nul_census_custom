@@ -104,3 +104,8 @@ div.censusPrograms a.button:hover {
 .group-funding-row.nulTableRow .form-select {
   width: 150px;
 }
+
+/* AGH #11487 when on a census or tab node in edit mode hide preview button */
+#edit-preview {
+  display: none;
+}
