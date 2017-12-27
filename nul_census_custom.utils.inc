@@ -441,3 +441,22 @@ function nul_census_custom_redirect_to_program_details_tab($form, &$form_state) 
   }
   $form_state['redirect'] = "/node/$nodeToRedirectTo";
 }
+
+/**
+ * identify which part of the census you are on ... census main node, tab node or a program
+ * @param  string $nodeType node content type
+ * @return string part of the census the node is ('census', 'tab', 'programs' or 'none')
+ */
+function nul_census_custom_get_census_part($nodeType) {
+  $censusPart = 'none';
+  if ($nodeType == 'census' || $nodeType == 'programs') {
+    $censusPart = $node->type;
+  }
+  else {
+    $tabTermDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $nodeType);
+    if (!empty($tabTermDetails)) {
+      $censusPart = 'tab';
+    }
+  }
+  return $censusPart;
+}

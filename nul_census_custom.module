@@ -601,31 +601,6 @@ function nul_census_custom_mail($key, &$message, $params) {
 function nul_census_custom_node_validate($node, $form, &$form_state) {
   $tabTermDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $node->type);
   if ($tabTermDetails) {
-    // Check all fields are full if dealing with a census tab with a status of 'Complete', 'Submitted', 'Resubmit', 'Reviewed', or 'Reviewed Complete'
-    // $status = taxonomy_term_load($node->field_tab_status[LANGUAGE_NONE][0]['tid']);
-    // if (in_array($status->name, array('Complete', 'Submitted', 'Resubmit', 'Reviewed', 'Reviewed Complete'))) {
-    //   foreach ($form as $key => $value) {
-    //     if (substr($key, 0, 6) == 'field_') {
-    //       $fieldValue = NULL;
-    //       if (!empty($value[LANGUAGE_NONE]['#title'])) {
-    //         $fieldTitle = $value[LANGUAGE_NONE]['#title'];
-    //         if (!empty($value[LANGUAGE_NONE]['#value'])) {
-    //           $fieldValue = $value[LANGUAGE_NONE]['#value'];
-    //         }
-    //       }
-    //       if (!empty($value[LANGUAGE_NONE][0]['value']['#title'])) {
-    //         $fieldTitle = $value[LANGUAGE_NONE]['#title'];
-    //         if (!empty($value[LANGUAGE_NONE][0]['value']['#value'])) {
-    //           $fieldValue = $value[LANGUAGE_NONE][0]['value']['#value'];
-    //         }
-    //       }
-    //       if ($fieldValue == NULL) {
-    //         form_set_error($key, "$fieldTitle field must be filled because this tab has a status of {$status->name}");
-    //       }
-    //     }
-    //   }
-    // }
-
     // Make sure percentages add up to 100
     if ($node->type == 'service_areas') {
       $raceFields = array(
@@ -715,22 +690,22 @@ function nul_census_custom_node_access_records($node) {
       'priority' => 0,
     );
   }
+  watchdog('nul_census_custom', 'user has the affiliate %affiliate', array('%affiliate' => $affiliate), WATCHDOG_NOTICE, $link = NULL);
   return $grants;
 }
 
 /**
  * Implements hook_node_grants().
  */
-function nul_census_custom_node_grants_alter($account, $op) {
-  if ($op != 'view') {
-    $grants = array();
-    $affiliate = nul_census_custom_get_affiliate_from_user($account->uid);
-    if (user_access('edit own affiliate censuses', $account) && !empty($affiliate)) {
-      // gid to allow view access.
-      $grants['nul_census_custom_realm_for_editing_own_affiliate_census'][] = array($affiliate);
-    }
-    return $grants;
+function nul_census_custom_node_grants($account, $op) {
+  $grants = array();
+  $affiliate = nul_census_custom_get_affiliate_from_user($account->uid);
+  if (user_access('edit own affiliate censuses', $account) && !empty($affiliate)) {
+    // gid to allow view access.
+    $grants['nul_census_custom_realm_for_editing_own_affiliate_census'] = array($affiliate);
   }
+  watchdog('nul_census_custom', 'user has the affiliate %affiliate', array('%affiliate' => $affiliate), WATCHDOG_NOTICE, $link = NULL);
+  return $grants;
 }
 
 function nul_census_custom_menu() {
