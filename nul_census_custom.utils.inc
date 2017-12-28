@@ -450,7 +450,7 @@ function nul_census_custom_redirect_to_program_details_tab($form, &$form_state) 
 function nul_census_custom_get_census_part($nodeType) {
   $censusPart = 'none';
   if ($nodeType == 'census' || $nodeType == 'programs') {
-    $censusPart = $node->type;
+    $censusPart = $nodeType;
   }
   else {
     $tabTermDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $nodeType);
