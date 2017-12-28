@@ -62,13 +62,11 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
             // Add and process resubmit button
             nul_census_custom_button_to_update_status($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name, 'Resubmit', 'edit census tabs with status resubmit', 'resubmit', $node->nid, $node->field_parent_census[LANGUAGE_NONE][0]['target_id'], array('Submitted'));
           }
-          $my_view_name = 'programs_for_program_area';
-          $my_display_name = 'block';
-          $my_view = views_get_view($my_view_name);
+          $my_view = views_get_view('programs_for_program_area');
           if (is_object($my_view)) {
-            $my_view->set_display($my_display_name);
+            $my_view->set_display('block');
             $my_view->pre_execute();
-            $programs = $my_view->render($my_display_name);
+            $programs = $my_view->render('block');
           }
           $addAProgramLink = '';
           if (!empty($programs)) {
