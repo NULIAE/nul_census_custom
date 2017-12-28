@@ -304,6 +304,8 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               if (!empty($form['field_parent_census'][LANGUAGE_NONE]['#options'][arg(3)])) {
                 $form['field_parent_census'][LANGUAGE_NONE]['#default_value'] = arg(3);
               }
+              // TODO have census part function return this object
+              $censusTab = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $form['type']['#value']);
               if ($censusTab->name) {
                 $form['title']['#default_value'] = $censusTab->name;
               }
