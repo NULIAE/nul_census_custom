@@ -30,13 +30,14 @@ function nul_census_custom_searchTaxonomyByField($vocabMachineName, $fieldName, 
  * @return array  can they edit or not, can they resubmit or not
  */
 function nul_census_custom_check_status_permisions($status, $contentType) {
-  // IF tid then look up name
-  if (gettype($status) == 'integer') {
-    $term = taxonomy_term_load($status);
+  $term = taxonomy_term_load($status);
+  if (!empty($term->name)) {
     $status = $term->name;
   }
   global $user;
   $canResubmit = FALSE;
+  $canEdit = FALSE;
+
   // IF user is an administrator they can edit whatever always
   if (in_array('administrator', $user->roles)) {
     $canEdit = TRUE;
