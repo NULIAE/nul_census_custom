@@ -23,7 +23,8 @@
         });
       }
 
-      if ($('input[type=radio][name^=field_do_you_offer_programs_of_t]:checked').val() == 0) {
+      if ($('input[type=radio][name^=field_do_you_offer_programs_of_t]:checked').val() == 0 ||
+      typeof ($('input[type=radio][name^=field_do_you_offer_programs_of_t]:checked').val())  === 'undefined') {
         $('.node-form div.form-item').each(function (index, key) {
           // skips the title, tab status and parent census fields,
           // whether the user sees those fields should be depenedent on their permissions
