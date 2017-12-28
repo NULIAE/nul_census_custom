@@ -178,7 +178,6 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           if (!empty($form['field_parent_census'][LANGUAGE_NONE]['#options'][arg(3)])) {
             $form['field_parent_census'][LANGUAGE_NONE]['#default_value'] = arg(3);
           }
-          // Limit options for Program Type and Services Provided based on Program Area
           // set program area if needed
           if (!empty($form['field_program_area'][LANGUAGE_NONE]['#options'])) {
             foreach ($form['field_program_area'][LANGUAGE_NONE]['#options'] as $tid => $option) {
@@ -204,6 +203,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
             'field_program_area',
           );
           // If you find a program area
+          // Limit options for Program Type and Services Provided based on Program Area
           if ($programArea > 0) {
             // Check the following fields options
             $fieldsToLimitByProgramArea = array(
