@@ -332,11 +332,11 @@ function nul_census_custom_permission() {
   return array(
     'edit own affiliate censuses' => array(
       'title' => t('edit own affiliate census and tabs'),
-      'description' => t('Allows a user to edit census tabs with status complete, submitted, reviewed or review complete.'),
+      'description' => t('Allows a user to edit censuses where the affiliate id matches the affiliate on their civi contact record'),
     ),
     'edit all affiliate censuses' => array(
       'title' => t('edit all affiliate census and tabs'),
-      'description' => t('Allows a user to edit census tabs with status complete, submitted, reviewed or review complete.'),
+      'description' => t('Allows a user to edit any census'),
     ),
     'can create census for own affiliate' => array(
       'title' => t('can create census for own affiliate'),
@@ -360,12 +360,12 @@ function nul_census_custom_permission() {
       'description' => t('Permission for CEO to edit census while the census and its tabs have status complete'),
     ),
     'edit census with status submitted' => array(
-      'title' => t('Edit All censuses with status submitted'),
-      'description' => t('Allows a user to edit census with status submitted'),
+      'title' => t('Edit All census with status submitted'),
+      'description' => t('Allows a user to edit censuses with status submitted'),
     ),
     'can mark census tabs resubmit and reviewed' => array(
       'title' => t('can mark all censuses tabs resubmit and reviewed and can mark census review complete'),
-      'description' => t('Allows a user to mark census tabs as resubmit and reviewed'),
+      'description' => t('Allows a user to mark census tabs as resubmit and reviewed and can mark census review complete'),
     ),
     'can mark census tabs as complete' => array(
       'title' => t('can mark census tabs as complete'),
