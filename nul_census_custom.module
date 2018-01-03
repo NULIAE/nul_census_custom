@@ -493,7 +493,7 @@ function nul_census_custom_node_update($node) {
       }
     }
   }
-  // AGH #11267 If census status changes to "completed" "approved" or "resubmit" send a notification email
+  // AGH #11267 If census status changes to "completed" "Reviewed Complete" or "Submitted" send a notification email
   // If updating a census
   if ($node->type == 'census') {
     // if that census status field is populated
@@ -503,7 +503,7 @@ function nul_census_custom_node_update($node) {
         // look up the name of the status
         $term = taxonomy_term_load($node->field_census_status[LANGUAGE_NONE][0]['tid']);
         // check that the name is in the array of status we want to alert people of a status being changed to.
-        if (!empty($term->name) && in_array($term->name, array('Complete', 'Approved', 'Resubmit'))) {
+        if (!empty($term->name) && in_array($term->name, array('Complete', 'Reviewed Complete', 'Submitted'))) {
           $toAndFrom = nul_census_custom_get_emails_to_notify($node);
           // status has changed to Complete Approved or resubmit, we should email appropriate ppl
           $language = language_default();
