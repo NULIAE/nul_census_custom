@@ -57,6 +57,18 @@
   var races = ['white', 'hispanic', 'asian-am', 'native-am', 'african-amer', 'other', 'african-am'];
   $(document).ready(function () {
     $(tableFieldBases).each(function (index, fieldBase) {
+      // Disable total fields so user cannot enter content
+      var totalFields = [
+        fieldBase.totalFieldId.female,
+        fieldBase.totalFieldId.male,
+        fieldBase.totalFieldId,
+      ];
+      $(totalFields).each(function (index, field) {
+        if (field && field.length > 0) {
+          $('input#' + field).attr('readonly', true);
+        }
+      });
+
       $('input[id*="' + fieldBase.base + '"').keyup(function () {
         if (fieldBase.totalBy == 'race' || fieldBase.totalBy == 'grand') {
           var total = parseInt(0);
