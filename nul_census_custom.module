@@ -70,9 +70,10 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
           }
           $addAProgramLink = '';
           if (!empty($programs)) {
-            // TODO write permissions to check if programs can be added at this time
             if ($perms['canEdit'] || $perms['canResubmit']) {
-              $addAProgramLink = "<a class='button nulCensusButton' href='/node/add/programs/{$node->field_parent_census[LANGUAGE_NONE][0]['target_id']}/{$node->type}'>+ Add A Program</a>";
+              if (!empty($node->field_do_you_offer_programs_of_t[LANGUAGE_NONE][0]['value']) && $node->field_do_you_offer_programs_of_t[LANGUAGE_NONE][0]['value'] == 1) {
+                $addAProgramLink = "<a class='button nulCensusButton' href='/node/add/programs/{$node->field_parent_census[LANGUAGE_NONE][0]['target_id']}/{$node->type}'>+ Add A Program</a>";
+              }
             }
             $markup = "
             <div class='censusPrograms'>
