@@ -126,9 +126,18 @@ This is a view that will show all of the tabs with parent census XXX where XXX i
 
 Configuration: None necessary
 
-## Sends Notification Emails when a new census is Created
+## Sends Notification Emails
 
-## Sends Notification Emails when the census status changes to "completed" "approved" or "resubmit"
+When a new census is Created
+
+AND
+
+When the census status changes to "completed" "Reviewed Complete" or "Submitted"
+
+an email is sent to the following email addresses:
+
++ The email in the setting (Configuration-> nul census custom -> settings)
++ The two emails on the census node email address survey certifier email
 
 
 # Content Types info
