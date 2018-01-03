@@ -356,7 +356,7 @@ function nul_census_custom_permission() {
     ),
     //TODO update this permission right now these ppl cannot edit complete only incomplete
     'edit census with status complete' => array(
-      'title' => t('Can edit a census with the status of complete and its related tabs also with status complete'),
+      'title' => t('Can edit a census with the status of complete (and its related tabs also with status complete)'),
       'description' => t('Permission for CEO to edit census while the census and its tabs have status complete'),
     ),
     'edit census with status submitted' => array(

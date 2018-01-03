@@ -60,6 +60,13 @@ For Census Tabs editing:
 | Reviewed Complete | Yes                                                    | No              |  
 | Submitted         | Yes                                                    | No              |
 
+
+### NUL Census Customizations Module Permissions Configuration
+![NUL Census Customizations Module Permissions Configuration](img/nulCensusCustomisationsModulePermissions.png)
+
+### Node permissions configuration for census and census tabs
+![Node permissions configuration for census and census tabs](img/tabSetUp.png)
+
 ## Total-ing
 
 Totals for tables on the following tabs:
