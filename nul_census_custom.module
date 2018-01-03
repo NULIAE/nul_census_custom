@@ -654,7 +654,9 @@ function nul_census_custom_node_access($node, $op, $account) {
     switch ($nodeType) {
       case 'census':
         $affiliateOfNode = nul_census_custom_get_affiliate_from_node($node->nid, 'census');
-        $perms = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['tid'], 'census');
+        if (!empty($node->field_census_status[LANGUAGE_NONE][0]['tid'])) {
+          $perms = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['tid'], 'census');
+        }
         break;
 
       case 'programs':
