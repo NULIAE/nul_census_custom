@@ -661,7 +661,9 @@ function nul_census_custom_node_access($node, $op, $account) {
         $affiliateOfNode = nul_census_custom_get_affiliate_from_node($node->field_parent_census[LANGUAGE_NONE][0]['target_id'], 'tab');
         $contentType = taxonomy_term_load($node->field_program_area[LANGUAGE_NONE][0]['tid'])->field_content_type[LANGUAGE_NONE][0]['value'];
         $programDetailTab = nul_census_custom_get_status_of_programs_parent_details_tab($contentType, $node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
-        $perms = nul_census_custom_check_status_permisions($programDetailTab->field_tab_status[LANGUAGE_NONE][0]['tid'], 'tab');
+        if (!empty($programDetailTab->field_tab_status[LANGUAGE_NONE][0]['tid'])) {
+          $perms = nul_census_custom_check_status_permisions($programDetailTab->field_tab_status[LANGUAGE_NONE][0]['tid'], 'tab');
+        }
         break;
 
       case 'tab':
@@ -680,7 +682,7 @@ function nul_census_custom_node_access($node, $op, $account) {
       elseif (user_access('edit own affiliate censuses', $account)) {
         // Get affiliate for user
         $userAffiliate = nul_census_custom_get_affiliate_from_user($account->uid);
-        if ($affiliateOfNode == $userAffiliate && $perms['canEdit'] == TRUE) {
+        if (!empty($perms) && $affiliateOfNode == $userAffiliate && $perms['canEdit'] == TRUE) {
           watchdog('nul_census_custom', 'node %affiliateOfNode user %userAffiliate', array('%affiliateOfNode' => $affiliateOfNode, '%userAffiliate' => $userAffiliate), WATCHDOG_NOTICE, $link = NULL);
           // Grant access to users with the right permission.
           return NODE_ACCESS_ALLOW;
@@ -697,59 +699,7 @@ function nul_census_custom_node_access($node, $op, $account) {
   // other node types.
   return NODE_ACCESS_IGNORE;
 }
-// /**
-//  * Implements hook_node_access_records().
-//  */
-// function nul_census_custom_node_access_records($node) {
-//   // If user is limited to editing their own affiliate do not let them edit others
-//   $grants = array();
-//   $tabTermDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $node->type);
-//   $affiliate = NULL;
-//   // If on a tab
-//   if (!empty($tabTermDetails)) {
-//     $affiliate = nul_census_custom_get_affiliate_from_node($node->field_parent_census[LANGUAGE_NONE][0]['target_id'], 'tab');
-//     // $perms = nul_census_custom_check_status_permisions($node->field_tab_status[LANGUAGE_NONE][0]['tid'], 'tab');
-//   }
-//   // If on a census
-//   if ($node->type == 'census') {
-//     $affiliate = nul_census_custom_get_affiliate_from_node($node->nid, 'census');
-//     // TODO Check this value
-//     // $perms = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['tid'], 'census');
-//   }
-//   // if on a program
-//   if ($node->type == 'programs') {
-//     // $contentType = taxonomy_term_load($node->field_program_area[LANGUAGE_NONE][0]['tid'])->field_content_type[LANGUAGE_NONE][0]['value'];
-//     // $programDetailsTab = nul_census_custom_get_status_of_programs_parent_details_tab($contentType, $node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
-//     $affiliate = nul_census_custom_get_affiliate_from_node($node->field_parent_census[LANGUAGE_NONE][0]['target_id'], 'tab');
-//     // $perms = nul_census_custom_check_status_permisions($programDetailsTab->nid, 'tab');
-//   }
-//   if (!empty($affiliate)) {
-//     $grants[] = array(
-//       'realm' => 'nul_census_custom_realm_for_editing_own_affiliate_census',
-//       'gid' => $affiliate,
-//       'grant_view' => 1,
-//       'grant_update' => 1,
-//       'grant_delete' => 0,
-//       'priority' => 0,
-//     );
-//   }
-//   watchdog('nul_census_custom', 'user has the affiliate %affiliate', array('%affiliate' => $affiliate), WATCHDOG_NOTICE, $link = NULL);
-//   return $grants;
-// }
-//
-// /**
-//  * Implements hook_node_grants().
-//  */
-// function nul_census_custom_node_grants($account, $op) {
-//   $grants = array();
-//   $affiliate = nul_census_custom_get_affiliate_from_user($account->uid);
-//   if (user_access('edit own affiliate censuses', $account) && !empty($affiliate)) {
-//     // gid to allow view access.
-//     $grants['nul_census_custom_realm_for_editing_own_affiliate_census'] = array($affiliate);
-//   }
-//   watchdog('nul_census_custom', 'user has the affiliate %affiliate', array('%affiliate' => $affiliate), WATCHDOG_NOTICE, $link = NULL);
-//   return $grants;
-// }
+
 /**
  * [nul_census_custom_menu description]
  * @return [type] [description]

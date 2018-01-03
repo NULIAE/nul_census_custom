@@ -424,7 +424,7 @@ function nul_census_custom_get_status_of_programs_parent_details_tab($detailTabT
     ->entityCondition('bundle', $detailTabType)
     ->fieldCondition('field_parent_census', 'target_id', $parentCensus)
     ->execute();
-  if (!empty(key($results['node']))) {
+  if (!empty($results['node']) && !empty(key($results['node']))) {
     $programDetailsTab = node_load(key($results['node']));
   }
   return $programDetailsTab;
