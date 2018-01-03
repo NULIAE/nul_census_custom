@@ -66,6 +66,7 @@
       $(totalFields).each(function (index, field) {
         if (field && field.length > 0) {
           $('input#' + field).attr('readonly', true);
+          $('input#' + field).addClass('readonly');
         }
       });
 
