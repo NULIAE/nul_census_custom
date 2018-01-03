@@ -1,9 +1,8 @@
 This Module:
 -----------
+## Fields Styled to be displayed as tables in View and Edit
 
 Styles fields on the census to create grids to improve user experience.
-
-## Fields Styled to be displayed as tables in View and Edit
 
 ### Example: "What is the racial/gender composition of your board?" Table
 
@@ -19,7 +18,6 @@ See screenshot below:
 
 ![Screenshot of board composition table](img/boardCompositionTable.png)
 
-
 All field groups styled this way:
 
 1. What is the racial/gender composition of your board?
@@ -33,20 +31,20 @@ All field groups styled this way:
 
 When you visit: <url>/node/add/census/<affiliateId>
 
-Custom code: disables the affiliate, year and title fields and populates them as follows:
+Custom code: hides the affiliate id, year and title fields and populates them as follows:
 
-+ Affiliate to be the value passed as the 4th argument in the url (later this will be the civi contact id of the affiliate and be used for permissioning)
++ Affiliate to be the value passed as the 4th argument in the url (the civi contact id of the affiliate)
 + Year to be the current year
 + Populates the title to be the affiliate id concatenated with the year
 
-## Census Tab in create mode
+## Census Tabs in create mode
+
 When you visit: <url>/node/add/<censusTab>/<parentCensus>
  Set title and make it locked
 
  set tab status to incomplete
 
  set parent census to parentCensus node id passed in the url as the 4th argument
-
 
 ## Permissions
 For Census Tabs editing:
@@ -89,22 +87,7 @@ This module has an install file that creates the taxonomy terms needed for the f
 
 ## Views Block Configuration:
 
-### View: back to census button for new: Back to Census Button
-This block is used to create a button to return to the Parent Census when in edit mode of a new census tab.
-
-Configuration: This block should be added to the bottom of the content region of the theme being used for edit mode. And set title of the block to <none>
-
-### View: Button to Add new Program
-
-This creates a link: <a href=/node/add/programs/[field_parent_census-target_id]/[type]>Add a Program</a> where [field_parent_census-target_id] is the id of the parent census and [type] is the content type. There is custom code on the add program content page that looks for these two parameters and sets the parent census value and the program type using the program area taxonomy.
-
-Configuration: This block should be configured to show at the bottom of the content region of the default theme. On all the program details content types (Education Program Details, Entrepreneurship and Business Development Program Details, Health and Quality of Life Program Details, Other Programs) and set title of block to <none>
-
-### View: Programs for Program Area:
-
-This view shows the programs that have the same parent census as the program details tab AND have the related (thru the program areas taxonomy) program type.
-
-Configuration: Configure this block to show on all Program Details Tabs
+TODO UPDATE THESE VIEWS DESCRIPTIONS TO INCLUDE THE REPORTS
 
 ### View: Census Tab Menu:
 
@@ -190,15 +173,15 @@ If on a program details tab in view mode can view add program button.
 
 #### Incomplete to Complete:
 
-All Census tabs start as Incomplete they each tab changes to Complete on submit when all "required fields" (these fields are determined by nul_census_custom_fake_required_fields() function in nul_census_custom.module) on that tab are filled.
+All Census tabs start as Incomplete Users with proper permissions (edit own or any affiliate) will see a button on view of a tab node to mark the tab as complete
 
 #### Complete to Submitted:
 
-When all tabs are complete and certify field on census is filled tabs switch from complete to submitted
+When all tabs are complete then the certify field on census will be unlocked for users with proper permissions (user can edit own or any affiliate and user can certify census is complete) when taht field is populated and the census is saved the status will be changed to submitted.
 
 #### Submitted to Resubmit:
 
-If user has permission 'can mark census tabs resubmit and reviewed' and viewing a tab with status submitted there is a button at the top to click that will switch the status of the tab to resubmit
+If user has permission 'can mark census tabs resubmit and reviewed' and is viewing a tab with status submitted there is a button at the top to click that will switch the status of the tab to resubmit
 
 #### Resubmit to Submitted:
 
@@ -206,17 +189,17 @@ If user has permission to edit in resubmit also has access to resubmit button wh
 
 #### Submitted to Reviewed:
 
-If user has permission 'can mark census tabs resubmit and reviewed' and viewing a tab with status submitted there is a button at the top to click that will switch the status of the tab to resubmit
+If user has permission 'can mark census tabs resubmit and reviewed' and viewing a tab with status submitted there is a button at the top to click that will switch the status of the tab to reviewed
 
 #### Reviewed to Reviewed Complete:
 
-when user with permission clicks button on census to "Mark Census as Review Complete" census and all tabs statuss are updated to reviewed complete
+when user with permission clicks button on census to "Mark Census as Review Complete" (which appears when all tabs are reviewed) then the census and all tabs statuss are updated to reviewed complete
 
 ### Census
 
 #### Incomplete to Complete:
 
-When all tabs except survey certification are complete, census status changes to complete
+When all tabs are complete, census status changes to complete
 
 #### Complete to Submitted:
 
@@ -224,7 +207,4 @@ on submit of a census in status complete When the survey certification field is 
 
 #### Submitted to Reviewed Complete
 
-when user with permission clicks button on census to "Mark Census as Review Complete" census and all tabs statuss are updated to reviewed complete
-
-
-See google doc tables for more details: https://docs.google.com/spreadsheets/d/1yIXrF57oZwzyS-SwvjQZtqBBfj8VChroOL32euSY_xo/edit#gid=860260362
+when user with permission clicks button on census to "Mark Census as Review Complete" (which appears when all tabs are marked as reviewed and the user has the permission) census and all tabs statuses are updated to reviewed complete
