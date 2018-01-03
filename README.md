@@ -208,3 +208,13 @@ on submit of a census in status complete When the survey certification field is 
 #### Submitted to Reviewed Complete
 
 when user with permission clicks button on census to "Mark Census as Review Complete" (which appears when all tabs are marked as reviewed and the user has the permission) census and all tabs statuses are updated to reviewed complete
+
+## Programs
+
+Custom code when on the content type programs
+
+### Programs in Create Mode
+
+When on a program details tabs and the user checks yes for "Affiliate had programs of this type" then on view of the program details tab will be an add a programs button. When the user clicks add a program they will be taken to a page to create a node of the type programs with the parent census id in the url and the program area of the program details tab they are coming from. The parent census id will be used to populate the parent census field and the program area will be used to set the program area for the program and limit the options for the services provided and program types to only those for that program area.
+
+NOTE: Programs do not have a status. they use the statuses of their program details tabs, if you can edit the program details tab you can edit the program and add new ones, if you can't edit the program details tab you can't edit or add programs
