@@ -500,7 +500,7 @@ function nul_census_custom_node_update($node) {
   // If updating a census
   if ($node->type == 'census') {
     // if that census status field is populated
-    if (!empty($node->field_census_status[LANGUAGE_NONE][0]['tid'])) {
+    if (!empty($node->field_census_status[LANGUAGE_NONE][0]['tid']) && !empty($node->original->field_census_status[LANGUAGE_NONE][0]['tid'])) {
       // and the status is not the same as it was originally (is being changed)
       if ($node->original->field_census_status[LANGUAGE_NONE][0]['tid'] !== $node->field_census_status[LANGUAGE_NONE][0]['tid']) {
         // look up the name of the status
