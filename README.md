@@ -1,5 +1,15 @@
 This Module:
 -----------
+
+## Installation
+
+To set up the nul census one should:
+
+1. Install all of the features in [NULCENUS_FEATURES](https://github.com/NULIAE/NULCENSUS_FEATURES). Some of these modules depend on other modules. Zip files for the required modules are [here](https://github.com/NULIAE/NULCENSUS_FEATURES/tree/master/reqModulesZipFiles).
+2. Install this module [nul_census_custom](https://github.com/NULIAE/nul_census_custom)
+3. Configure permissions as described in this readme
+4. Configure views as described in this readme
+
 ## Fields Styled to be displayed as tables in View and Edit
 
 Styles fields on the census to create grids to improve user experience.
