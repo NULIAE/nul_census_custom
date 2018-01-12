@@ -22,6 +22,7 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
     $nodeType = nul_census_custom_get_census_part($node->type);
     switch ($nodeType) {
       case 'census':
+        drupal_add_css(drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css');
         // If all tabs are reviewed and census is submitted and user has permission add button to mark census as review complete
         if (!empty($node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && $node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name == 'Submitted' && user_access('can mark census tabs resubmit and reviewed')) {
           // check that all tabs have status reviewed
