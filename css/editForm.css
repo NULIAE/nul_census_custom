@@ -134,12 +134,6 @@ div.nulTable div.field-type-number-integer {
 }
 
 /*Styling Census Tab Menu */
-#block-views-census-tab-menu-block {
-  background-color: #F3F4EE;
-  border: .5px solid #bebfb9;
-  /* border-radius: 10px; */
-}
-
 #block-views-census-tab-menu-block .tab,
 #block-views-census-tab-menu-block-1 .tab {
  padding: 10px;
@@ -154,6 +148,7 @@ body #sidebar-first .block {
 #block-views-census-tab-menu-block a,
 #block-views-census-tab-menu-block-1 a {
   color: black;
+  text-decoration: none;
 }
 
 #block-views-census-tab-menu-block .tab:hover,
