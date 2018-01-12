@@ -22,6 +22,7 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
     $nodeType = nul_census_custom_get_census_part($node->type);
     switch ($nodeType) {
       case 'census':
+        drupal_add_css(drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css');
         // If all tabs are reviewed and census is submitted and user has permission add button to mark census as review complete
         if (!empty($node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && $node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name == 'Submitted' && user_access('can mark census tabs resubmit and reviewed')) {
           // check that all tabs have status reviewed
@@ -419,7 +420,7 @@ function nul_census_custom_block_view_alter(&$data, $block) {
         $currentNode = node_load($currentNid);
         if (!empty($currentNode->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
           $parentCensusNid = $currentNode->field_parent_census[LANGUAGE_NONE][0]['target_id'];
-          $result = "<a href='/node/{$parentCensusNid}'>Back To Parent Census</a><p></p>";
+          $result = "<a href='/node/{$parentCensusNid}'><div class='parentCensusLink tab field-content tabType'>Back To Parent Census</a></div>";
         }
       }
     }

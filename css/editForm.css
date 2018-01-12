@@ -132,3 +132,52 @@ div.nulTable .field-type-markup p {
 div.nulTable div.field-type-number-integer {
   margin-left: 10px;
 }
+
+/*Styling Census Tab Menu */
+#block-views-census-tab-menu-block {
+  background-color: #F3F4EE;
+  border: .5px solid #bebfb9;
+  /* border-radius: 10px; */
+}
+
+#block-views-census-tab-menu-block .tab,
+#block-views-census-tab-menu-block-1 .tab {
+ padding: 10px;
+ border-bottom: .5px solid #bebfb9;
+}
+
+/*probably dont need on live site*/
+body #sidebar-first .block {
+  padding: 0px;
+}
+
+#block-views-census-tab-menu-block a,
+#block-views-census-tab-menu-block-1 a {
+  color: black;
+}
+
+#block-views-census-tab-menu-block .tab:hover,
+#block-views-census-tab-menu-block a:hover,
+#block-views-census-tab-menu-block-1 .tab:hover,
+#block-views-census-tab-menu-block-1 a:hover {
+  background-color: #bebfb9;
+  color: #C51230;
+}
+
+
+
+#block-views-census-tab-menu-block a .tabType,
+#block-views-census-tab-menu-block-1 a .tabType,
+.parentCensusLink {
+  font-weight: bold;
+}
+
+#block-views-census-tab-menu-block a:hover,
+#block-views-census-tab-menu-block-1 a:hover {
+  text-decoration: none;
+}
+
+#block-views-census-tab-menu-block p,
+#block-views-census-tab-menu-block-1 p {
+  display: none;
+}
