@@ -109,3 +109,26 @@ div.censusPrograms a.button:hover {
 #edit-preview {
   display: none;
 }
+
+
+/* AGH #11498 Styling tables in NUL theme*/
+.nulTable .field-type-list-boolean {
+  margin-left: 5px;
+}
+
+div.nulTable {
+  margin-bottom: 10px;
+}
+
+div.nulTable .field-type-markup {
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+div.nulTable .field-type-markup p {
+  margin-bottom: 10px;
+}
+
+div.nulTable div.field-type-number-integer {
+  margin-left: 10px;
+}
