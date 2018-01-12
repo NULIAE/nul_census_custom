@@ -80,6 +80,7 @@ div.censusPrograms a.button {
   color: black;
   padding: 5px;
   margin: 5px;
+  padding-left: 10px;
 }
 
 div.censusPrograms a.button:hover {
