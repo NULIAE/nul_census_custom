@@ -140,7 +140,8 @@ div.nulTable div.field-type-number-integer {
   /* border-radius: 10px; */
 }
 
-#block-views-census-tab-menu-block .tab {
+#block-views-census-tab-menu-block .tab,
+#block-views-census-tab-menu-block-1 .tab {
  padding: 10px;
  border-bottom: .5px solid #bebfb9;
 }
@@ -150,12 +151,15 @@ body #sidebar-first .block {
   padding: 0px;
 }
 
-#block-views-census-tab-menu-block a {
+#block-views-census-tab-menu-block a,
+#block-views-census-tab-menu-block-1 a {
   color: black;
 }
 
 #block-views-census-tab-menu-block .tab:hover,
-#block-views-census-tab-menu-block a:hover {
+#block-views-census-tab-menu-block a:hover,
+#block-views-census-tab-menu-block-1 .tab:hover,
+#block-views-census-tab-menu-block-1 a:hover {
   background-color: #bebfb9;
   color: #C51230;
 }
@@ -163,14 +167,17 @@ body #sidebar-first .block {
 
 
 #block-views-census-tab-menu-block a .tabType,
+#block-views-census-tab-menu-block-1 a .tabType,
 .parentCensusLink {
   font-weight: bold;
 }
 
-#block-views-census-tab-menu-block a:hover {
+#block-views-census-tab-menu-block a:hover,
+#block-views-census-tab-menu-block-1 a:hover {
   text-decoration: none;
 }
 
-#block-views-census-tab-menu-block p {
+#block-views-census-tab-menu-block p,
+#block-views-census-tab-menu-block-1 p {
   display: none;
 }
