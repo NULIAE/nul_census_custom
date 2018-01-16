@@ -727,19 +727,19 @@ function nul_census_custom_menu() {
   $items['admin/config/nul_census_custom'] = array(
     'title' => 'NUL Census Custom',
     'description' => 'Adjust NUL Census Settings',
-    'position' => 'right',
-    'weight' => '-10',
+    // 'position' => 'right',
+    // 'weight' => '-10',
     'page callback' => 'system_admin_menu_block_page',
-    'access arguments' => array('administer civicrm'),
+    'access arguments' => array('access administration pages'),
     'file' => 'system.admin.inc',
     'file path' => drupal_get_path('module', 'system'),
   );
   $items['admin/config/nul_census_custom/settings'] = array(
+    'title' => 'NUL Census Custom Settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('nul_census_custom_settings_form'),
-    'access arguments' => array('administer civicrm'),
-    'title' => 'NUL Census Custom Settings',
-    'type' => MENU_NORMAL_ITEM,
+    'access arguments' => array('access administration pages'),
+    // 'type' => MENU_NORMAL_ITEM,
     'file' => 'nul_census_custom.admin.inc',
     'file path' => drupal_get_path('module', 'nul_census_custom'),
   );
