@@ -9,6 +9,7 @@ To set up the nul census one should:
 2. Install this module [nul_census_custom](https://github.com/NULIAE/nul_census_custom)
 3. Configure permissions as described in this readme
 4. Configure views as described in this readme
+5. Configure settings for module (http://example.com/admin/config/nul_census_custom/settings)
 
 ## Fields Styled to be displayed as tables in View and Edit
 
