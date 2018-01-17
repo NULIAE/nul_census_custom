@@ -158,11 +158,11 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
             if ($canCreate['affiliateId'] >= 1) {
               // look up display name
               $params = array(
-                'return' => array("display_name"),
-                'id' => $canCreate['affiliateId'],
+                'id' => variable_get('affiliatefield'),
+                'api.OptionValue.getsingle' => array('option_group_id' => "\$value.option_group_id", 'value' => $canCreate['affiliateId']),
               );
-              $affiliateInfo = nul_census_custom_civi_api('Contact', 'getsingle', $params);
-              if (!empty($affiliateInfo['display_name'])) {
+              $affiliateInfo = nul_census_custom_civi_api('CustomField', 'getsingle', $params);
+              if (!empty($affiliateInfo['api.OptionValue.getsingle']['label'])) {
                 $displayName = $affiliateInfo['display_name'];
               }
               // make title field to be the name of the affliate and hide

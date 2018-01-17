@@ -317,7 +317,7 @@ function nul_census_custom_get_affiliate_from_user($drupalUserId = NULL) {
     global $user;
     $drupalUserId = $user->uid;
   }
-  $affiliateField = variable_get('affiliatefield');
+  $affiliateField = "contact_id.custom_" . variable_get('affiliatefield');
   $affiliate = NULL;
   $params = array(
     'return' => array($affiliateField, "contact_id.id"),
