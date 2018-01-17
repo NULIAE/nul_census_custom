@@ -163,7 +163,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               );
               $affiliateInfo = nul_census_custom_civi_api('CustomField', 'getsingle', $params);
               if (!empty($affiliateInfo['api.OptionValue.getsingle']['label'])) {
-                $displayName = $affiliateInfo['display_name'];
+                $displayName = $affiliateInfo['api.OptionValue.getsingle']['label'];
               }
               // make title field to be the name of the affliate and hide
               $form['title']['#default_value'] = $displayName . " " . $year . " Census";
