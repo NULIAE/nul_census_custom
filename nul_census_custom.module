@@ -171,6 +171,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               $form['field_year'][LANGUAGE_NONE][0]['value']['#default_value'] = $year;
               // Update affliate field and disable
               $form['field_affiliate'][LANGUAGE_NONE][0]['value']['#default_value'] = $canCreate['affiliateId'];
+              $form['field_first_name'][LANGUAGE_NONE][0]['value']['#default_value'] = $displayName;
               // set default status to inclomplete
               $defaultStatus = array_search('Incomplete', $form['field_census_status'][LANGUAGE_NONE]['#options']);
               if (empty($form['field_census_status'][LANGUAGE_NONE]['#default_value'])) {
