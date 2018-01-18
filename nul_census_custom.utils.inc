@@ -400,10 +400,10 @@ function nul_census_custom_get_emails_to_notify($node) {
     'field_email_address',
   );
   $from = variable_get('emailnotification');
-  $to = array($from);
+  $to[] = $from;
   foreach ($emailFields as $key => $field) {
     if (!empty($node->{$field}[LANGUAGE_NONE][0]['value'])) {
-      $affiliateContactEmails[] = $node->{$field}[LANGUAGE_NONE][0]['value'];
+      $to[] = $node->{$field}[LANGUAGE_NONE][0]['value'];
     }
   }
   $to = implode(', ', $to);
