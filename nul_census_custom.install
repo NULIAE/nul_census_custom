@@ -58,6 +58,16 @@ function nul_census_custom_install() {
             'Training' => array('1'),
           ),
         ),
+        "Mentoring Program Funding Options" => array(
+          'machine_name' => 'mentoring_program_funding_options',
+          'name' => "Mentoring Program Funding Options",
+          'list' => array(
+            'Mixed (No NUL funding)' => array('1'),
+            'Private Funds' => array('1'),
+            'Public Funds' => array('1'),
+            'Mixed (including NUL funding)' => array('1'),
+          ),
+        ),
         "Census Tab Status" => array(
           'machine_name' => 'census_tab_status',
           'name' => "Census Tab Status",
