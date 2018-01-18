@@ -743,7 +743,7 @@ function nul_census_custom_menu() {
     // 'position' => 'right',
     // 'weight' => '-10',
     'page callback' => 'system_admin_menu_block_page',
-    'access arguments' => array('access administration pages'),
+    'access arguments' => array('can edit magic census fields'),
     'file' => 'system.admin.inc',
     'file path' => drupal_get_path('module', 'system'),
   );
@@ -751,7 +751,7 @@ function nul_census_custom_menu() {
     'title' => 'NUL Census Custom Settings',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('nul_census_custom_settings_form'),
-    'access arguments' => array('access administration pages'),
+    'access arguments' => array('can edit magic census fields'),
     // 'type' => MENU_NORMAL_ITEM,
     'file' => 'nul_census_custom.admin.inc',
     'file path' => drupal_get_path('module', 'nul_census_custom'),
