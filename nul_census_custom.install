@@ -4,7 +4,10 @@
  * [feature_name_install description]
  */
 function nul_census_custom_install() {
-  // Sets up nul custom settings data base table
+  /**
+   * Sets up nul custom settings data base table
+   * @return [type] [description]
+   */
   function odb_incomelimits_schema() {
     $schema['nul_census_custom_settings'] = array(
       'description' => 'Settings for nul_census_custom',
@@ -40,6 +43,21 @@ function nul_census_custom_install() {
   function vocabArrays($type) {
     if ($type == 'basic') {
       $vocabDetails = array(
+        "Type of Venture" => array(
+          'machine_name' => 'type_of_venture',
+          'name' => "Type of Venture",
+          'list' => array(
+            'Annual Dinner' => array('1'),
+            'Career Fair' => array('1'),
+            'Child Care Services' => array('1'),
+            'Entrepreneurship Center' => array('1'),
+            'Equal Opportunity Day' => array('1'),
+            'Program Service Fees' => array('1'),
+            'Rentals' => array('1'),
+            'Sales' => array('1'),
+            'Training' => array('1'),
+          ),
+        ),
         "Census Tab Status" => array(
           'machine_name' => 'census_tab_status',
           'name' => "Census Tab Status",
