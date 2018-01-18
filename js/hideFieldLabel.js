@@ -5,5 +5,9 @@
       var fieldID = $(value).attr('id');
       $('label[for="' + fieldID + '"]').addClass('hide');
     });
+
+    if ($('div#edit-field-service-provided-und').html() == '') {
+      $('label[for="edit-field-service-provided-und"]').addClass('hide');
+    }
   });
 }(jQuery));
