@@ -688,8 +688,18 @@ function nul_census_custom_node_access($node, $op, $account) {
           break;
 
         case 'tab':
-          $affiliateOfNode = nul_census_custom_get_affiliate_from_node($node->field_parent_census[LANGUAGE_NONE][0]['target_id'], 'tab');
-          $perms = nul_census_custom_check_status_permisions($node->field_tab_status[LANGUAGE_NONE][0]['tid'], 'tab');
+          if (!empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
+            $affiliateOfNode = nul_census_custom_get_affiliate_from_node($node->field_parent_census[LANGUAGE_NONE][0]['target_id'], 'tab');
+          }
+          elseif (!empty(arg(3))) {
+            $affiliateOfNode = nul_census_custom_get_affiliate_from_node(arg(3), 'tab');
+          }
+          if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['tid'])) {
+            $perms = nul_census_custom_check_status_permisions($node->field_tab_status[LANGUAGE_NONE][0]['tid'], 'tab');
+          }
+          else {
+            $perms = nul_census_custom_check_status_permisions('Incomplete', 'tab');
+          }
           break;
 
         default:
