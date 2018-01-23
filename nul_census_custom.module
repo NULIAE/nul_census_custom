@@ -117,6 +117,11 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
  * hook_form_alter()
  */
 function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == "node_delete_confirm") {
+    $form['#attached']['css'] = array(
+      drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
+    );
+  }
   if (!empty($form['type']['#value'])) {
     $nodeType = nul_census_custom_get_census_part($form['type']['#value']);
     switch ($nodeType) {
