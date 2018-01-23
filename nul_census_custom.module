@@ -133,6 +133,10 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           );
           // Disable certifier field
           $form['field_survey_name_of_certifier']['#disabled'] = TRUE;
+          // only allow users who have permission can certify census as complete to see that field
+          if (!user_access('can certify census as complete')) {
+            $form['field_survey_name_of_certifier']['#attributes']['class'][] = 'hide';
+          }
           $completeTerm = array_search('Complete', $form['field_census_status'][LANGUAGE_NONE]['#options']);
           // Enable certifier field if user has permissions and the census is complete
           if (!empty($form['field_survey_name_of_certifier']) &&
