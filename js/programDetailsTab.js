@@ -5,7 +5,7 @@
     hideFields();
     $('input[type=radio][name^=field_do_you_offer_programs_of_t]').change(hideFields);
     function hideFields() {
-      console.log($('input[type=radio][name^=field_do_you_offer_programs_of_t]:checked').val());
+      // console.log($('input[type=radio][name^=field_do_you_offer_programs_of_t]:checked').val());
       if ($('input[type=radio][name^=field_do_you_offer_programs_of_t]:checked').val() == 1) {
         $('.node-form div.form-item').each(function (index, key) {
           // skips the title, tab status and parent census fields,
@@ -24,7 +24,9 @@
       }
 
       if ($('input[type=radio][name^=field_do_you_offer_programs_of_t]:checked').val() == 0 ||
-      typeof ($('input[type=radio][name^=field_do_you_offer_programs_of_t]:checked').val())  === 'undefined') {
+      typeof (
+        $('input[type=radio][name^=field_do_you_offer_programs]:checked').val())  === 'undefined'
+      ) {
         $('.node-form div.form-item').each(function (index, key) {
           // skips the title, tab status and parent census fields,
           // whether the user sees those fields should be depenedent on their permissions
@@ -33,11 +35,16 @@
           !$(key).hasClass('form-item-field-parent-census-und') &&
           !$(key).hasClass('form-item-field-tab-status-und')) {
             $(key).hide();
+
+            // AGH #11664 If user switches to saying
+            // they do not have programs of that type clear all the fields
+            $(key).children('input').val('');
           }
         });
 
         $('div.field-group-div').each(function (index, key) {
           $(key).hide();
+          $(key).val('');
         });
       }
     };
