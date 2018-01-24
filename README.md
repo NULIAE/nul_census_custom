@@ -10,6 +10,10 @@ To set up the nul census one should:
 3. Configure permissions as described in this readme
 4. Configure views as described in this readme
 5. Configure settings for module (http://example.com/admin/config/nul_census_custom/settings)
+6. Configure navigation links and landing pages for different roles:
+  + Affliate staff should be directed to the "my-affiliate" page on login (using rules) and have a link to that page somewhere in their Navigation
+  + NUL Staff should have a link to "/census-s-by-affiliate" in their navigation bar
+
 
 ## Fields Styled to be displayed as tables in View and Edit
 
