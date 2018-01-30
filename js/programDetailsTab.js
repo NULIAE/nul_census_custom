@@ -38,7 +38,15 @@
 
             // AGH #11664 If user switches to saying
             // they do not have programs of that type clear all the fields
-            $(key).children('input').val('');
+
+            // if its radio treat special
+            if ($(key).children(':radio').length > 0) {
+              $(key).children('input[type="radio"]').attr('checked', false);
+
+            // IF its not a radio just clear value
+            } else {
+              $(key).children('input').val('');
+            }
           }
         });
 
