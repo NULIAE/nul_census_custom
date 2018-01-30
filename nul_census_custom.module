@@ -100,7 +100,7 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
 
             $node->content['programsForThisTab'] = array(
               '#markup' => $markup,
-              '#weight' => 100,
+              '#weight' => -100,
             );
           }
         }
