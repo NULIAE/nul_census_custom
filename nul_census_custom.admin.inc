@@ -18,7 +18,7 @@ function nul_census_custom_settings_form($form, &$form_state) {
   // Field in Civi to use to find the affiliate
   $form['affiliatefield'] = array(
     '#type' => 'textfield',
-    '#title' => t('Field in civi to base affiliate off of'),
+    '#title' => t('ID of custom field in civi to base affiliate off of'),
     '#default_value' => variable_get('affiliatefield'),
   );
   $form['submit'] = array(
