@@ -177,7 +177,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               // make title field to be the name of the affliate and hide
               $form['title']['#default_value'] = $displayName . " " . $year . " Census";
               // Update Year field and disable
-              $form['field_year'][LANGUAGE_NONE][0]['value']['#default_value'] = $year;
+              $form['field_year'][LANGUAGE_NONE]['#default_value'][] = intval($year);
               // Update affliate field and disable
               $form['field_affiliate'][LANGUAGE_NONE][0]['value']['#default_value'] = $canCreate['affiliateId'];
               $form['field_first_name'][LANGUAGE_NONE][0]['value']['#default_value'] = $displayName;
