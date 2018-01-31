@@ -438,13 +438,18 @@ function nul_census_custom_block_view_alter(&$data, $block) {
       }
     }
     if ($parentCensusNid == 0) {
-      // checks if on a census tab in create mode and make census tab menu work from there
-      if (
-        arg(0) == 'node' &&
-        arg(1) == 'add' &&
-        !empty(arg(2)) &&
-        arg(3) >= 1) {
-        if ($block->delta == 'census_tab_menu-block_1') {
+      if ($block->delta == 'census_tab_menu-block_1') {
+        // when on parent census add contact information tab
+        if (arg(1) > 0) {
+          $parentCensusId = arg(1);
+          $result = "<a href='/node/{$parentCensusId}'><div class='parentCensusLink tab field-content tabType'>Contact Information</a></div>";
+        }
+        // checks if on a census tab in create mode and make census tab menu work from there
+        if (
+          arg(0) == 'node' &&
+          arg(1) == 'add' &&
+          !empty(arg(2)) &&
+          arg(3) >= 1) {
           $PCNid = arg(3);
           $arguments = array(arg(3));
           $result = "<a href='/node/{$PCNid}'><div class='parentCensusLink tab field-content tabType'>Contact Information</a></div>";
