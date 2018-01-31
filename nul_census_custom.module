@@ -164,23 +164,18 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
             $year = date("Y");
             $canCreate = nul_census_custom_census_creation_permissions(arg(3), $year);
             // If an affiliate id for which the logged in user has access to is found
-            if ($canCreate['affiliateId'] >= 1) {
+            if ($canCreate['affiliateId'] >= 1 && !empty($form['field_affiliate_select'][LANGUAGE_NONE]['#options'][arg(3)])) {
               // look up display name
-              $params = array(
-                'id' => variable_get('affiliatefield'),
-                'api.OptionValue.getsingle' => array('option_group_id' => "\$value.option_group_id", 'value' => $canCreate['affiliateId']),
-              );
-              $affiliateInfo = nul_census_custom_civi_api('CustomField', 'getsingle', $params);
-              if (!empty($affiliateInfo['api.OptionValue.getsingle']['label'])) {
-                $displayName = $affiliateInfo['api.OptionValue.getsingle']['label'];
-              }
+              $displayName = $form['field_affiliate_select'][LANGUAGE_NONE]['#options'][arg(3)];
               // make title field to be the name of the affliate and hide
               $form['title']['#default_value'] = $displayName . " " . $year . " Census";
               // Update Year field and disable
               $form['field_year'][LANGUAGE_NONE]['#default_value'][] = intval($year);
-              // Update affliate field and disable
-              $form['field_affiliate'][LANGUAGE_NONE][0]['value']['#default_value'] = $canCreate['affiliateId'];
-              $form['field_first_name'][LANGUAGE_NONE][0]['value']['#default_value'] = $displayName;
+              // Update affliate select field
+              $form['field_affiliate_select'][LANGUAGE_NONE]['#default_value'][] = $canCreate['affiliateId'];
+
+              // $form['field_affiliate'][LANGUAGE_NONE][0]['value']['#default_value'] = $canCreate['affiliateId'];
+              // $form['field_first_name'][LANGUAGE_NONE][0]['value']['#default_value'] = $displayName;
               // set default status to inclomplete
               $defaultStatus = array_search('Incomplete', $form['field_census_status'][LANGUAGE_NONE]['#options']);
               if (empty($form['field_census_status'][LANGUAGE_NONE]['#default_value'])) {

@@ -276,8 +276,8 @@ function nul_census_custom_get_affiliate_from_node($nid, $censusPart) {
   if ($censusPart == 'census') {
     $parentCensus = node_load($nid);
   }
-  if (!empty($parentCensus->field_affiliate[LANGUAGE_NONE][0]['value'])) {
-    $affiliate = $parentCensus->field_affiliate[LANGUAGE_NONE][0]['value'];
+  if (!empty($parentCensus->field_affiliate_select[LANGUAGE_NONE][0]['value'])) {
+    $affiliate = $parentCensus->field_affiliate_select[LANGUAGE_NONE][0]['value'];
   }
   return $affiliate;
 }
@@ -360,7 +360,7 @@ function nul_census_custom_census_creation_permissions($affiliateId, $year) {
   $query = new EntityFieldQuery();
   $results = $query->entityCondition('entity_type', 'node')
     ->entityCondition('bundle', 'census')
-    ->fieldCondition('field_affiliate', 'value', $canCreate['affiliateId'])
+    ->fieldCondition('field_affiliate_select', 'value', $canCreate['affiliateId'])
     ->fieldCondition('field_year', 'value', $year)
     ->execute();
   // If you find one go to it
