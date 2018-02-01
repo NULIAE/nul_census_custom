@@ -234,9 +234,12 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           // If you find a program area
           // Limit options for Program Type and Services Provided based on Program Area
           if ($programArea > 0) {
+            // load js
+            drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/servicesProvided.js');
+
             // Check the following fields options
             $fieldsToLimitByProgramArea = array(
-              'field_service_provided',
+              // 'field_service_provided',
               'field_program_types',
             );
             foreach ($fieldsToLimitByProgramArea as $key => $fieldName) {
