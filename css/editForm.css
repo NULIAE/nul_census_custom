@@ -79,8 +79,11 @@ div.censusPrograms a.button {
   border: solid #bbb 1px;
   color: black;
   padding: 5px;
-  margin: 5px;
+  margin-bottom: 5px;
+  margin-top: 5px;
   padding-left: 10px;
+  display: block;
+  width: 105px;
 }
 
 div.censusPrograms a.button:hover {
@@ -161,4 +164,34 @@ body #sidebar-first .block {
 #block-views-census-tab-menu-block p,
 #block-views-census-tab-menu-block-1 p {
   display: none;
+}
+
+/* Styling Full Census*/
+
+div.view-full-census div.content .field {
+  border-top: solid 1px #bebfb9;
+  border-left: solid 1px #bebfb9;
+  border-right: solid 1px #bebfb9;
+}
+
+div.view-full-census div.content {
+  border-bottom: solid 1px #bebfb9;
+}
+
+div.view-full-census div.content .field-label-inline div.field-label {
+  width: 30%;
+  clear: both;
+  border-right: solid 1px #bebfb9;
+}
+div.view-full-census .field-label,
+div.view-full-census .field-items {
+  padding: 5px;
+}
+div.view-full-census .field-label-inline .field-items {
+  width: 60%;
+  float: left;
+  padding: 5px;
+}
+div.view-full-census div.content .field div.field-item.even {
+  border: none;
 }
