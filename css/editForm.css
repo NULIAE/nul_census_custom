@@ -25,12 +25,14 @@
 }
 
 .nulTable .field-group-div:nth-child(odd),
-.nulTableRow:nth-child(odd) {
+.nulTableRow:nth-child(odd),
+div.view.view-throwa div.views-field:nth-child(odd) {
   background-color: #F3F4EE;
 }
 
 .nulTable .field-group-div:nth-child(even),
-.nulTableRow:nth-child(even) {
+.nulTableRow:nth-child(even),
+div.view.view-throwa div.views-field:nth-child(even) {
   background-color: white;
 }
 
@@ -191,3 +193,41 @@ div.view-full-census .field-label-inline .field-items {
 div.view-full-census div.content .field div.field-item.even {
   border: none;
 }
+
+/* programs view */
+
+div.view.view-throwa div.views-row {
+ display: table;
+ width: 100%;
+ padding-top: 20px;
+}
+
+div.view.view-throwa div.views-field {
+display: table-row;
+}
+
+div.view.view-throwa div.views-label,
+div.view.view-throwa span.views-label {
+ width: 40%;
+ display: table-cell;
+ padding: 5px;
+}
+
+div.view.view-throwa div.field-content {
+ display: table-cell;
+ padding: 5px;
+}
+
+div.view.view-throwa div.field-content.nulHeader {
+ font-weight: bold;
+}
+
+div.view.view-throwa div.views-field.views-field-type-1 {
+ background-color: white;
+ width: 100%;
+}
+
+div.view.view-throwa div.views-field:nth-child(even) {
+  background-color: #dfddde;
+}
+
