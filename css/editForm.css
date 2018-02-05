@@ -83,7 +83,7 @@ div.censusPrograms a.button {
   margin-top: 5px;
   padding-left: 10px;
   display: block;
-  width: 105px;
+  width: 135px;
 }
 
 div.censusPrograms a.button:hover {
@@ -186,6 +186,7 @@ div.view-full-census div.content .field-label-inline div.field-label {
 div.view-full-census .field-label,
 div.view-full-census .field-items {
   padding: 5px;
+  width: 30%;
 }
 div.view-full-census .field-label-inline .field-items {
   width: 60%;
