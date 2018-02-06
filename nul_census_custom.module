@@ -234,8 +234,20 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           // If you find a program area
           // Limit options for Program Type and Services Provided based on Program Area
           if ($programArea > 0) {
-            // load js
-            drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/servicesProvided.js');
+            // create array of tid's
+            $servicesProvidedVocabulary = taxonomy_vocabulary_machine_name_load('services_provided');
+            $servicesProvidedVocabulary = taxonomy_get_tree($servicesProvidedVocabulary->vid);
+            $sortedOptions = array();
+            foreach ($servicesProvidedVocabulary as $key => $value) {
+              $programAreaOfOption = taxonomy_term_load($value->tid)->field_program_area[LANGUAGE_NONE][0]['tid'];
+              if (!empty($programAreaOfOption)) {
+                $sortedOptions[$programAreaOfOption][] = $value->tid;
+              }
+            }
+            if (!empty($sortedOptions)) {
+              drupal_add_js(array('nul_census_custom' => array('sorted' => $sortedOptions)), array('type' => 'setting'));
+              drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/servicesProvided.js');
+            }
 
             // Check the following fields options
             $fieldsToLimitByProgramArea = array(
