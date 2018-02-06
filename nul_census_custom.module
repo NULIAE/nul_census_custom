@@ -214,7 +214,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           if (!empty($form['field_program_area'][LANGUAGE_NONE]['#default_value'])) {
             $programArea = $form['field_program_area'][LANGUAGE_NONE]['#default_value'][0];
             // Show program area as text if the user does not have permission to set it
-            if (!empty($form['field_program_area'][LANGUAGE_NONE]['#options'][$form['field_program_area'][LANGUAGE_NONE]['#default_value'][0]]) && !user_access('can edit magic census fields')) {
+            if (!empty($form['field_program_area'][LANGUAGE_NONE]['#options'][$form['field_program_area'][LANGUAGE_NONE]['#default_value'][0]])) {
               $form['programAreaText'] = array(
                 '#type' => 'markup',
                 '#markup' => "<label>Program Area: " . $form['field_program_area'][LANGUAGE_NONE]['#options'][$form['field_program_area'][LANGUAGE_NONE]['#default_value'][0]] . "</label>",
