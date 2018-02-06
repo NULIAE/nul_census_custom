@@ -10,13 +10,9 @@
       var servicesForArea = sortedOptions[programArea];
     }
 
-    // TODO what should happen if an admin user changes the program area..
-    // should services provided paragraphs all be reset?
-    // $('#edit-field-program-area-und').change();
-
     // When a new service provided paragraph is added
     $(document).ajaxStop(function () {
-      // foreach thru options if now in services for Area array unset
+      // foreach thru options and remove ones that arent for the program area
       if ($('select[name^="field_services_provided"]').not('[id*="weight"]').length > 0) {
         $('select[name^="field_services_provided"]').not('[id*="weight"]').each(function (p, v) {
           $(this).find('option').each(function (id, value) {
