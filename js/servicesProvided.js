@@ -17,11 +17,13 @@
     // When a new service provided paragraph is added
     $(document).ajaxStop(function () {
       // foreach thru options if now in services for Area array unset
-      if ($('select[name^="field_services_provided"]').length > 0) {
-        $('select[name^="field_services_provided"] option').each(function (id, value) {
-          if (!servicesForArea[id]) {
-            $(this).remove();
-          }
+      if ($('select[name^="field_services_provided"]').not('[id*="weight"]').length > 0) {
+        $('select[name^="field_services_provided"]').not('[id*="weight"]').each(function (p, v) {
+          $(this).find('option').each(function (id, value) {
+            if (!servicesForArea[id]) {
+              $(value).remove();
+            }
+          });
         });
       }
     });
