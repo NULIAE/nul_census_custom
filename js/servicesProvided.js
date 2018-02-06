@@ -16,7 +16,7 @@
       if ($('select[name^="field_services_provided"]').not('[id*="weight"]').length > 0) {
         $('select[name^="field_services_provided"]').not('[id*="weight"]').each(function (p, v) {
           $(this).find('option').each(function (id, value) {
-            if (!servicesForArea[id]) {
+            if ($(value).val() != '_none' && $.inArray($(value).val(), servicesForArea) < 0) {
               $(value).remove();
             }
           });
