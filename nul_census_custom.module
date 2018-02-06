@@ -8,7 +8,7 @@ module_load_include('inc', 'nul_census_custom', './nul_census_custom.utils');
 function nul_census_custom_preprocess_views_view(&$vars) {
   $view = $vars['view'];
   // Make sure it's the correct view
-  if ($view->name == 'full_census') {
+  if ($view->name == 'full_census' || $view->name == 'throwa') {
     // add needed stylesheet
     drupal_add_css(drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css');
   }
@@ -228,15 +228,32 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           }
           $fieldsToHideAndDisableOnProgram = array(
             'field_parent_census',
-            'field_program_area',
             'field_legacy_program_id',
           );
+          // ALWAYS hide Program Area field
+          $form['field_program_area']['#attributes']['class'][] = 'hide';
+
           // If you find a program area
           // Limit options for Program Type and Services Provided based on Program Area
           if ($programArea > 0) {
+            // create array of tid's
+            $servicesProvidedVocabulary = taxonomy_vocabulary_machine_name_load('services_provided');
+            $servicesProvidedVocabulary = taxonomy_get_tree($servicesProvidedVocabulary->vid);
+            $sortedOptions = array();
+            foreach ($servicesProvidedVocabulary as $key => $value) {
+              $programAreaOfOption = taxonomy_term_load($value->tid)->field_program_area[LANGUAGE_NONE][0]['tid'];
+              if (!empty($programAreaOfOption)) {
+                $sortedOptions[$programAreaOfOption][] = $value->tid;
+              }
+            }
+            if (!empty($sortedOptions)) {
+              drupal_add_js(array('nul_census_custom' => array('sorted' => $sortedOptions)), array('type' => 'setting'));
+              drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/servicesProvided.js');
+            }
+
             // Check the following fields options
             $fieldsToLimitByProgramArea = array(
-              'field_service_provided',
+              // 'field_service_provided',
               'field_program_types',
             );
             foreach ($fieldsToLimitByProgramArea as $key => $fieldName) {

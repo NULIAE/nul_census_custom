@@ -25,12 +25,14 @@
 }
 
 .nulTable .field-group-div:nth-child(odd),
-.nulTableRow:nth-child(odd) {
+.nulTableRow:nth-child(odd),
+div.view.view-throwa div.views-field:nth-child(odd) {
   background-color: #F3F4EE;
 }
 
 .nulTable .field-group-div:nth-child(even),
-.nulTableRow:nth-child(even) {
+.nulTableRow:nth-child(even),
+div.view.view-throwa div.views-field:nth-child(even) {
   background-color: white;
 }
 
@@ -79,8 +81,11 @@ div.censusPrograms a.button {
   border: solid #bbb 1px;
   color: black;
   padding: 5px;
-  margin: 5px;
+  margin-bottom: 5px;
+  margin-top: 5px;
   padding-left: 10px;
+  display: block;
+  width: 135px;
 }
 
 div.censusPrograms a.button:hover {
@@ -160,5 +165,73 @@ body #sidebar-first .block {
 
 #block-views-census-tab-menu-block p,
 #block-views-census-tab-menu-block-1 p {
+  display: none;
+}
+
+/* Styling Full Census*/
+div.view-full-census div.content .field-label-inline div.field-label {
+  width: 30%;
+  clear: both;
+}
+
+div.view-full-census .field .field-label,
+div.view-full-parent-census .field .field-label {
+  padding: 5px;
+  width: 30%;
+}
+
+div.view-full-census .field-items,
+div.view-full-parent-census .field-items {
+  padding: 5px;
+  width: 60%;
+}
+div.view-full-census .field-label-inline .field-items {
+  width: 60%;
+  float: left;
+  padding: 5px;
+}
+div.view-full-census div.content .field div.field-item.even {
+  border: none;
+}
+
+/* programs view */
+
+div.view.view-throwa div.views-row {
+ display: table;
+ width: 100%;
+ padding-top: 20px;
+}
+
+div.view.view-throwa div.views-field {
+display: table-row;
+}
+
+div.view.view-throwa div.views-label,
+div.view.view-throwa span.views-label {
+ width: 40%;
+ display: table-cell;
+ padding: 5px;
+}
+
+div.view.view-throwa div.field-content {
+ display: table-cell;
+ padding: 5px;
+}
+
+div.view.view-throwa div.field-content.nulHeader {
+ font-weight: bold;
+}
+
+div.view.view-throwa div.views-field.views-field-type-1 {
+ background-color: white;
+ width: 100%;
+}
+
+div.view.view-throwa div.views-field:nth-child(even) {
+  background-color: #dfddde;
+}
+
+/* AGH #11788 hide submitted by text */
+p.author-datetime {
   display: none;
 }
