@@ -149,6 +149,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
             'field_affiliate_select',
             'field_census_status',
             'title',
+            'field_legacy_census_id',
           );
           nul_census_custom_hide_and_disable_fields($form, $fieldsToHideAndDisableOnCensus);
           // IF ON A CENSUS IN CREATE MODE
