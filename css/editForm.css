@@ -149,7 +149,7 @@ body #sidebar-first .block {
 #block-views-census-tab-menu-block-1 .tab:hover,
 #block-views-census-tab-menu-block-1 a:hover {
   background-color: #bebfb9;
-  color: #C51230;
+  /* color: #C51230; */
 }
 
 #block-views-census-tab-menu-block a .tabType,
@@ -234,4 +234,22 @@ div.view.view-throwa div.views-field:nth-child(even) {
 /* AGH #11788 hide submitted by text */
 p.author-datetime {
   display: none;
+}
+
+/* AGH #11498 color coding statuses*/
+
+/*NOT COMPLETE */
+div.tabStatus.notStarted,
+div.tabStatus.Incomplete,
+div.tabStatus.Resubmit {
+  color: #9C2422;
+}
+
+/* Complete Statuses */
+div.tabStatus.Complete,
+div.tabStatus.Reviewed,
+div.tabStatus.Submitted,
+div.tabStatus.Reviewed,
+div.tabStatus.Reviewed.Complete {
+  color: darkgreen;
 }
