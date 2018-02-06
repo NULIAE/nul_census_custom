@@ -231,3 +231,7 @@ div.view.view-throwa div.views-field:nth-child(even) {
   background-color: #dfddde;
 }
 
+/* AGH #11788 hide submitted by text */
+p.author-datetime {
+  display: none;
+}
