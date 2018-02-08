@@ -286,6 +286,10 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
 
       case 'tab':
         if (!empty($form['#node']->type) && $form['#node']->type . '_node_form' == $form_id) {
+          // AGH #11789 making revenue fields total
+          if ($form['#node']->type == 'revenue') {
+            drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/revenueTotal.js');
+          }
           // If on program details tab add js to hide and show fields based on checkbox
           if (!empty($form['field_do_you_offer_programs_of_t'])) {
             drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/programDetailsTab.js');
