@@ -238,18 +238,33 @@ p.author-datetime {
 
 /* AGH #11498 color coding statuses*/
 
-/*NOT COMPLETE */
+/* Not started – red */
 div.tabStatus.notStarted,
-div.tabStatus.Incomplete,
 div.tabStatus.Resubmit {
   color: #9C2422;
 }
 
+/* Incomplete – yellow/orange */
+div.tabStatus.Incomplete {
+  color: yellow;
+}
+
+/* Complete – green */
 /* Complete Statuses */
-div.tabStatus.Complete,
-div.tabStatus.Reviewed,
-div.tabStatus.Submitted,
-div.tabStatus.Reviewed,
-div.tabStatus.Reviewed.Complete {
+div.tabStatus.Complete {
   color: darkgreen;
+}
+
+/* Submitted – blue */
+div.tabStatus.Submitted {
+  color: blue;
+}
+
+/* Reviewed - purple */
+div.tabStatus.Reviewed {
+  color: purple;
+}
+
+div.tabStatus.Reviewed.Complete {
+  color: black;
 }
