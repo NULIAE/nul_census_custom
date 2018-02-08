@@ -8,6 +8,12 @@ module_load_include('inc', 'nul_census_custom', './nul_census_custom.utils');
 function nul_census_custom_preprocess_views_view(&$vars) {
   $view = $vars['view'];
   // Make sure it's the correct view
+  if ($view->name == 'census_tab_menu') {
+    drupal_add_css(
+      'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css',
+      array('type' => 'external')
+    );
+  }
   if ($view->name == 'full_census' || $view->name == 'throwa') {
     // add needed stylesheet
     drupal_add_css(drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css');

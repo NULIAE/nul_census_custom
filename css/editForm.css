@@ -238,15 +238,29 @@ p.author-datetime {
 
 /* AGH #11498 color coding statuses*/
 
+div.tabStatus::before {
+  font-family: FontAwesome;
+  margin-right: 5px;
+}
+
 /* Not started – red */
 div.tabStatus.notStarted,
 div.tabStatus.Resubmit {
   color: #9C2422;
 }
 
+div.tabStatus.notStarted::before,
+div.tabStatus.Resubmit::before {
+  content: "\f057";
+}
+
 /* Incomplete – yellow/orange */
 div.tabStatus.Incomplete {
-  color: yellow;
+  color: orange;
+}
+
+div.tabStatus.Incomplete::before {
+  content: "\f057";
 }
 
 /* Complete – green */
@@ -255,9 +269,17 @@ div.tabStatus.Complete {
   color: darkgreen;
 }
 
+div.tabStatus.Complete::before {
+  content: "\f00c";
+}
+
 /* Submitted – blue */
 div.tabStatus.Submitted {
   color: blue;
+}
+
+div.tabStatus.Submitted::before {
+  content: "\f0a9";
 }
 
 /* Reviewed - purple */
@@ -265,6 +287,14 @@ div.tabStatus.Reviewed {
   color: purple;
 }
 
+div.tabStatus.Reviewed::before {
+  content: "\f058";
+}
+
 div.tabStatus.Reviewed.Complete {
   color: black;
+}
+
+div.tabStatus.Reviewed.Complete::before {
+  content: "\f058";
 }
