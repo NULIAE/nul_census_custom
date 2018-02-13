@@ -12,6 +12,7 @@
       'input#edit-field-revenue-federal-und-0-value',
       'input#edit-field-revenue-state-local-und-0-value',
       'input#edit-field-revenue-nul-und-0-value',
+      'input#edit-field-revenue-other-und-0-value', 
     ];
     var totalField = 'input#edit-field-revenue-total-budget-und-0-value';
 
