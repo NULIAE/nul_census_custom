@@ -1,5 +1,6 @@
 (function ($) {
-  // AGH 11789 THIS JS handles tables with total fields that need to be calcualted on the revenue page
+  // AGH 11789 THIS JS handles tables with total fields
+  // that need to be calcualted on the revenue page
   $(document).ready(function () {
     var fieldsToTotal = [
       'input#edit-field-revenue-investment-und-0-value',

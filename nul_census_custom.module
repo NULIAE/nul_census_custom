@@ -290,6 +290,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           if ($form['#node']->type == 'revenue') {
             drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/revenueTotal.js');
           }
+
           // If on program details tab add js to hide and show fields based on checkbox
           if (!empty($form['field_do_you_offer_programs_of_t'])) {
             drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/programDetailsTab.js');
@@ -685,6 +686,24 @@ function nul_census_custom_node_validate($node, $form, &$form_state) {
 
           }
         }
+      }
+    }
+
+    // AGH #11854 enforce that field_program_housing_fixed and field_program_housing_adjustable add up to 100%
+    if ($node->type == 'program_housing') {
+      $totalHousing = 0;
+      $housingFieldsToTotal = array(
+        'field_program_housing_adjustable',
+        'field_program_housing_fixed',
+      );
+      foreach ($housingFieldsToTotal as $key => $field) {
+        if (!empty($node->{$field}[LANGUAGE_NONE][0]['value'])) {
+          $totalHousing = $totalHousing + $node->{$field}[LANGUAGE_NONE][0]['value'];
+        }
+      }
+      if ($totalHousing != 100 && $totalHousing > 0) {
+        form_set_error('field_program_housing_adjustable', t('"Percent of fixed rate mortgages" and "Percent of adjustable rate mortgages" must add up to 100%'));
+        form_set_error('field_program_housing_fixed');
       }
     }
 
