@@ -76,7 +76,7 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
         drupal_add_css(drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css');
         // Check permissions, if do not have permission to edit complete tabs hide edit button
         if (!empty($statusOfTab) && $node->type !== 'census') {
-          $perms = nul_census_custom_check_status_permisions($statusOfTab, 'tab');
+          $perms = nul_census_custom_check_status_permisions($statusOfTab, 'tab', $node->nid);
           if ($perms['canResubmit'] && $statusOfTab == 'Resubmit') {
             // Add and process resubmit button
             nul_census_custom_button_to_update_status($statusOfTab, 'Resubmit', 'edit census tabs with status resubmit', 'resubmit', $node->nid, $node->field_parent_census[LANGUAGE_NONE][0]['target_id'], array('Submitted'));

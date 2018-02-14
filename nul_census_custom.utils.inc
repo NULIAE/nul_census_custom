@@ -29,7 +29,7 @@ function nul_census_custom_searchTaxonomyByField($vocabMachineName, $fieldName, 
  * @param  string $contentType census or tab
  * @return array  can they edit or not, can they resubmit or not
  */
-function nul_census_custom_check_status_permisions($status, $contentType) {
+function nul_census_custom_check_status_permisions($status, $contentType, $nid = NULL) {
   $term = taxonomy_term_load($status);
   if (!empty($term->name)) {
     $status = $term->name;
@@ -37,14 +37,22 @@ function nul_census_custom_check_status_permisions($status, $contentType) {
   global $user;
   $canResubmit = FALSE;
   $canEdit = FALSE;
+  $myAffiliate = FALSE;
+
+  // check that logged in user and node affiliate match
+  $loggedInUserAffiliate = nul_census_custom_get_affiliate_from_user();
+  $nodeAffiliateNode = nul_census_custom_get_affiliate_from_node($nid, $censusPart);
+  if ($loggedInUserAffiliate == $nodeAffiliateNode) {
+    $myAffiliate = TRUE;
+  }
 
   // IF user is an administrator they can edit whatever always
-  if (in_array('administrator', $user->roles)) {
+  if (in_array('administrator', $user->roles) || user_access('edit all affiliate censuses')) {
     $canEdit = TRUE;
     $canResubmit = TRUE;
   }
   // If user is not admin check permissions
-  if (!in_array('administrator', $user->roles)) {
+  else if ($myAffiliate && user_access('edit own affiliate censuses')) {
     if ($contentType == 'tab') {
       switch ($status) {
         case 'Incomplete':
@@ -135,6 +143,7 @@ function nul_census_custom_check_status_permisions($status, $contentType) {
           $canEdit = FALSE;
 
           break;
+
       }
     }
   }
