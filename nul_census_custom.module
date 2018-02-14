@@ -470,7 +470,7 @@ function nul_census_custom_block_view_alter(&$data, $block) {
         // when on parent census add contact information tab
         if (arg(1) > 0) {
           $currentNode = node_load(arg(1));
-          if ($currentNode->type == 'census') {
+          if (!empty($currentNode->type) && $currentNode->type == 'census') {
             $parentCensusId = arg(1);
             $result = "<a href='/node/{$parentCensusId}'><div class='parentCensusLink tab field-content tabType'>Contact Information</a></div>";
           }
