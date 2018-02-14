@@ -38,13 +38,15 @@ function nul_census_custom_check_status_permisions($status, $contentType, $nid =
   $canResubmit = FALSE;
   $canEdit = FALSE;
   $myAffiliate = FALSE;
+  if (!empty($nid)) {
+    // check that logged in user and node affiliate match
+    $loggedInUserAffiliate = nul_census_custom_get_affiliate_from_user();
 
-  // check that logged in user and node affiliate match
-  $loggedInUserAffiliate = nul_census_custom_get_affiliate_from_user();
-  $censusPart = nul_census_custom_get_census_part($contentType);
-  $nodeAffiliateNode = nul_census_custom_get_affiliate_from_node($nid, $censusPart);
-  if ($loggedInUserAffiliate == $nodeAffiliateNode) {
-    $myAffiliate = TRUE;
+    $nodeAffiliateNode = nul_census_custom_get_affiliate_from_node($nid, 'tab');
+    // print_r($nodeAffiliateNode); die();
+    if ($loggedInUserAffiliate == $nodeAffiliateNode) {
+      $myAffiliate = TRUE;
+    }
   }
 
   // IF user is an administrator they can edit whatever always
@@ -53,7 +55,7 @@ function nul_census_custom_check_status_permisions($status, $contentType, $nid =
     $canResubmit = TRUE;
   }
   // If user is not admin check permissions
-  else if ($myAffiliate && user_access('edit own affiliate censuses')) {
+  elseif ($myAffiliate && user_access('edit own affiliate censuses')) {
     if ($contentType == 'tab') {
       switch ($status) {
         case 'Incomplete':
@@ -279,9 +281,9 @@ function nul_census_custom_button_to_update_status($statusOfTab, $statusTabMustB
 function nul_census_custom_get_affiliate_from_node($nid, $censusPart) {
   $affiliate = NULL;
   if ($censusPart == 'tab') {
-    if (!empty($nid)) {
-      $parentCensus = node_load($nid);
-    }
+    $tab = node_load($nid);
+    $nid = $tab->field_parent_census[LANGUAGE_NONE][0]['target_id'];
+    $parentCensus = node_load($nid);
   }
   if ($censusPart == 'census') {
     $parentCensus = node_load($nid);
