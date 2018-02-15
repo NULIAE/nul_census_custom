@@ -76,7 +76,7 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
         drupal_add_css(drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css');
         // Check permissions, if do not have permission to edit complete tabs hide edit button
         if (!empty($statusOfTab) && $node->type !== 'census') {
-          $perms = nul_census_custom_check_status_permisions($statusOfTab, 'tab');
+          $perms = nul_census_custom_check_status_permisions($statusOfTab, 'tab', $node->nid);
           if ($perms['canResubmit'] && $statusOfTab == 'Resubmit') {
             // Add and process resubmit button
             nul_census_custom_button_to_update_status($statusOfTab, 'Resubmit', 'edit census tabs with status resubmit', 'resubmit', $node->nid, $node->field_parent_census[LANGUAGE_NONE][0]['target_id'], array('Submitted'));
@@ -298,7 +298,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           // IF user does not have permission to edit this tab with this status redirect to home page
           if (!empty($form['#node']->field_tab_status) && !empty($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']]) && substr($form_id, 0, 7) !== 'comment') {
             // TODO check this is working
-            $perms = nul_census_custom_check_status_permisions($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']], 'tab');
+            $perms = nul_census_custom_check_status_permisions($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']], 'tab', $form['#node']->nid);
             // If can't edit redirect to node in view mode.
             if (!$perms['canEdit']) {
               if (arg(0) == 'node' && arg(2) == 'edit') {
@@ -470,7 +470,7 @@ function nul_census_custom_block_view_alter(&$data, $block) {
         // when on parent census add contact information tab
         if (arg(1) > 0) {
           $currentNode = node_load(arg(1));
-          if ($currentNode->type == 'census') {
+          if (!empty($currentNode->type) && $currentNode->type == 'census') {
             $parentCensusId = arg(1);
             $result = "<a href='/node/{$parentCensusId}'><div class='parentCensusLink tab field-content tabType'>Contact Information</a></div>";
           }
@@ -743,18 +743,18 @@ function nul_census_custom_node_access($node, $op, $account) {
       case 'census':
         $affiliateOfNode = nul_census_custom_get_affiliate_from_node($node->nid, 'census');
         if (!empty($node->field_census_status[LANGUAGE_NONE][0]['tid'])) {
-          $perms = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['tid'], 'census');
+          $perms = nul_census_custom_check_status_permisions($node->field_census_status[LANGUAGE_NONE][0]['tid'], 'census', $node->nid);
         }
         break;
 
       case 'programs':
         // If on a program check for a parent census
         if (!empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
-          $affiliateOfNode = nul_census_custom_get_affiliate_from_node($node->field_parent_census[LANGUAGE_NONE][0]['target_id'], 'tab');
+          $affiliateOfNode = nul_census_custom_get_affiliate_from_node($node->field_parent_census[LANGUAGE_NONE][0]['target_id'], 'census', $node->nid);
         }
         // if no parent census available check if its in the url ( this would be the case on a new program)
         elseif (!empty(arg(3))) {
-          $affiliateOfNode = nul_census_custom_get_affiliate_from_node(arg(3), 'tab');
+          $affiliateOfNode = nul_census_custom_get_affiliate_from_node(arg(3), 'census');
         }
 
         $contentType = taxonomy_term_load($node->field_program_area[LANGUAGE_NONE][0]['tid'])->field_content_type[LANGUAGE_NONE][0]['value'];
@@ -762,26 +762,27 @@ function nul_census_custom_node_access($node, $op, $account) {
 
         // Check if there is a tab status
         if (!empty($programDetailTab->field_tab_status[LANGUAGE_NONE][0]['tid'])) {
-          $perms = nul_census_custom_check_status_permisions($programDetailTab->field_tab_status[LANGUAGE_NONE][0]['tid'], 'tab');
+          $perms = nul_census_custom_check_status_permisions($programDetailTab->field_tab_status[LANGUAGE_NONE][0]['tid'], 'tab', $node->nid);
         }
         // If there is no tab status set the status to be incomplete
         else {
-          $perms = nul_census_custom_check_status_permisions('Incomplete', 'tab');
+          $perms = nul_census_custom_check_status_permisions('Incomplete', 'tab', $node->nid);
         }
         break;
 
       case 'tab':
+        // tab in create mode
         if (!empty(arg(3))) {
-          $affiliateOfNode = nul_census_custom_get_affiliate_from_node(arg(3), 'tab');
+          $affiliateOfNode = nul_census_custom_get_affiliate_from_node(arg(3), 'census');
         }
         if (!empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
-          $affiliateOfNode = nul_census_custom_get_affiliate_from_node($node->field_parent_census[LANGUAGE_NONE][0]['target_id'], 'tab');
+          $affiliateOfNode = nul_census_custom_get_affiliate_from_node($node->field_parent_census[LANGUAGE_NONE][0]['target_id'], 'census');
         }
         if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['tid'])) {
-          $perms = nul_census_custom_check_status_permisions($node->field_tab_status[LANGUAGE_NONE][0]['tid'], 'tab');
+          $perms = nul_census_custom_check_status_permisions($node->field_tab_status[LANGUAGE_NONE][0]['tid'], 'tab', $node->nid);
         }
         else {
-          $perms = nul_census_custom_check_status_permisions('Incomplete', 'tab');
+          $perms = nul_census_custom_check_status_permisions('Incomplete', 'tab', $node->nid);
         }
         break;
 

@@ -169,23 +169,27 @@ body #sidebar-first .block {
 }
 
 /* Styling Full Census*/
-div.view-full-census div.content .field-label-inline div.field-label {
+div.view-full-census div.content .field-label-inline div.field-label,
+div.content .field-label-inline div.field-label {
   width: 30%;
   clear: both;
 }
 
 div.view-full-census .field .field-label,
-div.view-full-parent-census .field .field-label {
+div.view-full-parent-census .field .field-label,
+div.article-content .field .field-label {
   padding: 5px;
   width: 30%;
 }
 
 div.view-full-census .field-items,
-div.view-full-parent-census .field-items {
+div.view-full-parent-census .field-items,
+div.article-content .field-items  {
   padding: 5px;
   width: 60%;
 }
-div.view-full-census .field-label-inline .field-items {
+div.view-full-census .field-label-inline .field-items,
+div.article-content .field-label-inline .field-items {
   width: 60%;
   float: left;
   padding: 5px;

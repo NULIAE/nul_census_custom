@@ -29,7 +29,7 @@ function nul_census_custom_searchTaxonomyByField($vocabMachineName, $fieldName, 
  * @param  string $contentType census or tab
  * @return array  can they edit or not, can they resubmit or not
  */
-function nul_census_custom_check_status_permisions($status, $contentType) {
+function nul_census_custom_check_status_permisions($status, $contentType, $nid = NULL) {
   $term = taxonomy_term_load($status);
   if (!empty($term->name)) {
     $status = $term->name;
@@ -37,14 +37,24 @@ function nul_census_custom_check_status_permisions($status, $contentType) {
   global $user;
   $canResubmit = FALSE;
   $canEdit = FALSE;
+  $myAffiliate = FALSE;
+  if (!empty($nid)) {
+    // check that logged in user and node affiliate match
+    $loggedInUserAffiliate = nul_census_custom_get_affiliate_from_user();
+    $nodeAffiliateNode = nul_census_custom_get_affiliate_from_node($nid, $contentType);
+    // print_r($nodeAffiliateNode); die();
+    if ($loggedInUserAffiliate == $nodeAffiliateNode) {
+      $myAffiliate = TRUE;
+    }
+  }
 
   // IF user is an administrator they can edit whatever always
-  if (in_array('administrator', $user->roles)) {
+  if (in_array('administrator', $user->roles) || user_access('edit all affiliate censuses')) {
     $canEdit = TRUE;
     $canResubmit = TRUE;
   }
   // If user is not admin check permissions
-  if (!in_array('administrator', $user->roles)) {
+  elseif ($myAffiliate && user_access('edit own affiliate censuses')) {
     if ($contentType == 'tab') {
       switch ($status) {
         case 'Incomplete':
@@ -135,6 +145,7 @@ function nul_census_custom_check_status_permisions($status, $contentType) {
           $canEdit = FALSE;
 
           break;
+
       }
     }
   }
@@ -269,9 +280,9 @@ function nul_census_custom_button_to_update_status($statusOfTab, $statusTabMustB
 function nul_census_custom_get_affiliate_from_node($nid, $censusPart) {
   $affiliate = NULL;
   if ($censusPart == 'tab') {
-    if (!empty($nid)) {
-      $parentCensus = node_load($nid);
-    }
+    $tab = node_load($nid);
+    $nid = $tab->field_parent_census[LANGUAGE_NONE][0]['target_id'];
+    $parentCensus = node_load($nid);
   }
   if ($censusPart == 'census') {
     $parentCensus = node_load($nid);
