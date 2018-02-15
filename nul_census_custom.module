@@ -797,7 +797,7 @@ function nul_census_custom_node_validate($node, $form, &$form_state) {
  */
 function nul_census_custom_node_access($node, $op, $account) {
   // TODO break this out based on $op
-  if (!empty($node->type)) {
+  if (!empty($node->type) && !empty($node->nid)) {
     $nodeType = nul_census_custom_get_census_part($node->type);
     if (!empty($nodeType)) {
       switch ($nodeType) {
