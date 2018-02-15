@@ -41,8 +41,7 @@ function nul_census_custom_check_status_permisions($status, $contentType, $nid =
   if (!empty($nid)) {
     // check that logged in user and node affiliate match
     $loggedInUserAffiliate = nul_census_custom_get_affiliate_from_user();
-
-    $nodeAffiliateNode = nul_census_custom_get_affiliate_from_node($nid, 'tab');
+    $nodeAffiliateNode = nul_census_custom_get_affiliate_from_node($nid, $contentType);
     // print_r($nodeAffiliateNode); die();
     if ($loggedInUserAffiliate == $nodeAffiliateNode) {
       $myAffiliate = TRUE;
