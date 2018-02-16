@@ -875,6 +875,10 @@ function nul_census_custom_node_access($node, $op, $account) {
             // Grant access to users with the right permission.
             return NODE_ACCESS_ALLOW;
           }
+          // for when user can view but not edit
+          if (!empty($perms) && $affiliateOfNode == $userAffiliate && $perms['canView'] == TRUE && $op == 'view') {
+            return NODE_ACCESS_ALLOW;
+          }
           // if its a census with the status "Reviewed Complete" you can view
           elseif (!empty($perms) && $affiliateOfNode != $userAffiliate && $perms['canView'] == TRUE && $op == 'view') {
             return NODE_ACCESS_ALLOW;
