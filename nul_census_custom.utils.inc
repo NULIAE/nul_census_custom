@@ -29,7 +29,7 @@ function nul_census_custom_searchTaxonomyByField($vocabMachineName, $fieldName, 
  * @param  string $contentType census or tab
  * @return array  can they edit or not, can they resubmit or not
  */
-function nul_census_custom_check_status_permisions($status, $contentType, $nid = NULL) {
+function nul_census_custom_check_status_permisions($status = NULL, $contentType, $nid = NULL) {
   $term = taxonomy_term_load($status);
   if (!empty($term->name)) {
     $status = $term->name;
@@ -37,6 +37,7 @@ function nul_census_custom_check_status_permisions($status, $contentType, $nid =
   global $user;
   $canResubmit = FALSE;
   $canEdit = FALSE;
+  $canView = FALSE;
   $myAffiliate = FALSE;
   if (!empty($nid)) {
     // check that logged in user and node affiliate match
@@ -52,9 +53,11 @@ function nul_census_custom_check_status_permisions($status, $contentType, $nid =
   if (in_array('administrator', $user->roles) || user_access('edit all affiliate censuses')) {
     $canEdit = TRUE;
     $canResubmit = TRUE;
+    $canView = TRUE;
   }
   // If user is not admin check permissions
   elseif ($myAffiliate && user_access('edit own affiliate censuses')) {
+    $canView = TRUE;
     if ($contentType == 'tab') {
       switch ($status) {
         case 'Incomplete':
@@ -149,9 +152,13 @@ function nul_census_custom_check_status_permisions($status, $contentType, $nid =
       }
     }
   }
+  elseif (!$myAffiliate && $status == 'Reviewed Complete' && user_access('edit own affiliate censuses')) {
+    $canView = TRUE;
+  }
   return array(
     'canEdit' => $canEdit,
     'canResubmit' => $canResubmit,
+    'canView' => $canView,
   );
 }
 
