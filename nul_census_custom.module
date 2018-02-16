@@ -366,6 +366,8 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
             'field_comm_org_native_am_female',
             'field_comm_org_african_am_female',
             'field_comm_org_other_female',
+            'field_comm_org_total',
+            'field_comm_org_societal_impact',
 
             // Workforce Development Programs
             'field_legacy_work_sub_budget',
