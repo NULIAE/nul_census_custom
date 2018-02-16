@@ -17,6 +17,17 @@ function nul_census_custom_preprocess_views_view(&$vars) {
   if ($view->name == 'full_census' || $view->name == 'throwa') {
     // add needed stylesheet
     drupal_add_css(drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css');
+    if ($view->name == 'full_census') {
+      if (!empty(arg(1))) {
+        $pcID = arg(1);
+        $census = node_load($pcID);
+        $statusOfTab = $census->field_census_status[LANGUAGE_NONE][0]['tid'];
+        $perms = nul_census_custom_check_status_permisions($statusOfTab, 'census', $pcID);
+        if ($perms['canView'] == FALSE) {
+          drupal_goto('403');
+        }
+      }
+    }
   }
 }
 

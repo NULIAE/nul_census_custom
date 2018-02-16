@@ -29,7 +29,7 @@ function nul_census_custom_searchTaxonomyByField($vocabMachineName, $fieldName, 
  * @param  string $contentType census or tab
  * @return array  can they edit or not, can they resubmit or not
  */
-function nul_census_custom_check_status_permisions($status, $contentType, $nid = NULL) {
+function nul_census_custom_check_status_permisions($status = NULL, $contentType, $nid = NULL) {
   $term = taxonomy_term_load($status);
   if (!empty($term->name)) {
     $status = $term->name;
