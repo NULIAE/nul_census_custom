@@ -1,0 +1,22 @@
+/* Programs Report*/
+div.view.view-clone-of-other-programs-required-report-2- td p {
+  height: 40px;
+}
+
+div.view.view-clone-of-other-programs-required-report-2- table td.views-field-field-year,
+div.view.view-clone-of-other-programs-required-report-2- table td.views-field-field-affiliate-select {
+  vertical-align: top;
+}
+
+div.view.view-clone-of-other-programs-required-report-2- table td.views-field-field-program-served-total {
+  vertical-align: bottom;
+}
+
+div.view.view-clone-of-other-programs-required-report-2- table td.views-field-field-program-served-total p {
+  height: 20px;
+  font-weight: bold;
+  margin: 0px;
+}
+
+
+
