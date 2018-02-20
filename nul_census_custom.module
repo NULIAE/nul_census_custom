@@ -280,7 +280,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
 
             // Check the following fields options
             $fieldsToLimitByProgramArea = array(
-              // 'field_service_provided',
+              'field_program_target_group',
               'field_program_types',
             );
             foreach ($fieldsToLimitByProgramArea as $key => $fieldName) {
@@ -295,7 +295,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
                 }
               }
               // IF no options for this program type hide the field
-              if (count($form[$fieldName][LANGUAGE_NONE]['#options']) == 1 && !empty($form[$fieldName][LANGUAGE_NONE]['#options']['_none'])) {
+              if (empty($form[$fieldName][LANGUAGE_NONE]['#options']) || count($form[$fieldName][LANGUAGE_NONE]['#options']) == 1 && !empty($form[$fieldName][LANGUAGE_NONE]['#options']['_none'])) {
                 $fieldsToHideAndDisableOnProgram[] = $fieldName;
               }
             }
