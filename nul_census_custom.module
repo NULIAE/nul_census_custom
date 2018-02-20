@@ -29,6 +29,11 @@ function nul_census_custom_preprocess_views_view(&$vars) {
       }
     }
   }
+  // Programs report view styles
+  if ($view->name == 'clone_of_other_programs_required_report_2_') {
+    // add needed stylesheet
+    drupal_add_css(drupal_get_path('module', 'nul_census_custom') . '/css/programReport.css');
+  }
 }
 
 /**
