@@ -297,6 +297,8 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               // IF no options for this program type hide the field
               if (empty($form[$fieldName][LANGUAGE_NONE]['#options']) || count($form[$fieldName][LANGUAGE_NONE]['#options']) == 1 && !empty($form[$fieldName][LANGUAGE_NONE]['#options']['_none'])) {
                 $fieldsToHideAndDisableOnProgram[] = $fieldName;
+                // message for admins
+                $form[$fieldName][LANGUAGE_NONE]['#description'] = "No options available for this Program Type";
               }
             }
           }
