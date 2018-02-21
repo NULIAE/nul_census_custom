@@ -79,6 +79,10 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
         if ($node->type == 'emergency_relief_activities') {
           drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/formFix.js');
         }
+        if ($node->type == 'revenue' || $node->type == 'program_entrepreneurship') {
+          // Making Paragraph Tables into one table
+          drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/paragraphTables.js');
+        }
         $statusOfTab = NULL;
         if (!empty($node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name)) {
           $statusOfTab = $node->field_tab_status[LANGUAGE_NONE][0]['taxonomy_term']->name;
