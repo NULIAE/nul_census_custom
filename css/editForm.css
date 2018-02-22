@@ -308,4 +308,5 @@ div.tabStatus.Reviewed.Complete::before {
 .readonly {
   cursor: not-allowed;
   background: #F3F4EE;
+  border: 1px solid lightgrey;
 }
