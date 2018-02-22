@@ -302,3 +302,7 @@ div.tabStatus.Reviewed.Complete {
 div.tabStatus.Reviewed.Complete::before {
   content: "\f058";
 }
+.readonly {
+  cursor: not-allowed;
+  background: #F3F4EE;
+}
