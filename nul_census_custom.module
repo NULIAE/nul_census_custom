@@ -261,6 +261,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           $fieldsToHideAndDisableOnProgram = array(
             'field_parent_census',
             'field_legacy_program_id',
+            'field_legacy_target_group',
 
             // NOTE I think this field should be removed from programs because it is unnecessary
             'field_legacy_census_id',
@@ -383,6 +384,12 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
             'field_comm_org_other_female',
             'field_comm_org_total',
             'field_comm_org_societal_impact',
+            'field_legacy_voter_duplicate_tot',
+            'field_legacy_comm_org_dup_tot',
+            'field_legacy_forums_dup_tot',
+            'field_legacy_crja_dup_tot',
+            'field_legacy_police_dup_tot',
+            'field_legacy_advocacy_dup_tot',
 
             // Workforce Development Programs
             'field_legacy_work_sub_budget',
@@ -420,6 +427,13 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
             'field_legacy_relief_health_impac',
             'field_legacy_relief_civic_impact',
             'field_legacy_relief_justice_impa',
+
+            // Entrepreneurship
+            'field_legacy_business_sales_tot',
+
+            // revenue
+            'field_legacy_budgetnulfunding',
+
           );
 
           nul_census_custom_hide_and_disable_fields($form, $fieldsToHideAndDisableOnTab);
