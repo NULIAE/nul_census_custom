@@ -163,7 +163,7 @@ function nul_census_custom_export_to_csv($form) {
   pwpl.field_program_work_placed_value as 'Number of participants placed in jobs',
   pws.field_program_work_salary_value as 'Annual salary (if applicable)',
   pwh.field_program_work_hourly_value as 'or Hourly wage rate',
-  pww.field_program_work_welfare_value as 'Number of welfare participants in federal/state funded programs ',
+  pww.field_program_work_welfare_value as 'Number of welfare participants in federal/state funded programs',
   pwwp.field_program_work_welfare_place_value as 'Number of welfare program participants placed in jobs',
   pwws.field_program_work_welfare_salar_value as 'Annual welfare salary (if applicable)',
   pwwh.field_program_work_welfare_hour_value as 'or Hourly wage rate (welfare)'
@@ -207,7 +207,7 @@ function nul_census_custom_export_to_csv($form) {
   SUM(pwpl.field_program_work_placed_value) as 'Number of participants placed in jobs',
   SUM(pws.field_program_work_salary_value) as 'Annual salary (if applicable)',
   SUM(pwh.field_program_work_hourly_value) as 'or Hourly wage rate',
-  SUM(pww.field_program_work_welfare_value) as 'Number of welfare participants in federal/state funded programs ',
+  SUM(pww.field_program_work_welfare_value) as 'Number of welfare participants in federal/state funded programs',
   SUM(pwwp.field_program_work_welfare_place_value) as 'Number of welfare program participants placed in jobs',
   SUM(pwws.field_program_work_welfare_salar_value) as 'Annual welfare salary (if applicable)',
   SUM(pwwh.field_program_work_welfare_hour_value) as 'or Hourly wage rate (welfare)'
@@ -253,7 +253,21 @@ function nul_census_custom_export_to_csv($form) {
     //Gets the line so we can flip it and get the column names
     $column_names = get_object_vars($line);
     if ($first) {
-      $field_names = array_flip($column_names);
+      $field_names = array(
+        '0' => 'Workforce Tab NID',
+        '1' => 'Parent Census NID',
+        '2' => 'Title',
+        '3' => 'Year',
+        '4' => '# clients who received counseling',
+        '5' => 'Number of participants in employment/workforce development programs (exclude welfare recipients)?',
+        '6' => 'Number of participants placed in jobs',
+        '7' => 'Annual salary (if applicable)',
+        '8' => 'or Hourly wage rate',
+        '9' => 'Number of welfare participants in federal/state funded programs',
+        '10' => 'Number of welfare program participants placed in jobs',
+        '11' => 'Annual welfare salary (if applicable)',
+        '12' => 'or Hourly wage rate (welfare)',
+      );
       fputcsv($fp, $field_names);
       $first = FALSE;
       // Only happens once
