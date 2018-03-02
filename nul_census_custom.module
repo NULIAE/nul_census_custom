@@ -287,7 +287,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
   if ($form_id == 'views_exposed_form' && arg(0) == 'workforce-development-report-required-report-3') {
     $form['export_to_csv'] = array(
       '#type' => 'submit',
-      '#value' => 'Apply and Export to CSV',
+      '#value' => 'Export to CSV',
       '#executes_submit_callback' => TRUE,
       '#access' => TRUE,
       '#submit' => $form['#submit'],
