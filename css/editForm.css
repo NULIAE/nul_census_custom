@@ -310,3 +310,11 @@ div.tabStatus.Reviewed.Complete::before {
   background: #F3F4EE;
   border: 1px solid lightgrey;
 }
+
+
+/* AGH #12041 maing autocomplete options display in block instead of inline*/
+div.nulTable div.field-group-div.nulTableRow div#autocomplete li {
+ display: block;
+ width: 100%;
+}
+
