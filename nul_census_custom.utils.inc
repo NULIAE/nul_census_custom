@@ -152,9 +152,6 @@ function nul_census_custom_check_status_permisions($status = NULL, $contentType,
       }
     }
   }
-  elseif (!$myAffiliate && $status == 'Reviewed Complete' && user_access('edit own affiliate censuses')) {
-    $canView = TRUE;
-  }
   return array(
     'canEdit' => $canEdit,
     'canResubmit' => $canResubmit,
