@@ -468,6 +468,11 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           // AGH #11789 making revenue fields total
           if ($form['#node']->type == 'revenue') {
             drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/revenueTotal.js');
+            $fieldsToRemoveCommas = '';
+            if (!empty($fieldsToRemoveCommas)) {
+              drupal_add_js(array('nul_census_custom' => array('fields' => $fieldsToRemoveCommas)), array('type' => 'setting'));
+              drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/removeComma.js');
+            }
           }
 
           // If on program details tab add js to hide and show fields based on checkbox
