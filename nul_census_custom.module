@@ -304,6 +304,9 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
       case 'census':
         // If on Census node
         if ($form_id == 'census_node_form') {
+          // Remove commas from number fields
+          nul_census_custom_remove_commas($form_state);
+
           $form['#attached']['css'] = array(
             drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
           );
@@ -368,6 +371,9 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
         // IF ON PROGRAMS TAB
         // Check we are on a content type of programs
         if (!empty($form['type']['#value']) && $form['type']['#value'] == 'programs') {
+          // Remove commas from number fields
+          nul_census_custom_remove_commas($form_state);
+
           // if on a programs tab add a redirect to go to the program details tab on save
           $form['actions']['submit']['#submit'][] = 'nul_census_custom_redirect_to_program_details_tab';
           // Add css for styling tables
@@ -465,14 +471,12 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
 
       case 'tab':
         if (!empty($form['#node']->type) && $form['#node']->type . '_node_form' == $form_id) {
+          // Remove commas from number fields
+          nul_census_custom_remove_commas($form_state);
+
           // AGH #11789 making revenue fields total
           if ($form['#node']->type == 'revenue') {
             drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/revenueTotal.js');
-            $fieldsToRemoveCommas = '';
-            if (!empty($fieldsToRemoveCommas)) {
-              drupal_add_js(array('nul_census_custom' => array('fields' => $fieldsToRemoveCommas)), array('type' => 'setting'));
-              drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/removeComma.js');
-            }
           }
 
           // If on program details tab add js to hide and show fields based on checkbox

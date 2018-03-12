@@ -476,3 +476,21 @@ function nul_census_custom_get_census_part($nodeType) {
   }
   return $censusPart;
 }
+
+function nul_census_custom_remove_commas($form_state) {
+  $numberFields = array();
+  foreach ($form_state['field'] as $field => $fieldDets) {
+    if (
+      !empty($fieldDets[LANGUAGE_NONE]['field']['field_name']) &&
+      !empty($fieldDets[LANGUAGE_NONE]['field']['type']) &&
+      in_array($fieldDets[LANGUAGE_NONE]['field']['type'], array('number_decimal', 'number_integer'))
+    ) {
+      $numberFields[] = $fieldDets[LANGUAGE_NONE]['field']['field_name'];
+    }
+  }
+  if (!empty($numberFields)) {
+    drupal_add_js(array('nul_census_custom' => array('removecommas' => $numberFields)), array('type' => 'setting'));
+    drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/removeComma.js');
+  }
+  // return $numberFields;
+}
