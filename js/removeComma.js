@@ -5,7 +5,7 @@
     $(fieldsToStrip).each(function (index, fieldName) {
       $('input[name*=' + fieldName + ']').change(function () {
         $(this).val(
-          $(this).val().replace(',', '')
+          $(this).val().replace(/\,/g, '')
         );
         $(this).trigger('keyup');
       });
