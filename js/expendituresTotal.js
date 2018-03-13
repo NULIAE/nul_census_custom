@@ -1,5 +1,5 @@
 (function ($) {
-  // AGH 11789 THIS JS handles tables with total fields
+  // AGH #12124 THIS JS handles tables with total fields
   // that need to be calcualted on the expenditures page
   $(document).ready(function () {
     var fieldsToTotal = [
