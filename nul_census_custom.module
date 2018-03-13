@@ -479,6 +479,10 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
             drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/revenueTotal.js');
           }
 
+          if ($form['#node']->type == 'expenditures') {
+            drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/expendituresTotal.js');
+          }
+
           // If on program details tab add js to hide and show fields based on checkbox
           if (!empty($form['field_do_you_offer_programs_of_t'])) {
             drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/programDetailsTab.js');
