@@ -483,6 +483,10 @@ function nul_census_custom_get_census_part($nodeType) {
 }
 
 function nul_census_custom_remove_commas($form_state) {
+  // has number fields in paragraphs so def need to load
+  if (in_array($form_state['node']->type, array('service_areas', 'programs', 'revenue', 'program_entrepreneurship'))) {
+    drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/removeComma.js');
+  }
   $numberFields = array();
   foreach ($form_state['field'] as $field => $fieldDets) {
     if (
