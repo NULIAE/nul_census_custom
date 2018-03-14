@@ -300,6 +300,10 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
   }
   if (!empty($form['type']['#value'])) {
     $nodeType = nul_census_custom_get_census_part($form['type']['#value']);
+    // code to apply to all census parts
+    if (in_array($nodeType, array('census', 'tab', 'programs'))) {
+      nul_census_custom_check_for_required_url_parts($nodeType);
+    }
     switch ($nodeType) {
       case 'census':
         // If on Census node
@@ -338,14 +342,13 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           if (
           arg(0) == 'node' &&
           arg(1) == 'add' &&
-          !empty(arg(2)) &&
           arg(2) == 'census' &&
           arg(3) >= 1) {
             // set year to be current year
             $year = date("Y");
             $canCreate = nul_census_custom_census_creation_permissions(arg(3), $year);
             // If an affiliate id for which the logged in user has access to is found
-            if ($canCreate['affiliateId'] >= 1 && !empty($form['field_affiliate_select'][LANGUAGE_NONE]['#options'][arg(3)])) {
+            if (arg(3) >= 1 && $canCreate['affiliateId'] >= 1 && !empty($form['field_affiliate_select'][LANGUAGE_NONE]['#options'][arg(3)])) {
               // look up display name
               $displayName = $form['field_affiliate_select'][LANGUAGE_NONE]['#options'][arg(3)];
               // make title field to be the name of the affliate and hide
