@@ -893,6 +893,7 @@ function nul_census_custom_node_insert($node) {
     $language = language_default();
     $params = array(
       'nid' => $node->nid,
+      'title' => $node->title,
     );
     $toAndFrom = nul_census_custom_get_emails_to_notify($node);
     drupal_mail('nul_census_custom', 'census_created', $toAndFrom['to'], $language, $params, $toAndFrom['from'], TRUE);
@@ -908,14 +909,14 @@ function nul_census_custom_mail($key, &$message, $params) {
     case 'status_change':
       $link = $base_url . '/node/' . $params['nid'];
       $message['subject'] = "{$params['title']} Status Changed to {$params['status']}";
-      $message['body'][] = "'{$params['title']}' Status Changed to {$params['status']} from {$params['prev_status']} see link below to visit this census: $link";
+      $message['body'][] = "'{$params['title']}' Status Changed to {$params['status']} see link below to visit this census: $link";
       drupal_set_message(t('Status Change email sent'), 'success');
       break;
 
     case 'census_created':
       $link = $base_url . '/node/' . $params['nid'];
-      $message['subject'] = "Census Created nid: {$params['nid']}";
-      $message['body'][] = "Census Created nid: {$params['nid']} visit at $link";
+      $message['subject'] = "{$params['title']} started";
+      $message['body'][] = "{$params['title']} started, visit at $link";
       drupal_set_message(t('Census Created email sent'), 'success');
       break;
 
