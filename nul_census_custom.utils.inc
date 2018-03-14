@@ -352,6 +352,11 @@ function nul_census_custom_get_affiliate_from_user($drupalUserId = NULL) {
  */
 function nul_census_custom_census_creation_permissions($affiliateId, $year) {
   $canCreate = array();
+  // If no affiliate ID and user does not have permission to create census for any affiliate block them
+  if (empty($affiliateId) && !user_access('can create census for any affiliate')) {
+    $canCreate['any'] = FALSE;
+    drupal_goto('/');
+  }
   // If can only create censuses for their affiliate check that the id passed from the url is for an affiliate the user has access to
   if (user_access('can create census for own affiliate') && !user_access('can create census for any affiliate') && !user_access('can edit magic census fields')) {
     $canCreate['any'] = FALSE;
@@ -493,4 +498,17 @@ function nul_census_custom_remove_commas($form_state) {
     drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/removeComma.js');
   }
   // return $numberFields;
+}
+
+function nul_census_custom_check_for_required_url_parts($part) {
+  if (arg(0) == 'node' &&
+  arg(1) == 'add' &&
+  !empty(arg(2)) &&
+  !user_access('can create census for any affiliate')) {
+    // if not proper stuff sent
+    if ((in_array($part, array('census', 'tab'))  && empty(arg(3))) || ($part == 'programs' && empty(arg(4)))) {
+      drupal_set_message('No parent census id sent, user can only create programs for censuses of their affiliate');
+      drupal_goto('/');
+    }
+  }
 }
