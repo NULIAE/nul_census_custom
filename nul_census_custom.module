@@ -909,7 +909,7 @@ function nul_census_custom_mail($key, &$message, $params) {
     case 'status_change':
       $link = $base_url . '/node/' . $params['nid'];
       $message['subject'] = "{$params['title']} Status Changed to {$params['status']}";
-      $message['body'][] = "'{$params['title']}' Status Changed to {$params['status']} see link below to visit this census: $link";
+      $message['body'][] = "{$params['title']} status changed to {$params['status']} see link below to visit this census: $link";
       drupal_set_message(t('Status Change email sent'), 'success');
       break;
 
