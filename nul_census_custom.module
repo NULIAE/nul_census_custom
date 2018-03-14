@@ -586,7 +586,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
             'field_aux_other_heritage',
 
             // Emergency Relief Activities
-            'field_legacy_relief_ed_imp',
+            'field_legacy_relief_ed_impact',
             'field_legacy_relief_employ_impac',
             'field_legacy_relief_health_impac',
             'field_legacy_relief_civic_impact',
