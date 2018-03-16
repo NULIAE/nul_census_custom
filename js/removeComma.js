@@ -34,7 +34,6 @@
 
     var checkParagraphNumberFields = function (paragraphNumberFields) {
       $(paragraphNumberFields).each(function (index, fieldName) {
-        console.log($('input[id*=' + fieldName + ']'));
         $('input[id*=' + fieldName + ']').change(function () {
           $(this).val(
             $(this).val().replace(/\,/g, '')

@@ -62,8 +62,10 @@
     // (for existing paragraphs)
     $('input[id*="field-budget-venture-earned-und"]').keyup(calculateTotalRevenue);
 
-    // when a new paragraph is added
+    // when a new paragraph is added OR deleted
     $(document).ajaxStop(function () {
+      calculateTotalRevenue();
+
       // on key up for amount earned field in venture type paragraph recalculate total
       $('input[id*="field-budget-venture-earned-und"]').keyup(calculateTotalRevenue);
     });
