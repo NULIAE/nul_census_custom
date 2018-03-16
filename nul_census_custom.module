@@ -454,7 +454,11 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
                 foreach ($form[$fieldName][LANGUAGE_NONE]['#options'] as $optionId => $name) {
                   if ($optionId > 0) {
                     $term = taxonomy_term_load($optionId);
-                    if (intval($term->field_program_area[LANGUAGE_NONE][0]['tid']) !== intval($programArea)) {
+                    if (
+                      !empty($term->field_program_area[LANGUAGE_NONE][0]['tid']) &&
+                      intval($programArea) > 0 &&
+                      intval($term->field_program_area[LANGUAGE_NONE][0]['tid']) !== intval($programArea)
+                    ) {
                       unset($form[$fieldName][LANGUAGE_NONE]['#options'][$optionId]);
                     }
                   }
