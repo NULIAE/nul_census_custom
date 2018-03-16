@@ -4,7 +4,6 @@
   $(document).ready(function () {
     var nid = Drupal.settings.nul_census_custom.nid;
     var href = '/node/' + nid;
-    console.log(nid);
     if (Drupal.settings.nul_census_custom.censuspart == 'tab') {
       var buttonsToAdd = "<li><a href='"
        + href  +
