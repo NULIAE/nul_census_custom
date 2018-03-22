@@ -2,6 +2,70 @@
 
 module_load_include('inc', 'nul_census_custom', './nul_census_custom.utils');
 
+function nul_census_custom_page_alter(&$page) {
+  // PDF version of full census
+  if (arg(0) == 'full-census' && arg(1) > 0) {
+    $parentCensusId = arg(1);
+    $css = base_path() . drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css';
+    $css1 = base_path() . drupal_get_path('module', 'nul_census_custom') . '/css/pdf.css';
+
+    $buttonToPDF = "<a href='/full-census/{$parentCensusId}/pdf/full-{$parentCensusId}.pdf'>Print To PDF</a>";
+    // Add a special region for the HTML header of PDF files:
+    $pdfHeaderRegion = CRM_Core_Region::instance('export-document-header', FALSE);
+    $page['content']['system_main']['main']['#markup'] = $buttonToPDF . $page['content']['system_main']['main']['#markup'];
+  }
+  if (arg(2) == 'pdf') {
+    // print_r($markup); die();
+    // CRM_Utils_PDF_Utils::html2pdf($markup, "full-{$parentCensusId}.pdf", FALSE, NULL);
+    $format = CRM_Core_BAO_PdfFormat::getDefaultValues();
+    // print_r($format); die();
+    $paperSize = CRM_Core_BAO_PaperSize::getByName($format['paper_size']);
+    $paper_width = CRM_Utils_PDF_Utils::convertMetric($paperSize['width'], $paperSize['metric'], 'pt');
+    $paper_height = CRM_Utils_PDF_Utils::convertMetric($paperSize['height'], $paperSize['metric'], 'pt');
+    $paper_size = array(0, 0, $paper_width, $paper_height);
+    $orientation = CRM_Core_BAO_PdfFormat::getValue('orientation', $format);
+    $metric = CRM_Core_BAO_PdfFormat::getValue('metric', $format);
+    $t = CRM_Core_BAO_PdfFormat::getValue('margin_top', $format);
+    $r = CRM_Core_BAO_PdfFormat::getValue('margin_right', $format);
+    $b = CRM_Core_BAO_PdfFormat::getValue('margin_bottom', $format);
+    $l = CRM_Core_BAO_PdfFormat::getValue('margin_left', $format);
+    $pdfHeaderRegion = CRM_Core_Region::instance('export-document-header', FALSE);
+    $htmlHeader = ($pdfHeaderRegion) ? $pdfHeaderRegion->render('', FALSE) : '';
+    $config = CRM_Core_Config::singleton();
+    $headerForPDF = "
+      <html>
+        <head>
+          <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>
+          <style>@page { margin: {$t}{$metric} {$r}{$metric} {$b}{$metric} {$l}{$metric}; }</style>
+          <style type=\"text/css\">@import url({$config->userFrameworkResourceURL}css/print.css);</style>
+          <style type=\"text/css\">@import url({$css});</style>
+          <style type=\"text/css\">@import url({$css1});</style>
+          {$htmlHeader}
+        </head>
+        <body>
+          <div id=\"crm-container\">\n";
+    // $headerForPDF = "
+    // <html>
+    //   <head>
+    //     <link rel='stylesheet' type='text/css' href='$css'>
+    //     <link rel='stylesheet' type='text/css' href='$css1'>
+    //   </head>
+    //   <body>";
+    // $footerForPDF = "</body></html>";
+    $footerForPDF = "
+    </div>
+    </body>
+    </html>";
+    $markup = $headerForPDF . $page['content']['system_main']['main']['#markup'] . $footerForPDF;
+    $output = FALSE;
+    $fileName = "full-{$parentCensusId}.pdf";
+    $html = $markup;
+    // print_r($html); die();
+    // print_r($markup); die();
+    return CRM_Utils_PDF_Utils::_html2pdf_dompdf($paper_size, $orientation, $html, $output, $fileName);
+  }
+}
+
 /**
  * hook_preprocess_views_view()
  */

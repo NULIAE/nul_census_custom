@@ -1,0 +1,31 @@
+div h2 a {
+  text-decoration: none;
+  color: black;
+}
+div.contextual-links-wrapper,
+div.censusPrograms a.button.nulCensusButton,
+div.field.field-name-field-parent-census,
+span.submitted {
+  display: none;
+}
+
+div.content div.field div.field-label {
+  width: 35%;
+  clear: both;
+  display: inline-block;
+  font-weight: bold;
+}
+
+div.content div.field-items {
+  width: 60%;
+  display: inline-block;
+  /* float: left; */
+}
+
+div.content div.field.field-name-field-service-areas div.field-label {
+  display: none;
+}
+
+div.content div.field.field-name-field-service-areas div.field-items {
+  width: 100%;
+}
