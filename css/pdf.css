@@ -1,3 +1,25 @@
+div.nulTable h3 {
+  /* border-right: solid 1px black; */
+  width: 170px;
+}
+
+div.content div.field {
+  padding-top: 10px;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  padding-bottom: 10px;
+  /* border-bottom: solid 1px grey; */
+}
+div.content div.field-label {
+  font-weight: bold;
+  display: inline-block;
+  width: 300px;
+}
+
+div.content div.field-items {
+  display: inline-block;
+}
+
 div h2 a {
   text-decoration: none;
   color: black;
@@ -9,23 +31,36 @@ span.submitted {
   display: none;
 }
 
-div.content div.field div.field-label {
-  width: 35%;
-  clear: both;
-  display: inline-block;
-  font-weight: bold;
+div.nulTable {
+  display: block;
+  width: 700px;
+  border: solid 1px black;
+  /* page-break-after: always; */
+}
+div.nulTableHeader,
+div.group-boardcomptableheader.field-group-div.nulTableRow {
+  display: block;
+  width: 700px;
+  /* background-color: #bebfb9; */
 }
 
-div.content div.field-items {
-  width: 60%;
-  display: inline-block;
-  /* float: left; */
+div.nulTableRow {
+  border-top: solid 1px black;
 }
 
-div.content div.field.field-name-field-service-areas div.field-label {
+
+div.content div.paragraphs-items div.field-label {
   display: none;
 }
 
-div.content div.field.field-name-field-service-areas div.field-items {
-  width: 100%;
+div.nulTable div.field,
+div.nulTable h3 {
+  display: inline-block;
+  width: 150px;
+  margin: 5px;
+  border-bottom: none;
+}
+
+div.view.view-full-content-type {
+  page-break-after: always;
 }
