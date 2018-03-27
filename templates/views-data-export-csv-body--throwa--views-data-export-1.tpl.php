@@ -2,7 +2,7 @@
 
 // Array of labels keyed by field name
 $labels = array(
-  "field_total_expenditures" => "What was the total expenditure by your affiliate for expenses (include salaries, rent/mortgage, equipment, etc.)?",
+  "field_total_expenditures" => "What was the total expenditure by your affiliate for expenses (include salaries rent/mortgage equipment etc.)?",
   "field_a_salaries_wages" => "A. Salaries/Wages",
   "field_b_fringe_benefits" => "B. Fringe Benefits",
   "field_c_professional_fees" => "C. Professional/Contract/Consulting Fees",
@@ -13,7 +13,7 @@ $labels = array(
   "field_h_dues_subscription_regist" => "H. Dues/Subscription/Registration",
   "field_i_depreciation" => "I. Depreciation",
   "field_j_taxes_including_property" => "J. Taxes (including property taxes)",
-  "field_k_utilities" => "K. Utilities (telephone, gas, electric)",
+  "field_k_utilities" => "K. Utilities (telephone gas electric)",
   "field_l_equipment_space_rental" => "L. Equipment/space rental",
   "field_m_goods_and_services" => "M. Goods and Services",
   "field_n_rent_mortgage_payments" => "N. Rent/mortgage payments",
@@ -21,7 +21,7 @@ $labels = array(
   "field_number_properties_owned" => "How many properties does the affiliate own?",
   "field_number_properties_rented" => "How many properties does the affiliate rent?",
   "field_market_value_of_property" => "If the affiliate owns its facilities, what is the current market value of the property?",
-  "field_capital_budget_amount" => "If so, how much?",
+  "field_capital_budget_amount" => "If so how much?",
   "field_capital_budget" => "Does the affiliate have a capital budget?",
   "field_revenue_total_budget" => "What is the total budget of your affiliate?",
   "field_revenue_nul" => "NUL",
@@ -35,8 +35,8 @@ $labels = array(
   "field_revenue_investment" => "How much investment earnings (money market account, endowment)?",
   "field_revenue_ventures" => "Affiliate Social Entrepreneurship Ventures and/or Income Generating Activities",
   "field_revenue_has_endowment" => "Does the affiliate have an endowment?",
-  "field_revenue_endowment_amount" => "If so, what is the present amount?",
-  "field_program_ed_foster_total" => "If so, how many placements/recommendations for services do you make per year?",
+  "field_revenue_endowment_amount" => "If so what is the present amount?",
+  "field_program_ed_foster_total" => "If so how many placements/recommendations for services do you make per year?",
   "field_program_entpr_new" => "Number of new businesses created",
   "field_program_entpr_sales" => "Total sales of businesses started by participants in entrepreneurship programs (i.e. Small Business Matters)",
   "field_program_housing_attended" => "How many participants attended or inquired about home ownership programs?",
