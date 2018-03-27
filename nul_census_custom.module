@@ -12,7 +12,7 @@ function nul_census_custom_page_alter(&$page) {
     $buttonToPDF = "<a href='/full-census/{$parentCensusId}/pdf/full-{$parentCensusId}.pdf'>Print To PDF</a>";
     // Add a special region for the HTML header of PDF files:
     $markup = $page['content']['system_main']['main']['#markup'];
-    $page['content']['system_main']['main']['#markup'] = $buttonToPDF . $page['content']['system_main']['main']['#markup'];
+    $page['content']['system_main']['main']['#markup'] = $buttonToPDF . $page['content']['system_main']['main']['#markup'] . $buttonToPDF;
   }
   if (arg(2) == 'pdf') {
     CRM_Core_Region::instance('export-document-header')->add(array('style' => "@import url($css);"));
