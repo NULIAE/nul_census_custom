@@ -1007,3 +1007,16 @@ function nul_census_custom_menu() {
 
   return $items;
 }
+
+/**
+ * Implements hook_views_api().
+ */
+function nul_census_custom_views_api() {
+  // Tells views to look in templates folder for views template overrides
+  // Where there is a template override to put the content type sections on the census summary in the same order as the census tabs
+  return array(
+    'api' => 3,
+    'path' => drupal_get_path('module', 'nul_census_custom'),
+    'template path' => drupal_get_path('module', 'nul_census_custom') . '/templates',
+  );
+}
