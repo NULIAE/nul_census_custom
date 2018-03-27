@@ -166,7 +166,7 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
 function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
   // Set up Export to csv for workforce-development-report-required-report-3 view
   if ($form_id == 'views_exposed_form') {
-    if (arg(0) == 'workforce-development-report-required-report-3' || arg(0) == 'census-summary') {
+    if (arg(0) == 'workforce-development-report-required-report-3') {
       $form['export_to_csv'] = array(
         '#type' => 'submit',
         '#value' => 'Export to CSV',
@@ -174,6 +174,15 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
         '#access' => TRUE,
       );
       $form['export_to_csv']['#submit'][] = 'nul_census_custom_export_to_csv';
+    }
+    if (arg(0) == 'census-summary') {
+      $form['export_to_csv'] = array(
+        '#type' => 'submit',
+        '#value' => 'Export to CSV',
+        '#executes_submit_callback' => TRUE,
+        '#access' => TRUE,
+      );
+      $form['export_to_csv']['#submit'][] = 'nul_census_custom_redirect_to_csv';
     }
   }
   if ($form_id == "node_delete_confirm") {

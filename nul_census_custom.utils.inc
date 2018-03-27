@@ -640,14 +640,6 @@ function nul_census_custom_export_to_csv($form) {
 
     $csvTitle = "workforce_report_";
   }
-  // if census summary view
-  if ($form['#id'] == 'views-exposed-form-throwa-page') {
-    // TODO write Query
-    $query = "";
-    // TODO write Field Names
-    $field_names = array();
-    $csvTitle = "census_summary_report_";
-  }
   $result = db_query($query);
   $result = $result->fetchAll();
   $csv_file = $csvTitle . date('Ymd') . ".csv";
@@ -670,4 +662,10 @@ function nul_census_custom_export_to_csv($form) {
   }
   fclose($fp);
   drupal_exit();
+}
+
+
+function nul_census_custom_redirect_to_csv() {
+  // for census_summary instead of rewriting view just reformated data export
+  drupal_goto('/census-summary/export');
 }
