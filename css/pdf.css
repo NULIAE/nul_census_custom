@@ -20,13 +20,16 @@ div.content div.field-items {
   display: inline-block;
 }
 
-div h2 a {
+div h2 a,
+h1.article-title {
   text-decoration: none;
   color: black;
 }
 div.contextual-links-wrapper,
 div.censusPrograms a.button.nulCensusButton,
 div.field.field-name-field-parent-census,
+ul.links.inline,
+p.author-datetime,
 span.submitted {
   display: none;
 }
@@ -61,6 +64,6 @@ div.nulTable h3 {
   border-bottom: none;
 }
 
-div.view.view-full-content-type {
+/* div.view.view-full-content-type {
   page-break-after: always;
-}
+} */
