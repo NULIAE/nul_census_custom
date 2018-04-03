@@ -535,8 +535,6 @@ function nul_census_custom_export_to_csv($form) {
   if ($form['#id'] == 'views-exposed-form-workforce-development-report-page') {
     // SQL Query for Workforce
     $query = "(SELECT
-    workforce.nid as 'Workforce Tab NID',
-    parent.field_parent_census_target_id as 'Parent Census NID',
     parentCensus.title as 'Title',
     ye.field_year_value as 'Year',
     pwc.field_program_work_counseling_value as '# clients who received counseling',
@@ -579,8 +577,6 @@ function nul_census_custom_export_to_csv($form) {
     . $yearClause .
     ") UNION
     (SELECT
-    '' as 'Workforce Tab NID',
-    '' as 'Parent Census NID',
     '' as 'Title',
     '' as 'Year',
     SUM(pwc.field_program_work_counseling_value) as '# clients who received counseling',
@@ -623,8 +619,8 @@ function nul_census_custom_export_to_csv($form) {
     " . $yearClause . ")";
 
     $field_names = array(
-      '0' => 'Workforce Tab NID',
-      '1' => 'Parent Census NID',
+      // '0' => 'Workforce Tab NID',
+      // '1' => 'Parent Census NID',
       '2' => 'Title',
       '3' => 'Year',
       '4' => '# clients who received counseling',
