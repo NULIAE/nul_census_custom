@@ -7,7 +7,7 @@ function nul_census_custom_page_alter(&$page) {
   if (arg(0) == 'full-census' && arg(1) > 0) {
     $parentCensusId = arg(1);
     global $base_url;
-    $css = $base_url . '/' . drupal_get_path('module', 'nul_census_custom') . '/css/pdf.css';
+    $css1 = $base_url . '/' . drupal_get_path('module', 'nul_census_custom') . '/css/pdfStyles.css';
 
     $buttonToPDF = "<a href='/full-census/{$parentCensusId}/pdf/full-{$parentCensusId}.pdf'>Print To PDF</a>";
     // Add a special region for the HTML header of PDF files:
@@ -15,7 +15,7 @@ function nul_census_custom_page_alter(&$page) {
     $page['content']['system_main']['main']['#markup'] = $buttonToPDF . $page['content']['system_main']['main']['#markup'] . $buttonToPDF;
   }
   if (arg(2) == 'pdf') {
-    CRM_Core_Region::instance('export-document-header')->add(array('style' => "@import url($css);"));
+    CRM_Core_Region::instance('export-document-header')->add(array('style' => "@import url($css1);"));
     CRM_Utils_PDF_Utils::html2pdf($markup, "full-{$parentCensusId}.pdf", FALSE, NULL);
   }
 }
