@@ -747,7 +747,7 @@ function nul_census_custom_node_update($node) {
           if (!empty($ogStatusTerm->name)) {
             $params['prev_status'] = $ogStatusTerm->name;
           }
-          drupal_mail('nul_census_custom', 'status_change', $toAndFrom['to'], $language, $params, $toAndFrom['from'], TRUE);
+          // drupal_mail('nul_census_custom', 'status_change', $toAndFrom['to'], $language, $params, $toAndFrom['from'], TRUE);
         }
       }
     }
@@ -791,34 +791,34 @@ function nul_census_custom_node_insert($node) {
       'title' => $node->title,
     );
     $toAndFrom = nul_census_custom_get_emails_to_notify($node);
-    drupal_mail('nul_census_custom', 'census_created', $toAndFrom['to'], $language, $params, $toAndFrom['from'], TRUE);
+    // drupal_mail('nul_census_custom', 'census_created', $toAndFrom['to'], $language, $params, $toAndFrom['from'], TRUE);
   }
 }
 
 /**
  * hook_mail()
  */
-function nul_census_custom_mail($key, &$message, $params) {
-  global $base_url;
-  switch ($key) {
-    case 'status_change':
-      $link = $base_url . '/node/' . $params['nid'];
-      $message['subject'] = "{$params['title']} Status Changed to {$params['status']}";
-      $message['body'][] = "{$params['title']} status changed to {$params['status']} see link below to visit this census: $link";
-      drupal_set_message(t('Status Change email sent'), 'success');
-      break;
-
-    case 'census_created':
-      $link = $base_url . '/node/' . $params['nid'];
-      $message['subject'] = "{$params['title']} started";
-      $message['body'][] = "{$params['title']} started, visit at $link";
-      drupal_set_message(t('Census Created email sent'), 'success');
-      break;
-
-    default:
-      break;
-  }
-}
+// function nul_census_custom_mail($key, &$message, $params) {
+//   global $base_url;
+//   switch ($key) {
+//     case 'status_change':
+//       $link = $base_url . '/node/' . $params['nid'];
+//       $message['subject'] = "{$params['title']} Status Changed to {$params['status']}";
+//       $message['body'][] = "{$params['title']} status changed to {$params['status']} see link below to visit this census: $link";
+//       drupal_set_message(t('Status Change email sent'), 'success');
+//       break;
+//
+//     case 'census_created':
+//       $link = $base_url . '/node/' . $params['nid'];
+//       $message['subject'] = "{$params['title']} started";
+//       $message['body'][] = "{$params['title']} started, visit at $link";
+//       drupal_set_message(t('Census Created email sent'), 'success');
+//       break;
+//
+//     default:
+//       break;
+//   }
+// }
 
 function nul_census_custom_node_validate($node, $form, &$form_state) {
   $tabTermDetails = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $node->type);
