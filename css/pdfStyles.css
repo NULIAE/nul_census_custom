@@ -3,6 +3,10 @@ div.nulTable h3 {
   width: 170px;
 }
 
+body {
+  font-size: 12px;
+}
+
 div.content div.field {
   padding-top: 10px;
   margin-top: 5px;
@@ -21,10 +25,12 @@ div.content div.field-items {
 }
 
 div h2 a,
+div.view-empty h2,
 #crm-container article h1.article-title a {
   text-decoration: none;
-  color: black;
+  color: #708340;
 }
+
 div.contextual-links-wrapper,
 div.censusPrograms a.button.nulCensusButton,
 div.field.field-name-field-parent-census,
@@ -59,14 +65,14 @@ div.content div.paragraphs-items div.field-label {
 div.nulTable div.field,
 div.nulTable h3 {
   display: inline-block;
-  width: 150px; 
+  width: 150px;
   margin: 5px;
   border-bottom: none;
 }
 
-/* div.view.view-full-content-type {
+div.view.view-full-content-type {
   page-break-after: always;
-} */
+}
 
 /* #paragraphs_item_service_area_full_group_sa_group h3 span:first-of-type {
 display: none;
