@@ -7,21 +7,22 @@ body {
   font-size: 12px;
 }
 
-div.content div.field {
-  padding-top: 10px;
-  margin-top: 5px;
-  margin-bottom: 5px;
-  padding-bottom: 10px;
-  /* border-bottom: solid 1px grey; */
-}
-div.content div.field-label {
+div.article-content div.field-label,
+div.article-content h2.field-label {
   font-weight: bold;
   display: inline-block;
   width: 300px;
+  margin: 0px;
+  font-size: 12px;
 }
 
-div.content div.field-items {
-  display: inline-block;
+div.article-content div.field-items,
+div.article-content ul.field-items {
+  display: inline-block; 
+}
+
+div.article-content ul.field-items {
+  padding-left: 0px;
 }
 
 div h2 a,
@@ -31,6 +32,8 @@ div.view-empty h2,
   color: #708340;
 }
 
+section.field.field-name-field-photo, 
+section.field.field-name-field-service-areas h2.field-label,
 div.contextual-links-wrapper,
 div.censusPrograms a.button.nulCensusButton,
 div.field.field-name-field-parent-census,
@@ -42,14 +45,14 @@ span.submitted {
 
 div.nulTable {
   display: block;
-  width: 700px;
+  width: 650px;
   border: solid 1px black;
   /* page-break-after: always; */
 }
 div.nulTableHeader,
 div.group-boardcomptableheader.field-group-div.nulTableRow {
   display: block;
-  width: 700px;
+  width: 650px;
   /* background-color: #bebfb9; */
 }
 
@@ -70,10 +73,30 @@ div.nulTable h3 {
   border-bottom: none;
 }
 
-div.view.view-full-content-type {
+div.view article,
+div.view-empty  {
   page-break-after: always;
 }
 
 /* #paragraphs_item_service_area_full_group_sa_group h3 span:first-of-type {
 display: none;
 } */
+
+section.field {
+  width: 650px;
+  text-align: left;
+  float: left;
+  clear: both;
+  margin: 0px;
+  padding: 0px;
+}
+
+#crm-container h2.field-label {
+ -webkit-margin-before: 0.3em;
+ -webkit-margin-after: 0.3em;
+ font-size: 12px;
+}
+
+#crm-container ul li {
+    list-style-type: none;
+}
