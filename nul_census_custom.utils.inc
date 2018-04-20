@@ -519,3 +519,149 @@ function nul_census_custom_check_for_required_url_parts($part) {
     }
   }
 }
+
+function nul_census_custom_export_to_csv($form) {
+  // IF year set add it to query
+  if (!empty($form['field_year_value']['#value'])) {
+    $yearClause = "" . $form['field_year_value']['#value'];
+    if ($form['field_year_value']['#value'] == 'All') {
+      $yearClause = "";
+    }
+    else {
+      $yearClause = " AND ye.field_year_value = " . $form['field_year_value']['#value'];
+    }
+  }
+  // if workforce development report
+  if ($form['#id'] == 'views-exposed-form-workforce-development-report-page') {
+    // SQL Query for Workforce
+    $query = "(SELECT
+    parentCensus.title as 'Title',
+    ye.field_year_value as 'Year',
+    pwc.field_program_work_counseling_value as '# clients who received counseling',
+    pwp.field_program_work_participants_value as 'Number of participants in employment/workforce development programs (exclude welfare recipients)?',
+    pwpl.field_program_work_placed_value as 'Number of participants placed in jobs',
+    pws.field_program_work_salary_value as 'Annual salary (if applicable)',
+    pwh.field_program_work_hourly_value as 'or Hourly wage rate',
+    pww.field_program_work_welfare_value as 'Number of welfare participants in federal/state funded programs',
+    pwwp.field_program_work_welfare_place_value as 'Number of welfare program participants placed in jobs',
+    pwws.field_program_work_welfare_salar_value as 'Annual welfare salary (if applicable)',
+    pwwh.field_program_work_welfare_hour_value as 'or Hourly wage rate (welfare)'
+    FROM node as workforce
+    LEFT JOIN field_data_field_parent_census parent
+    ON workforce.nid = parent.entity_id
+    LEFT JOIN node parentCensus
+    ON parentCensus.nid = parent.field_parent_census_target_id
+    LEFT JOIN field_data_field_year ye
+    ON parentCensus.nid = ye.entity_id
+    LEFT JOIN field_data_field_affiliate_select affiliate
+    ON parentCensus.nid = affiliate.entity_id
+    LEFT JOIN field_data_field_program_work_counseling pwc
+    ON pwc.entity_id = workforce.nid
+    LEFT JOIN field_data_field_program_work_participants pwp
+    ON pwp.entity_id = workforce.nid
+    LEFT JOIN field_data_field_program_work_placed pwpl
+    ON pwpl.entity_id = workforce.nid
+    LEFT JOIN field_data_field_program_work_salary pws
+    ON pws.entity_id = workforce.nid
+    LEFT JOIN field_data_field_program_work_hourly pwh
+    ON pwh.entity_id = workforce.nid
+    LEFT JOIN field_data_field_program_work_welfare pww
+    ON pww.entity_id = workforce.nid
+    LEFT JOIN field_data_field_program_work_welfare_place pwwp
+    ON pwwp.entity_id = workforce.nid
+    LEFT JOIN field_data_field_program_work_welfare_salar pwws
+    ON pwws.entity_id = workforce.nid
+    LEFT JOIN field_data_field_program_work_welfare_hour pwwh
+    ON pwwh.entity_id = workforce.nid
+    WHERE workforce.type = 'program_workforce'"
+    . $yearClause .
+    ") UNION
+    (SELECT
+    '' as 'Title',
+    '' as 'Year',
+    SUM(pwc.field_program_work_counseling_value) as '# clients who received counseling',
+    SUM(pwp.field_program_work_participants_value) as 'Number of participants in employment/workforce development programs (exclude welfare recipients)?',
+    SUM(pwpl.field_program_work_placed_value) as 'Number of participants placed in jobs',
+    SUM(pws.field_program_work_salary_value) as 'Annual salary (if applicable)',
+    SUM(pwh.field_program_work_hourly_value) as 'or Hourly wage rate',
+    SUM(pww.field_program_work_welfare_value) as 'Number of welfare participants in federal/state funded programs',
+    SUM(pwwp.field_program_work_welfare_place_value) as 'Number of welfare program participants placed in jobs',
+    SUM(pwws.field_program_work_welfare_salar_value) as 'Annual welfare salary (if applicable)',
+    SUM(pwwh.field_program_work_welfare_hour_value) as 'or Hourly wage rate (welfare)'
+    FROM node as workforce
+    LEFT JOIN field_data_field_parent_census parent
+    ON workforce.nid = parent.entity_id
+    LEFT JOIN node parentCensus
+    ON parentCensus.nid = parent.field_parent_census_target_id
+    LEFT JOIN field_data_field_year ye
+    ON parentCensus.nid = ye.entity_id
+    LEFT JOIN field_data_field_affiliate_select affiliate
+    ON parentCensus.nid = affiliate.entity_id
+    LEFT JOIN field_data_field_program_work_counseling pwc
+    ON pwc.entity_id = workforce.nid
+    LEFT JOIN field_data_field_program_work_participants pwp
+    ON pwp.entity_id = workforce.nid
+    LEFT JOIN field_data_field_program_work_placed pwpl
+    ON pwpl.entity_id = workforce.nid
+    LEFT JOIN field_data_field_program_work_salary pws
+    ON pws.entity_id = workforce.nid
+    LEFT JOIN field_data_field_program_work_hourly pwh
+    ON pwh.entity_id = workforce.nid
+    LEFT JOIN field_data_field_program_work_welfare pww
+    ON pww.entity_id = workforce.nid
+    LEFT JOIN field_data_field_program_work_welfare_place pwwp
+    ON pwwp.entity_id = workforce.nid
+    LEFT JOIN field_data_field_program_work_welfare_salar pwws
+    ON pwws.entity_id = workforce.nid
+    LEFT JOIN field_data_field_program_work_welfare_hour pwwh
+    ON pwwh.entity_id = workforce.nid
+    WHERE workforce.type = 'program_workforce'
+    " . $yearClause . ")";
+
+    $field_names = array(
+      // '0' => 'Workforce Tab NID',
+      // '1' => 'Parent Census NID',
+      '2' => 'Title',
+      '3' => 'Year',
+      '4' => '# clients who received counseling',
+      '5' => 'Number of participants in employment/workforce development programs (exclude welfare recipients)?',
+      '6' => 'Number of participants placed in jobs',
+      '7' => 'Annual salary (if applicable)',
+      '8' => 'or Hourly wage rate',
+      '9' => 'Number of welfare participants in federal/state funded programs',
+      '10' => 'Number of welfare program participants placed in jobs',
+      '11' => 'Annual welfare salary (if applicable)',
+      '12' => 'or Hourly wage rate (welfare)',
+    );
+
+    $csvTitle = "workforce_report_";
+  }
+  $result = db_query($query);
+  $result = $result->fetchAll();
+  $csv_file = $csvTitle . date('Ymd') . ".csv";
+  drupal_add_http_header('Content-Type', 'text/csv');
+  header("Content-Disposition: attachment; filename=\"$csv_file\"");
+
+  $fp = fopen('php://output', 'w');
+  $first = TRUE;
+
+  foreach ($result as $line) {
+    //Gets the line so we can flip it and get the column names
+    $column_names = get_object_vars($line);
+    if ($first) {
+      fputcsv($fp, $field_names);
+      $first = FALSE;
+      // Only happens once
+    }
+    // Puts the actual content
+    fputcsv($fp, $column_names);
+  }
+  fclose($fp);
+  drupal_exit();
+}
+
+
+function nul_census_custom_redirect_to_csv() {
+  // for census_summary instead of rewriting view just reformated data export
+  drupal_goto('/census-summary/export');
+}
