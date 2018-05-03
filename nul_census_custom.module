@@ -731,7 +731,18 @@ function nul_census_custom_block_view_alter(&$data, $block) {
         $currentNode = node_load($currentNid);
         if (!empty($currentNode->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
           $parentCensusNid = $currentNode->field_parent_census[LANGUAGE_NONE][0]['target_id'];
-          $result = "<a href='/node/{$parentCensusNid}'><div class='parentCensusLink tab field-content tabType'>Contact Information</a></div>";
+          $parentCensusTitle = node_load($parentCensusNid)->title;
+          $result = "
+            <a href='/node/{$parentCensusNid}'>
+              <div class='parentCensusLinkTitle tab field-content tabType'>
+                <h3>{$parentCensusTitle}</h3>
+            </div>
+            </a>
+            <a href='/node/{$parentCensusNid}'>
+              <div class='parentCensusLink tab field-content tabType'>
+                Contact Information
+              </div>
+            </a>";
         }
       }
     }
@@ -742,7 +753,17 @@ function nul_census_custom_block_view_alter(&$data, $block) {
           $currentNode = node_load(arg(1));
           if (!empty($currentNode->type) && $currentNode->type == 'census') {
             $parentCensusId = arg(1);
-            $result = "<a href='/node/{$parentCensusId}'><div class='parentCensusLink tab field-content tabType'>Contact Information</a></div>";
+            $result = "
+              <a href='/node/{$parentCensusId}'>
+                <div class='parentCensusLinkTitle tab field-content tabType'>
+                  <h3>{$currentNode->title}</h3>
+              </div>
+              </a>
+              <a href='/node/{$parentCensusId}'>
+                <div class='parentCensusLink tab field-content tabType'>
+                  Contact Information
+                </div>
+              </a>";
           }
         }
         // checks if on a census tab in create mode and make census tab menu work from there
@@ -753,8 +774,19 @@ function nul_census_custom_block_view_alter(&$data, $block) {
           arg(2) !== 'census' &&
           arg(3) >= 1) {
           $PCNid = arg(3);
+          $PC = node_load($PCNid);
           $arguments = array(arg(3));
-          $result = "<a href='/node/{$PCNid}'><div class='parentCensusLink tab field-content tabType'>Contact Information</a></div>";
+          $result = "
+            <a href='/node/{$PCNid}'>
+              <div class='parentCensusLinkTitle tab field-content tabType'>
+                <h3>{$PC->title}</h3>
+            </div>
+            </a>
+            <a href='/node/{$PCNid}'>
+              <div class='parentCensusLink tab field-content tabType'>
+                Contact Information
+              </div>
+            </a>";
         }
       }
     }
