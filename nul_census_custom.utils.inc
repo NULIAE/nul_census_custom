@@ -521,6 +521,16 @@ function nul_census_custom_check_for_required_url_parts($part) {
 }
 
 function nul_census_custom_export_to_csv($form) {
+  // IF affiliate set add it to query
+  if (!empty($form['field_affiliate_select_value']['#value'])) {
+    $asClause = "" . $form['field_affiliate_select_value']['#value'];
+    if ($form['field_affiliate_select_value']['#value'] == 'All') {
+      $asClause = "";
+    }
+    else {
+      $asClause = " AND affiliate.field_affiliate_select_value = " . $form['field_affiliate_select_value']['#value'];
+    }
+  }
   // IF year set add it to query
   if (!empty($form['field_year_value']['#value'])) {
     $yearClause = "" . $form['field_year_value']['#value'];
@@ -574,7 +584,7 @@ function nul_census_custom_export_to_csv($form) {
     LEFT JOIN field_data_field_program_work_welfare_hour pwwh
     ON pwwh.entity_id = workforce.nid
     WHERE workforce.type = 'program_workforce'"
-    . $yearClause .
+    . $yearClause . $asClause .
     ") UNION
     (SELECT
     '' as 'Title',
@@ -616,7 +626,7 @@ function nul_census_custom_export_to_csv($form) {
     LEFT JOIN field_data_field_program_work_welfare_hour pwwh
     ON pwwh.entity_id = workforce.nid
     WHERE workforce.type = 'program_workforce'
-    " . $yearClause . ")";
+    " . $yearClause . $asClause . ")";
 
     $field_names = array(
       // '0' => 'Workforce Tab NID',
