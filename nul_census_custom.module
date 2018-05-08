@@ -60,6 +60,113 @@ function nul_census_custom_preprocess_views_view(&$vars) {
  * hook_node_view()
  */
 function nul_census_custom_node_view($node, $view_mode, $langcode) {
+  $permissionedFields = array();
+  if (!user_access('can edit magic census fields')) {
+    $permissionedFields = array(
+      'field_year',
+      'field_affiliate_select',
+      'field_census_status',
+      'title',
+      'field_legacy_census_id',
+      'field_legacy_comments_contact',
+
+      'field_program_target_group',
+      'field_program_types',
+
+      'title',
+      'field_parent_census',
+      'field_tab_status',
+      // 'field_program_area',
+
+      // NOTE I think this field is unecessary
+      'field_legacy_census_id',
+
+      // Civic Engagement Tab
+      'field_community_organizations',
+      'field_comm_org_white_male',
+      'field_comm_org_hispanic_male',
+      'field_comm_org_asian_am_male',
+      'field_comm_org_native_am_male',
+      'field_comm_org_african_am_male',
+      'field_comm_org_other_male',
+      'field_comm_org_white_female',
+      'field_comm_org_hispanic_female',
+      'field_comm_org_asian_am_female',
+      'field_comm_org_native_am_female',
+      'field_comm_org_african_am_female',
+      'field_comm_org_other_female',
+      'field_comm_org_total',
+      'field_comm_org_societal_impact',
+      'field_legacy_voter_duplicate_tot',
+      'field_legacy_comm_org_dup_tot',
+      'field_legacy_forums_dup_tot',
+      'field_legacy_crja_dup_tot',
+      'field_legacy_police_dup_tot',
+      'field_legacy_advocacy_dup_tot',
+
+      // Workforce Development Programs
+      'field_legacy_work_sub_budget',
+      'field_program_work_subsidiary',
+      'field_program_work_sub_profit',
+      'field_program_work_sub_ownership',
+      'field_program_work_aff_profit',
+      'field_program_work_sub_housing',
+      'field_program_work_sub_health',
+      'field_program_work_sub_business',
+      'field_program_work_sub_workforce',
+
+      // Volunteers/Members tab
+      'field_guild_white',
+      'field_guild_hispanic_latino',
+      'field_guild_asian_american',
+      'field_guild_native_american',
+      'field_guild_african_american',
+      'field_guild_other_heritage',
+      'field_ypc_white',
+      'field_ypc_hispanic_latino',
+      'field_ypc_asian_american',
+      'field_ypc_native_american',
+      'field_ypc_african_american',
+      'field_ypc_other_heritage',
+      'field_aux_hispanic_latino',
+      'field_aux_asian_american',
+      'field_aux_native_american',
+      'field_aux_african_american',
+      'field_aux_other_heritage',
+
+      // Emergency Relief Activities
+      'field_legacy_relief_ed_impact',
+      'field_legacy_relief_employ_impac',
+      'field_legacy_relief_health_impac',
+      'field_legacy_relief_civic_impact',
+      'field_legacy_relief_justice_impa',
+
+      // Entrepreneurship
+      'field_legacy_business_sales_tot',
+
+      // revenue
+      'field_legacy_budgetnulfunding',
+    );
+  }
+  $fieldsOnContentType = field_info_instances('node', $node->type);
+  // print_r($fieldsOnContentType); die();
+  foreach ($fieldsOnContentType as $fieldName => $fieldDetails) {
+    if (empty($node->content[$fieldName]) && !in_array($fieldName, $permissionedFields)) {
+      $node->content[$fieldName] = array(
+        '#theme' => 'field',
+        '#title' => $fieldDetails['label'],
+        '#access' => 1,
+        '#label_display' => $fieldDetails['display']['default']['label'],
+        '#view_mode' => 'default',
+        '#language' => LANGUAGE_NONE,
+        '#field_name' => $fieldDetails['field_name'],
+        '#field_type' => 'text',
+        '#entity_type' => $fieldDetails['entity_type'],
+        '#bundle' => $fieldDetails['bundle'],
+        '#items' => array(),
+      );
+    }
+  }
   if (!empty($node->type)) {
     $nodeType = nul_census_custom_get_census_part($node->type);
     switch ($nodeType) {
