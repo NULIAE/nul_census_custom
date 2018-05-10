@@ -7,7 +7,7 @@ function nul_census_custom_page_alter(&$page) {
   if (arg(0) == 'full-census' && arg(1) > 0) {
     $parentCensusId = arg(1);
     global $base_url;
-    $css1 = $base_url . '/' . drupal_get_path('module', 'nul_census_custom') . '/css/9pdf.css';
+    $css1 = $base_url . '/' . drupal_get_path('module', 'nul_census_custom') . '/css/pdfStyling.css';
     $headerImage = $base_url . '/' . drupal_get_path('module', 'nul_census_custom') . '/img/greenCensusHeader.png';
 
     $buttonToPDF = "<a href='/full-census/{$parentCensusId}/pdf/full-{$parentCensusId}.pdf'>Print To PDF</a>";
