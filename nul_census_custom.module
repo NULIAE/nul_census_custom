@@ -1136,6 +1136,13 @@ function nul_census_custom_menu() {
     'file' => 'nul_census_custom.admin.inc',
     'file path' => drupal_get_path('module', 'nul_census_custom'),
   );
+  $items['censussummaryfilters'] = array(
+    'title' => 'Census Summary',
+    'description' => 'Census Summary Filters',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nul_census_custom_form'),
+    'access arguments' => array('can edit magic census fields'),
+  );
 
   return $items;
 }
@@ -1151,4 +1158,47 @@ function nul_census_custom_views_api() {
     'path' => drupal_get_path('module', 'nul_census_custom'),
     'template path' => drupal_get_path('module', 'nul_census_custom') . '/templates',
   );
+}
+
+function nul_census_custom_form($form, &$form_state) {
+  $year = date('Y');
+  $fieldsToAdd = array(
+    'field_year' => array(
+      'default_value' => $year,
+      'title' => 'Year',
+    ),
+    'field_affiliate_select' => array(
+      'default_value' => 'none',
+      'title' => 'Affiliate',
+    ),
+  );
+  foreach ($fieldsToAdd as $fieldName => $fieldHardcodedDetails) {
+    $fieldInfo = field_info_field($fieldName);
+    if (empty($fieldInfo['settings']['allowed_values'][$fieldHardcodedDetails['default_value']])) {
+      $fieldInfo['settings']['allowed_values'][$fieldHardcodedDetails['default_value']] = $fieldHardcodedDetails['default_value'];
+    }
+    $form[$fieldName] = array(
+      '#title' => $fieldHardcodedDetails['title'],
+      '#type' => 'select',
+      '#default_value' => $fieldHardcodedDetails['default_value'],
+      '#options' => $fieldInfo['settings']['allowed_values'],
+    );
+  }
+  $form['submit_button'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+
+  return $form;
+}
+
+function nul_census_custom_form_validate($form, &$form_state) {
+}
+
+function nul_census_custom_form_submit($form, &$form_state) {
+  $link = "/census_summary/{$form['field_year']['#value']}";
+  if ($form['field_affiliate_select']['#value'] !== 'none') {
+    $link = $link . "/{$form['field_affiliate_select']['#value']}";
+  }
+  drupal_goto($link);
 }
