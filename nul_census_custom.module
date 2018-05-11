@@ -1196,9 +1196,9 @@ function nul_census_custom_form_validate($form, &$form_state) {
 }
 
 function nul_census_custom_form_submit($form, &$form_state) {
-  $link = "/census_summary/{$form['field_year']['#value']}";
+  $link = "/census_summary_report/{$form['field_year']['#value']}/";
   if ($form['field_affiliate_select']['#value'] !== 'none') {
-    $link = $link . "/{$form['field_affiliate_select']['#value']}";
+    $link = $link . "{$form['field_affiliate_select']['#value']}";
   }
   drupal_goto($link);
 }
