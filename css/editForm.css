@@ -220,6 +220,7 @@ div.view.view-census-summary-report span.views-label {
 div.view.view-census-summary-report div.field-content {
  display: table-cell;
  padding: 5px;
+ text-align: right;
 }
 
 div.view.view-census-summary-report div.field-content.nulHeader {
