@@ -34,7 +34,7 @@ function nul_census_custom_preprocess_views_view(&$vars) {
       array('type' => 'external')
     );
   }
-  if ($view->name == 'full_census' || $view->name == 'throwa') {
+  if ($view->name == 'full_census' || $view->name == 'throwa' || $view->name == 'census_summary_report') {
     // add needed stylesheet
     drupal_add_css(drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css');
     if ($view->name == 'full_census') {

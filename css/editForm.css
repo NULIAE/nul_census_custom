@@ -235,6 +235,14 @@ div.view.view-census-summary-report div.views-field:nth-child(even) {
   background-color: #dfddde;
 }
 
+div.view.view-census-summary-report div.views-field.views-field-type {
+  background-color: white;
+}
+
+div.view.view-census-summary-report div.views-field.views-field-field-year {
+  display: none;
+}
+
 /* AGH #11788 hide submitted by text */
 p.author-datetime {
   display: none;
