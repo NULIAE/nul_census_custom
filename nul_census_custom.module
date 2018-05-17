@@ -965,7 +965,7 @@ function nul_census_custom_node_validate($node, $form, &$form_state) {
               $totalPercentage = $totalPercentage + floatval($paragraph[$fieldName][LANGUAGE_NONE][0]['value']['#value']);
             }
           }
-          if (bccomp($totalPercentage, 100, 3) && intval($totalPercentage) > 0) {
+          if (abs($totalPercentage - floatval(100)) > 0.0001 && intval($totalPercentage) > 0) {
             foreach ($raceFields as $key3 => $field) {
               form_set_error('field_service_areas][' . LANGUAGE_NONE . '][' . $key . '][' . $field, t('The numbers in the Composition % column for each Service Areas Race field must add up to 100'));
             }
