@@ -959,13 +959,13 @@ function nul_census_custom_node_validate($node, $form, &$form_state) {
       );
       if (!empty($form['field_service_areas'][LANGUAGE_NONE])) {
         foreach ($form['field_service_areas'][LANGUAGE_NONE] as $key => $paragraph) {
-          $totalPercentage = 0;
+          $totalPercentage = floatval(0);
           foreach ($raceFields as $key2 => $fieldName) {
             if (!empty($paragraph[$fieldName][LANGUAGE_NONE][0]['value']['#value'])) {
-              $totalPercentage = $totalPercentage + $paragraph[$fieldName][LANGUAGE_NONE][0]['value']['#value'];
+              $totalPercentage = $totalPercentage + floatval($paragraph[$fieldName][LANGUAGE_NONE][0]['value']['#value']);
             }
           }
-          if ($totalPercentage != 100 && $totalPercentage > 0) {
+          if (bccomp($totalPercentage, 100, 3) && intval($totalPercentage) > 0) {
             foreach ($raceFields as $key3 => $field) {
               form_set_error('field_service_areas][' . LANGUAGE_NONE . '][' . $key . '][' . $field, t('The numbers in the Composition % column for each Service Areas Race field must add up to 100'));
             }
