@@ -297,13 +297,84 @@ function nul_census_custom_summary_export_to_csv($form) {
   ON rea.entity_id = tab.nid
   WHERE tab.type = 'revenue' $whereClauses";
 
-  // TODO format sql queries
-  $educationQuery = "";
-  $entrepQuery = "";
-  $housingQuery = "";
+  $educationQuery = "SELECT
+  SUM(eft.field_program_ed_foster_total_value) as 'If so, how many placements/recommendations for services do you make per year?)'
+  FROM node as tab
+  LEFT JOIN field_data_field_parent_census parent
+  ON tab.nid = parent.entity_id
+  LEFT JOIN node parentCensus
+  ON parentCensus.nid = parent.field_parent_census_target_id
+  LEFT JOIN field_data_field_year ye
+  ON parentCensus.nid = ye.entity_id
+  LEFT JOIN field_data_field_affiliate_select affiliate
+  ON parentCensus.nid = affiliate.entity_id
+  LEFT JOIN field_data_field_program_ed_foster_total eft
+  ON eft.entity_id = tab.nid
+  WHERE tab.type = 'program_education' $whereClauses";
+
+  $entrepQuery = "SELECT
+  SUM(etp.field_program_entpr_total_partic_value) as 'Total Participants in Entrepreneurship Programs',
+  SUM(env.field_program_entpr_new_value) as 'Number of new businesses created',
+  SUM(es.field_program_entpr_sales_value) as 'Total sales of businesses started by participants in entrepreneurship programs (i.e. Small Business Matters)'
+  FROM node as tab
+  LEFT JOIN field_data_field_parent_census parent
+  ON tab.nid = parent.entity_id
+  LEFT JOIN node parentCensus
+  ON parentCensus.nid = parent.field_parent_census_target_id
+  LEFT JOIN field_data_field_year ye
+  ON parentCensus.nid = ye.entity_id
+  LEFT JOIN field_data_field_affiliate_select affiliate
+  ON parentCensus.nid = affiliate.entity_id
+  LEFT JOIN field_data_field_program_entpr_new env
+  ON env.entity_id = tab.nid
+  LEFT JOIN field_data_field_program_entpr_sales es
+  ON es.entity_id = tab.nid
+  LEFT JOIN field_data_field_program_entpr_total_partic etp
+  ON etp.entity_id = tab.nid
+  WHERE tab.type = 'program_entrepreneurship' $whereClauses";
+
+  $housingQuery = "SELECT
+  SUM(htp.field_program_housing_total_part_value) as 'How many participants attended or inquired about home ownership programs?',
+  SUM(hp.field_program_housing_purchased_value) as 'Number of program participants who purchased a home',
+  AVG(hap.field_program_housing_avg_price_value) as 'Average price of homes purchased',
+  SUM(hk.field_program_housing_have_kids_value) as 'How many people needing assistance have children under the age of 18 years of age?'
+  FROM node as tab
+  LEFT JOIN field_data_field_parent_census parent
+  ON tab.nid = parent.entity_id
+  LEFT JOIN node parentCensus
+  ON parentCensus.nid = parent.field_parent_census_target_id
+  LEFT JOIN field_data_field_year ye
+  ON parentCensus.nid = ye.entity_id
+  LEFT JOIN field_data_field_affiliate_select affiliate
+  ON parentCensus.nid = affiliate.entity_id
+  LEFT JOIN field_data_field_program_housing_total_part htp
+  ON htp.entity_id = tab.nid
+  LEFT JOIN field_data_field_program_housing_purchased hp
+  ON hp.entity_id = tab.nid
+  LEFT JOIN field_data_field_program_housing_avg_price hap
+  ON hap.entity_id = tab.nid
+  LEFT JOIN field_data_field_program_housing_have_kids hk
+  ON hk.entity_id = tab.nid
+  WHERE tab.type = ' program_housing' $whereClauses";
+
+  // TODO format sql queries see trash.sql for start
   $workforceQuery = "";
   $civicQuery = "";
-  $eraQuery = "";
+
+  $eraQuery = "SELECT
+  SUM(ts.field_relief_total_served_value) as 'Total Served'
+  FROM node as tab
+  LEFT JOIN field_data_field_parent_census parent
+  ON tab.nid = parent.entity_id
+  LEFT JOIN node parentCensus
+  ON parentCensus.nid = parent.field_parent_census_target_id
+  LEFT JOIN field_data_field_year ye
+  ON parentCensus.nid = ye.entity_id
+  LEFT JOIN field_data_field_affiliate_select affiliate
+  ON parentCensus.nid = affiliate.entity_id
+  LEFT JOIN field_data_field_relief_total_served ts
+  ON ts.entity_id = tab.nid
+  WHERE tab.type = 'emergency_relief_activities' $whereClauses";
 
   $csvTitle = "census_summary_report_";
   $csv_file = $csvTitle . date('Ymd') . ".csv";
