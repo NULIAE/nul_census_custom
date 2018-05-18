@@ -243,7 +243,61 @@ function nul_census_custom_summary_export_to_csv($form) {
   ON ecba.entity_id = tab.nid
   WHERE tab.type = 'expenditures' $whereClauses";
 
-  $revQuery = "";
+  $revQuery = "SELECT
+  SUM(rtb.field_revenue_total_budget_value) as 'What is the total budget of your affiliate?',
+  SUM(rn.field_revenue_nul_value) as 'NUL',
+  SUM(rc.field_revenue_corporations_value) as 'Corporations',
+  SUM(rf.field_revenue_foundations_value) as 'Foundations',
+  SUM(rim.field_revenue_individual_members_value) as 'Individual Memberships',
+  SUM(rse.field_revenue_special_events_value) as 'Special Events',
+  SUM(ruw.field_revenue_united_way_value) as 'United Way',
+  SUM(rfed.field_revenue_federal_value) as 'Federal',
+  SUM(rsl.field_revenue_state_local_value) as 'State/Local',
+  SUM(ro.field_revenue_other_value) as 'Other',
+  SUM(ri.field_revenue_investment_value) as 'How much investment earnings (money market account, endowment)?',
+  SUM(rv.field_revenue_ventures_value) as 'Affiliate Social Entrepreneurship Ventures and/or Income Generating Activities',
+  SUM(rhe.field_revenue_has_endowment_value) as 'Does the affiliate have an endowment?',
+  SUM(rea.field_revenue_endowment_amount_value) as 'If so, what is the present amount?'
+  FROM node as tab
+  LEFT JOIN field_data_field_parent_census parent
+  ON tab.nid = parent.entity_id
+  LEFT JOIN node parentCensus
+  ON parentCensus.nid = parent.field_parent_census_target_id
+  LEFT JOIN field_data_field_year ye
+  ON parentCensus.nid = ye.entity_id
+  LEFT JOIN field_data_field_affiliate_select affiliate
+  ON parentCensus.nid = affiliate.entity_id
+  LEFT JOIN field_data_field_revenue_total_budget rtb
+  ON rtb.entity_id = tab.nid
+  LEFT JOIN field_data_field_revenue_nul rn
+  ON rn.entity_id = tab.nid
+  LEFT JOIN field_data_field_revenue_corporations rc
+  ON rc.entity_id = tab.nid
+  LEFT JOIN field_data_field_revenue_foundations rf
+  ON rf.entity_id = tab.nid
+  LEFT JOIN field_data_field_revenue_individual_members rim
+  ON rim.entity_id = tab.nid
+  LEFT JOIN field_data_field_revenue_special_events rse
+  ON rse.entity_id = tab.nid
+  LEFT JOIN field_data_field_revenue_united_way ruw
+  ON ruw.entity_id = tab.nid
+  LEFT JOIN field_data_field_revenue_federal rfed
+  ON rfed.entity_id = tab.nid
+  LEFT JOIN field_data_field_revenue_state_local rsl
+  ON rsl.entity_id = tab.nid
+  LEFT JOIN field_data_field_revenue_other ro
+  ON ro.entity_id = tab.nid
+  LEFT JOIN field_data_field_revenue_investment ri
+  ON ri.entity_id = tab.nid
+  LEFT JOIN field_data_field_revenue_ventures rv
+  ON rv.entity_id = tab.nid
+  LEFT JOIN field_data_field_revenue_has_endowment rhe
+  ON rhe.entity_id = tab.nid
+  LEFT JOIN field_data_field_revenue_endowment_amount rea
+  ON rea.entity_id = tab.nid
+  WHERE tab.type = 'revenue' $whereClauses";
+
+  // TODO format sql queries
   $educationQuery = "";
   $entrepQuery = "";
   $housingQuery = "";
