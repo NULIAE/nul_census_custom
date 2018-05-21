@@ -366,7 +366,7 @@ function nul_census_custom_summary_export_to_csv($form) {
   SUM(pws.field_program_work_salary_value) as 'Annual salary (if applicable)',
   SUM(pwws.field_program_work_welfare_salar_value) as 'Annual welfare salary (if applicable)',
   SUM(pwwpl.field_program_work_welfare_place_value) as 'Number of welfare program participants placed in jobs',
-  SUM(pwtp.field_program_work_total_partici_value) as 'Total for number of participants in employment/workforce development programs and number of welfare participants in federal/stat',
+  SUM(pwtp.field_program_work_total_partici_value) as 'Total for number of participants in employment/workforce development programs and number of welfare participants in federal/stat'
   FROM node as tab
   LEFT JOIN field_data_field_parent_census parent
   ON tab.nid = parent.entity_id
@@ -384,15 +384,15 @@ function nul_census_custom_summary_export_to_csv($form) {
   ON pwpl.entity_id = tab.nid
   LEFT JOIN field_data_field_program_work_welfare pww
   ON pww.entity_id = tab.nid
-  LEFT JOIN field_data_field_program_work_welfare_place pwc
-  ON pwc.entity_id = tab.nid
-  LEFT JOIN field_data_field_program_work_salary pwc
+  LEFT JOIN field_data_field_program_work_welfare_place pwwp
+  ON pwwp.entity_id = tab.nid
+  LEFT JOIN field_data_field_program_work_salary pws
   ON pws.entity_id = tab.nid
-  LEFT JOIN field_data_field_program_work_welfare_salar pwc
+  LEFT JOIN field_data_field_program_work_welfare_salar pwws
   ON pwws.entity_id = tab.nid
-  LEFT JOIN field_data_field_program_work_welfare_place pwc
+  LEFT JOIN field_data_field_program_work_welfare_place pwwpl
   ON pwwpl.entity_id = tab.nid
-  LEFT JOIN field_data_field_program_work_total_partici pwc
+  LEFT JOIN field_data_field_program_work_total_partici pwtp
   ON pwtp.entity_id = tab.nid
   WHERE tab.type = 'program_workforce' $whereClauses";
 
@@ -402,7 +402,7 @@ function nul_census_custom_summary_export_to_csv($form) {
   SUM(fsi.field_forums_societal_impact_value) as 'Community Forums Societal Impact',
   SUM(csi.field_crja_societal_impact_value) as 'Civil Rights & Justice Activities Societal Impact',
   SUM(psi.field_police_societal_impact_value) as 'Police Brutality Societal Impact',
-  SUM(asi.field_advocacy_societal_impact_value) as 'Advocacy Efforts Societal Impact',
+  SUM(asi.field_advocacy_societal_impact_value) as 'Advocacy Efforts Societal Impact'
   FROM node as tab
   LEFT JOIN field_data_field_parent_census parent
   ON tab.nid = parent.entity_id
