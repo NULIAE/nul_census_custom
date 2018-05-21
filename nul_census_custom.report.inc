@@ -355,7 +355,7 @@ function nul_census_custom_summary_export_to_csv($form) {
   ON hap.entity_id = tab.nid
   LEFT JOIN field_data_field_program_housing_have_kids hk
   ON hk.entity_id = tab.nid
-  WHERE tab.type = ' program_housing' $whereClauses";
+  WHERE tab.type = 'program_housing' $whereClauses";
 
   $workforceQuery = "SELECT
   SUM(pwc.field_program_work_counseling_value) as 'Number of clients who received workforce development/job placement counseling from your affiliate last year?',
