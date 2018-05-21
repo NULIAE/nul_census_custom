@@ -357,9 +357,74 @@ function nul_census_custom_summary_export_to_csv($form) {
   ON hk.entity_id = tab.nid
   WHERE tab.type = ' program_housing' $whereClauses";
 
-  // TODO format sql queries see trash.sql for start
-  $workforceQuery = "";
-  $civicQuery = "";
+  $workforceQuery = "SELECT
+  SUM(pwc.field_program_work_counseling_value) as 'Number of clients who received workforce development/job placement counseling from your affiliate last year?',
+  SUM(pwp.field_program_work_participants_value) as 'Number of participants in employment/workforce development programs (exclude welfare recipients)?',
+  SUM(pwpl.field_program_work_placed_value) as 'Number of participants placed in jobs',
+  SUM(pww.field_program_work_welfare_value) as 'Number of welfare participants in federal/state funded programs',
+  SUM(pwwp.field_program_work_welfare_place_value) as 'Number of welfare program participants placed in jobs',
+  SUM(pws.field_program_work_salary_value) as 'Annual salary (if applicable)',
+  SUM(pwws.field_program_work_welfare_salar_value) as 'Annual welfare salary (if applicable)',
+  SUM(pwwpl.field_program_work_welfare_place_value) as 'Number of welfare program participants placed in jobs',
+  SUM(pwtp.field_program_work_total_partici_value) as 'Total for number of participants in employment/workforce development programs and number of welfare participants in federal/stat',
+  FROM node as tab
+  LEFT JOIN field_data_field_parent_census parent
+  ON tab.nid = parent.entity_id
+  LEFT JOIN node parentCensus
+  ON parentCensus.nid = parent.field_parent_census_target_id
+  LEFT JOIN field_data_field_year ye
+  ON parentCensus.nid = ye.entity_id
+  LEFT JOIN field_data_field_affiliate_select affiliate
+  ON parentCensus.nid = affiliate.entity_id
+  LEFT JOIN field_data_field_program_work_counseling pwc
+  ON pwc.entity_id = tab.nid
+  LEFT JOIN field_data_field_program_work_participants pwp
+  ON pwp.entity_id = tab.nid
+  LEFT JOIN field_data_field_program_work_placed pwpl
+  ON pwpl.entity_id = tab.nid
+  LEFT JOIN field_data_field_program_work_welfare pww
+  ON pww.entity_id = tab.nid
+  LEFT JOIN field_data_field_program_work_welfare_place pwc
+  ON pwc.entity_id = tab.nid
+  LEFT JOIN field_data_field_program_work_salary pwc
+  ON pws.entity_id = tab.nid
+  LEFT JOIN field_data_field_program_work_welfare_salar pwc
+  ON pwws.entity_id = tab.nid
+  LEFT JOIN field_data_field_program_work_welfare_place pwc
+  ON pwwpl.entity_id = tab.nid
+  LEFT JOIN field_data_field_program_work_total_partici pwc
+  ON pwtp.entity_id = tab.nid
+  WHERE tab.type = 'program_workforce' $whereClauses";
+
+  $civicQuery = "SELECT
+  SUM(vsi.field_voter_societal_impact_value) as 'Voter - Total Number Served or Registered (Male and Female)',
+  SUM(vct.field_comm_org_total_value) as 'Community Organization Societal Impact',
+  SUM(fsi.field_forums_societal_impact_value) as 'Community Forums Societal Impact',
+  SUM(csi.field_crja_societal_impact_value) as 'Civil Rights & Justice Activities Societal Impact',
+  SUM(psi.field_police_societal_impact_value) as 'Police Brutality Societal Impact',
+  SUM(asi.field_advocacy_societal_impact_value) as 'Advocacy Efforts Societal Impact',
+  FROM node as tab
+  LEFT JOIN field_data_field_parent_census parent
+  ON tab.nid = parent.entity_id
+  LEFT JOIN node parentCensus
+  ON parentCensus.nid = parent.field_parent_census_target_id
+  LEFT JOIN field_data_field_year ye
+  ON parentCensus.nid = ye.entity_id
+  LEFT JOIN field_data_field_affiliate_select affiliate
+  ON parentCensus.nid = affiliate.entity_id
+  LEFT JOIN field_data_field_voter_societal_impact vsi
+  ON vsi.entity_id = tab.nid
+  LEFT JOIN field_data_field_comm_org_total vct
+  ON vct.entity_id = tab.nid
+  LEFT JOIN field_data_field_forums_societal_impact fsi
+  ON fsi.entity_id = tab.nid
+  LEFT JOIN field_data_field_crja_societal_impact csi
+  ON csi.entity_id = tab.nid
+  LEFT JOIN field_data_field_police_societal_impact psi
+  ON psi.entity_id = tab.nid
+  LEFT JOIN field_data_field_advocacy_societal_impact asi
+  ON asi.entity_id = tab.nid
+  WHERE tab.type = 'civic_engagement' $whereClauses";
 
   $eraQuery = "SELECT
   SUM(ts.field_relief_total_served_value) as 'Total Served'
