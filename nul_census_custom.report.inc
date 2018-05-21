@@ -337,7 +337,8 @@ function nul_census_custom_summary_export_to_csv($form) {
   SUM(htp.field_program_housing_total_part_value) as 'How many participants attended or inquired about home ownership programs?',
   SUM(hp.field_program_housing_purchased_value) as 'Number of program participants who purchased a home',
   AVG(hap.field_program_housing_avg_price_value) as 'Average price of homes purchased',
-  SUM(hk.field_program_housing_have_kids_value) as 'How many people needing assistance have children under the age of 18 years of age?'
+  SUM(hk.field_program_housing_have_kids_value) as 'How many people needing assistance have children under the age of 18 years of age?',
+  SUM(ha.field_program_housing_alternate_value) as 'How many people were turned to alternative housing after losing their house?'
   FROM node as tab
   LEFT JOIN field_data_field_parent_census parent
   ON tab.nid = parent.entity_id
@@ -355,6 +356,8 @@ function nul_census_custom_summary_export_to_csv($form) {
   ON hap.entity_id = tab.nid
   LEFT JOIN field_data_field_program_housing_have_kids hk
   ON hk.entity_id = tab.nid
+  LEFT JOIN field_data_field_program_housing_alternate ha
+  ON ha.entity_id = tab.nid
   WHERE tab.type = 'program_housing' $whereClauses";
 
   $workforceQuery = "SELECT
