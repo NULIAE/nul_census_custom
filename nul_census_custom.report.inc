@@ -249,7 +249,7 @@ function nul_census_custom_summary_export_to_csv($form) {
   concat('$', format(SUM(rc.field_revenue_corporations_value), 2)) as 'Corporations',
   concat('$', format(SUM(rf.field_revenue_foundations_value), 2)) as 'Foundations',
   concat('$', format(SUM(rim.field_revenue_individual_members_value), 2)) as 'Individual Memberships',
-  concat('$', format(SUM(rse.field_revenue_special_events_value)) as 'Special Events',
+  concat('$', format(SUM(rse.field_revenue_special_events_value), 2)) as 'Special Events',
   concat('$', format(SUM(ruw.field_revenue_united_way_value), 2)) as 'United Way',
   concat('$', format(SUM(rfed.field_revenue_federal_value), 2)) as 'Federal',
   concat('$', format(SUM(rsl.field_revenue_state_local_value), 2)) as 'State/Local',
