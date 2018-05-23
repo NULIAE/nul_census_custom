@@ -172,26 +172,26 @@ function nul_census_custom_summary_export_to_csv($form) {
 
   // ExpendituresTab
   $expQuery = "SELECT
-  SUM(te.field_total_expenditures_value) as 'What was the total expenditure by your affiliate for expenses (include salaries rent/mortgage equipment etc.)?',
-  SUM(ea.field_a_salaries_wages_value)  as 'A. Salaries/Wages',
-  SUM(eb.field_b_fringe_benefits_value) as 'B. Fringe Benefits',
-  SUM(ec.field_c_professional_fees_value) as 'C. Professional/Contract/Consulting Fees',
-  SUM(ed.field_d_travel_value) as 'D. Travel',
-  SUM(ee.field_e_postage_freight_value) as 'E. Postage/Freight',
-  SUM(ef.field_f_insurance_value) as 'F. Insurance',
-  SUM(eg.field_g_interest_payments_value) as 'G. Interest Payments',
-  SUM(eh.field_h_dues_subscription_regist_value) as 'H. Dues/Subscription/Registration',
-  SUM(ei.field_i_depreciation_value) as 'I. Depreciation',
-  SUM(ej.field_j_taxes_including_property_value) as 'J. Taxes (including property taxes)',
-  SUM(ek.field_k_utilities_value) as 'K. Utilities (telephone gas electric)',
-  SUM(el.field_l_equipment_space_rental_value)  as 'L. Equipment/space rental',
-  SUM(em.field_m_goods_and_services_value) as 'M. Goods and Services',
-  SUM(en.field_n_rent_mortgage_payments_value) as 'N. Rent/mortgage payments',
-  SUM(eo.field_o_other_value) as 'O. Other',
+  concat('$', format(sum(te.field_total_expenditures_value), 2)) as 'What was the total expenditure by your affiliate for expenses (include salaries rent/mortgage equipment etc.)?',
+  concat('$', format(sum(ea.field_a_salaries_wages_value), 2)) as 'A. Salaries/Wages',
+  concat('$', format(sum(eb.field_b_fringe_benefits_value), 2)) as 'B. Fringe Benefits',
+  concat('$', format(sum(ec.field_c_professional_fees_value), 2)) as 'C. Professional/Contract/Consulting Fees',
+  concat('$', format(sum(ed.field_d_travel_value), 2)) as 'D. Travel',
+  concat('$', format(sum(ee.field_e_postage_freight_value), 2)) as 'E. Postage/Freight',
+  concat('$', format(sum(ef.field_f_insurance_value), 2)) as 'F. Insurance',
+  concat('$', format(sum(eg.field_g_interest_payments_value), 2)) as 'G. Interest Payments',
+  concat('$', format(sum(eh.field_h_dues_subscription_regist_value), 2)) as 'H. Dues/Subscription/Registration',
+  concat('$', format(sum(ei.field_i_depreciation_value), 2)) as 'I. Depreciation',
+  concat('$', format(sum(ej.field_j_taxes_including_property_value), 2)) as 'J. Taxes (including property taxes)',
+  concat('$', format(sum(ek.field_k_utilities_value), 2)) as 'K. Utilities (telephone gas electric)',
+  concat('$', format(sum(el.field_l_equipment_space_rental_value), 2)) as 'L. Equipment/space rental',
+  concat('$', format(sum(em.field_m_goods_and_services_value), 2)) as 'M. Goods and Services',
+  concat('$', format(sum(en.field_n_rent_mortgage_payments_value), 2)) as 'N. Rent/mortgage payments',
+  concat('$', format(sum(eo.field_o_other_value), 2)) as 'O. Other',
   SUM(eno.field_number_properties_owned_value) as 'How many properties does the affiliate own?',
   SUM(enr.field_number_properties_rented_value) as 'How many properties does the affiliate rent?',
-  SUM(emv.field_market_value_of_property_value) as 'If the affiliate owns its facilities what is the current market value of the property?',
-  SUM(ecba.field_capital_budget_amount_value) as 'If so how much?'
+  concat('$', format(sum(emv.field_market_value_of_property_value), 2)) as 'If the affiliate owns its facilities what is the current market value of the property?',
+  concat('$', format(sum(ecba.field_capital_budget_amount_value), 2)) as 'If so how much?'
   FROM node as tab
   LEFT JOIN field_data_field_parent_census parent
   ON tab.nid = parent.entity_id
@@ -244,20 +244,20 @@ function nul_census_custom_summary_export_to_csv($form) {
   WHERE tab.type = 'expenditures' $whereClauses";
 
   $revQuery = "SELECT
-  SUM(rtb.field_revenue_total_budget_value) as 'What is the total budget of your affiliate?',
-  SUM(rn.field_revenue_nul_value) as 'NUL',
-  SUM(rc.field_revenue_corporations_value) as 'Corporations',
-  SUM(rf.field_revenue_foundations_value) as 'Foundations',
-  SUM(rim.field_revenue_individual_members_value) as 'Individual Memberships',
-  SUM(rse.field_revenue_special_events_value) as 'Special Events',
-  SUM(ruw.field_revenue_united_way_value) as 'United Way',
-  SUM(rfed.field_revenue_federal_value) as 'Federal',
-  SUM(rsl.field_revenue_state_local_value) as 'State/Local',
-  SUM(ro.field_revenue_other_value) as 'Other',
-  SUM(ri.field_revenue_investment_value) as 'How much investment earnings (money market account, endowment)?',
-  SUM(rv.field_revenue_ventures_value) as 'Affiliate Social Entrepreneurship Ventures and/or Income Generating Activities',
-  SUM(rhe.field_revenue_has_endowment_value) as 'Does the affiliate have an endowment?',
-  SUM(rea.field_revenue_endowment_amount_value) as 'If so, what is the present amount?'
+  concat('$', format(SUM(rtb.field_revenue_total_budget_value), 2)) as 'What is the total budget of your affiliate?',
+  concat('$', format(SUM(rn.field_revenue_nul_value), 2)) as 'NUL',
+  concat('$', format(SUM(rc.field_revenue_corporations_value), 2)) as 'Corporations',
+  concat('$', format(SUM(rf.field_revenue_foundations_value), 2)) as 'Foundations',
+  concat('$', format(SUM(rim.field_revenue_individual_members_value), 2)) as 'Individual Memberships',
+  concat('$', format(SUM(rse.field_revenue_special_events_value)) as 'Special Events',
+  concat('$', format(SUM(ruw.field_revenue_united_way_value), 2)) as 'United Way',
+  concat('$', format(SUM(rfed.field_revenue_federal_value), 2)) as 'Federal',
+  concat('$', format(SUM(rsl.field_revenue_state_local_value), 2)) as 'State/Local',
+  concat('$', format(SUM(ro.field_revenue_other_value), 2)) as 'Other',
+  concat('$', format(SUM(ri.field_revenue_investment_value), 2)) as 'How much investment earnings (money market account, endowment)?',
+  concat('$', format(SUM(rv.field_revenue_ventures_value), 2)) as 'Affiliate Social Entrepreneurship Ventures and/or Income Generating Activities',
+  concat('$', format(SUM(rhe.field_revenue_has_endowment_value), 2)) as 'Does the affiliate have an endowment?',
+  concat('$', format(SUM(rea.field_revenue_endowment_amount_value), 2)) as 'If so, what is the present amount?'
   FROM node as tab
   LEFT JOIN field_data_field_parent_census parent
   ON tab.nid = parent.entity_id
@@ -315,7 +315,7 @@ function nul_census_custom_summary_export_to_csv($form) {
   $entrepQuery = "SELECT
   SUM(etp.field_program_entpr_total_partic_value) as 'Total Participants in Entrepreneurship Programs',
   SUM(env.field_program_entpr_new_value) as 'Number of new businesses created',
-  SUM(es.field_program_entpr_sales_value) as 'Total sales of businesses started by participants in entrepreneurship programs (i.e. Small Business Matters)'
+  concat('$', format(SUM(es.field_program_entpr_sales_value), 2)) as 'Total sales of businesses started by participants in entrepreneurship programs (i.e. Small Business Matters)'
   FROM node as tab
   LEFT JOIN field_data_field_parent_census parent
   ON tab.nid = parent.entity_id
@@ -336,7 +336,7 @@ function nul_census_custom_summary_export_to_csv($form) {
   $housingQuery = "SELECT
   SUM(htp.field_program_housing_total_part_value) as 'How many participants attended or inquired about home ownership programs?',
   SUM(hp.field_program_housing_purchased_value) as 'Number of program participants who purchased a home',
-  AVG(hap.field_program_housing_avg_price_value) as 'Average price of homes purchased',
+  concat('$', format(AVG(hap.field_program_housing_avg_price_value), 2)) as 'Average price of homes purchased',
   SUM(hk.field_program_housing_have_kids_value) as 'How many people needing assistance have children under the age of 18 years of age?',
   SUM(ha.field_program_housing_alternate_value) as 'How many people were turned to alternative housing after losing their house?'
   FROM node as tab
@@ -366,8 +366,8 @@ function nul_census_custom_summary_export_to_csv($form) {
   SUM(pwpl.field_program_work_placed_value) as 'Number of participants placed in jobs',
   SUM(pww.field_program_work_welfare_value) as 'Number of welfare participants in federal/state funded programs',
   SUM(pwwp.field_program_work_welfare_place_value) as 'Number of welfare program participants placed in jobs',
-  SUM(pws.field_program_work_salary_value) as 'Annual salary (if applicable)',
-  SUM(pwws.field_program_work_welfare_salar_value) as 'Annual welfare salary (if applicable)',
+  concat('$', format(SUM(pws.field_program_work_salary_value), 2)) as 'Annual salary (if applicable)',
+  concat('$', format(SUM(pwws.field_program_work_welfare_salar_value), 2)) as 'Annual welfare salary (if applicable)',
   SUM(pwwpl.field_program_work_welfare_place_value) as 'Number of welfare program participants placed in jobs',
   SUM(pwtp.field_program_work_total_partici_value) as 'Total for number of participants in employment/workforce development programs and number of welfare participants in federal/stat'
   FROM node as tab
@@ -456,13 +456,13 @@ function nul_census_custom_summary_export_to_csv($form) {
 
   // Format Tabs
   nul_census_custom_tab_formatting_for_census($expQuery, 'Expenditures', $fp);
-  nul_census_custom_tab_formatting_for_census($revQuery, 'Revenue', $fp);
-  nul_census_custom_tab_formatting_for_census($educationQuery, 'Education Programs', $fp);
-  nul_census_custom_tab_formatting_for_census($entrepQuery, 'Entrepreneurship and Business Development Programs', $fp);
-  nul_census_custom_tab_formatting_for_census($housingQuery, 'Housing and Community Development Programs', $fp);
-  nul_census_custom_tab_formatting_for_census($workforceQuery, 'Workforce Development Programs', $fp);
-  nul_census_custom_tab_formatting_for_census($civicQuery, 'Civic Engagement', $fp);
-  nul_census_custom_tab_formatting_for_census($eraQuery, 'Emergency Relief Activities', $fp);
+  // nul_census_custom_tab_formatting_for_census($revQuery, 'Revenue', $fp);
+  // nul_census_custom_tab_formatting_for_census($educationQuery, 'Education Programs', $fp);
+  // nul_census_custom_tab_formatting_for_census($entrepQuery, 'Entrepreneurship and Business Development Programs', $fp);
+  // nul_census_custom_tab_formatting_for_census($housingQuery, 'Housing and Community Development Programs', $fp);
+  // nul_census_custom_tab_formatting_for_census($workforceQuery, 'Workforce Development Programs', $fp);
+  // nul_census_custom_tab_formatting_for_census($civicQuery, 'Civic Engagement', $fp);
+  // nul_census_custom_tab_formatting_for_census($eraQuery, 'Emergency Relief Activities', $fp);
 
   fclose($fp);
   drupal_exit();
