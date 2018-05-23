@@ -456,13 +456,13 @@ function nul_census_custom_summary_export_to_csv($form) {
 
   // Format Tabs
   nul_census_custom_tab_formatting_for_census($expQuery, 'Expenditures', $fp);
-  // nul_census_custom_tab_formatting_for_census($revQuery, 'Revenue', $fp);
-  // nul_census_custom_tab_formatting_for_census($educationQuery, 'Education Programs', $fp);
-  // nul_census_custom_tab_formatting_for_census($entrepQuery, 'Entrepreneurship and Business Development Programs', $fp);
-  // nul_census_custom_tab_formatting_for_census($housingQuery, 'Housing and Community Development Programs', $fp);
-  // nul_census_custom_tab_formatting_for_census($workforceQuery, 'Workforce Development Programs', $fp);
-  // nul_census_custom_tab_formatting_for_census($civicQuery, 'Civic Engagement', $fp);
-  // nul_census_custom_tab_formatting_for_census($eraQuery, 'Emergency Relief Activities', $fp);
+  nul_census_custom_tab_formatting_for_census($revQuery, 'Revenue', $fp);
+  nul_census_custom_tab_formatting_for_census($educationQuery, 'Education Programs', $fp);
+  nul_census_custom_tab_formatting_for_census($entrepQuery, 'Entrepreneurship and Business Development Programs', $fp);
+  nul_census_custom_tab_formatting_for_census($housingQuery, 'Housing and Community Development Programs', $fp);
+  nul_census_custom_tab_formatting_for_census($workforceQuery, 'Workforce Development Programs', $fp);
+  nul_census_custom_tab_formatting_for_census($civicQuery, 'Civic Engagement', $fp);
+  nul_census_custom_tab_formatting_for_census($eraQuery, 'Emergency Relief Activities', $fp);
 
   fclose($fp);
   drupal_exit();
