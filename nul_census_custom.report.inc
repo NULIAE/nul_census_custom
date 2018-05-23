@@ -450,6 +450,10 @@ function nul_census_custom_summary_export_to_csv($form) {
   header("Content-Disposition: attachment; filename=\"$csv_file\"");
 
   $fp = fopen('php://output', 'w');
+
+  // title row
+  fputcsv($fp, array("{$form['field_year']['#value']} {$form['field_affiliate_select']['#value']}", '', ''));
+
   // Format Tabs
   nul_census_custom_tab_formatting_for_census($expQuery, 'Expenditures', $fp);
   nul_census_custom_tab_formatting_for_census($revQuery, 'Revenue', $fp);
