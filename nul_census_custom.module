@@ -1000,6 +1000,7 @@ function nul_census_custom_node_validate($node, $form, &$form_state) {
     $results = $query->entityCondition('entity_type', 'node')
       ->entityCondition('bundle', $node->type)
       ->fieldCondition('field_parent_census', 'target_id', $node->field_parent_census[LANGUAGE_NONE][0]['target_id'])
+      ->propertyCondition('status', NODE_PUBLISHED)
       ->execute();
     // Do not allow node with this parent census of this type to be saved unless
     $allowParentCensus = FALSE;
