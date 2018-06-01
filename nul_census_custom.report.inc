@@ -338,7 +338,7 @@ function nul_census_custom_summary_export_to_csv($form) {
   format(SUM(hp.field_program_housing_purchased_value), 0) as 'Number of program participants who purchased a home',
   concat('$', format(AVG(hap.field_program_housing_avg_price_value), 2)) as 'Average price of homes purchased',
   format(SUM(hk.field_program_housing_have_kids_value), 0) as 'How many people needing assistance have children under the age of 18 years of age?',
-  format(SUM(ha.field_program_housing_alternate_value), 0) as 'How many people were turned to alternative housing after losing their house?',
+  format(SUM(ha.field_program_housing_alternate_value), 0) as 'How many people were turned to alternative housing after losing their house?'
   FROM node as tab
   LEFT JOIN field_data_field_parent_census parent
   ON tab.nid = parent.entity_id
