@@ -450,9 +450,15 @@ function nul_census_custom_summary_export_to_csv($form) {
   header("Content-Disposition: attachment; filename=\"$csv_file\"");
 
   $fp = fopen('php://output', 'w');
-
   // title row
-  fputcsv($fp, array("{$form['field_year']['#value']} {$form['field_affiliate_select']['#value']}", '', ''));
+  $affiliateTitle = '';
+  if ($form['field_affiliate_select']['#value'] == 'All') {
+    $affiliateTitle = $form['field_affiliate_select']['#value'];
+  }
+  else {
+    $affiliateTitle = $form['field_affiliate_select']['#options'][$form['field_affiliate_select']['#value']];
+  }
+  fputcsv($fp, array("{$form['field_year']['#value']} {$affiliateTitle}", '', ''));
 
   // Format Tabs
   nul_census_custom_tab_formatting_for_census($expQuery, 'Expenditures', $fp);
