@@ -188,8 +188,8 @@ function nul_census_custom_summary_export_to_csv($form) {
   concat('$', format(sum(em.field_m_goods_and_services_value), 2)) as 'M. Goods and Services',
   concat('$', format(sum(en.field_n_rent_mortgage_payments_value), 2)) as 'N. Rent/mortgage payments',
   concat('$', format(sum(eo.field_o_other_value), 2)) as 'O. Other',
-  SUM(eno.field_number_properties_owned_value) as 'How many properties does the affiliate own?',
-  SUM(enr.field_number_properties_rented_value) as 'How many properties does the affiliate rent?',
+  format(SUM(eno.field_number_properties_owned_value), 0) as 'How many properties does the affiliate own?',
+  format(SUM(enr.field_number_properties_rented_value), 0) as 'How many properties does the affiliate rent?',
   concat('$', format(sum(emv.field_market_value_of_property_value), 2)) as 'If the affiliate owns its facilities what is the current market value of the property?',
   concat('$', format(sum(ecba.field_capital_budget_amount_value), 2)) as 'If so how much?'
   FROM node as tab
@@ -298,7 +298,7 @@ function nul_census_custom_summary_export_to_csv($form) {
   WHERE tab.type = 'revenue' $whereClauses";
 
   $educationQuery = "SELECT
-  SUM(eft.field_program_ed_foster_total_value) as 'If so, how many placements/recommendations for services do you make per year?)'
+  format(SUM(eft.field_program_ed_foster_total_value), 0) as 'If so, how many placements/recommendations for services do you make per year?)'
   FROM node as tab
   LEFT JOIN field_data_field_parent_census parent
   ON tab.nid = parent.entity_id
@@ -313,8 +313,8 @@ function nul_census_custom_summary_export_to_csv($form) {
   WHERE tab.type = 'program_education' $whereClauses";
 
   $entrepQuery = "SELECT
-  SUM(etp.field_program_entpr_total_partic_value) as 'Total Participants in Entrepreneurship Programs',
-  SUM(env.field_program_entpr_new_value) as 'Number of new businesses created',
+  format(SUM(etp.field_program_entpr_total_partic_value), 0) as 'Total Participants in Entrepreneurship Programs',
+  format(SUM(env.field_program_entpr_new_value), 0) as 'Number of new businesses created',
   concat('$', format(SUM(es.field_program_entpr_sales_value), 2)) as 'Total sales of businesses started by participants in entrepreneurship programs (i.e. Small Business Matters)'
   FROM node as tab
   LEFT JOIN field_data_field_parent_census parent
@@ -334,11 +334,11 @@ function nul_census_custom_summary_export_to_csv($form) {
   WHERE tab.type = 'program_entrepreneurship' $whereClauses";
 
   $housingQuery = "SELECT
-  SUM(htp.field_program_housing_total_part_value) as 'How many participants attended or inquired about home ownership programs?',
-  SUM(hp.field_program_housing_purchased_value) as 'Number of program participants who purchased a home',
+  format(SUM(htp.field_program_housing_total_part_value), 0) as 'How many participants attended or inquired about home ownership programs?',
+  format(SUM(hp.field_program_housing_purchased_value), 0) as 'Number of program participants who purchased a home',
   concat('$', format(AVG(hap.field_program_housing_avg_price_value), 2)) as 'Average price of homes purchased',
-  SUM(hk.field_program_housing_have_kids_value) as 'How many people needing assistance have children under the age of 18 years of age?',
-  SUM(ha.field_program_housing_alternate_value) as 'How many people were turned to alternative housing after losing their house?'
+  format(SUM(hk.field_program_housing_have_kids_value), 0) as 'How many people needing assistance have children under the age of 18 years of age?',
+  format(SUM(ha.field_program_housing_alternate_value), 0) as 'How many people were turned to alternative housing after losing their house?',
   FROM node as tab
   LEFT JOIN field_data_field_parent_census parent
   ON tab.nid = parent.entity_id
@@ -361,15 +361,15 @@ function nul_census_custom_summary_export_to_csv($form) {
   WHERE tab.type = 'program_housing' $whereClauses";
 
   $workforceQuery = "SELECT
-  SUM(pwc.field_program_work_counseling_value) as 'Number of clients who received workforce development/job placement counseling from your affiliate last year?',
-  SUM(pwp.field_program_work_participants_value) as 'Number of participants in employment/workforce development programs (exclude welfare recipients)?',
-  SUM(pwpl.field_program_work_placed_value) as 'Number of participants placed in jobs',
-  SUM(pww.field_program_work_welfare_value) as 'Number of welfare participants in federal/state funded programs',
-  SUM(pwwp.field_program_work_welfare_place_value) as 'Number of welfare program participants placed in jobs',
+  format(SUM(pwc.field_program_work_counseling_value), 0) as 'Number of clients who received workforce development/job placement counseling from your affiliate last year?',
+  format(SUM(pwp.field_program_work_participants_value), 0) as 'Number of participants in employment/workforce development programs (exclude welfare recipients)?',
+  format(SUM(pwpl.field_program_work_placed_value), 0) as 'Number of participants placed in jobs',
+  format(SUM(pww.field_program_work_welfare_value), 0) as 'Number of welfare participants in federal/state funded programs',
+  format(SUM(pwwp.field_program_work_welfare_place_value), 0) as 'Number of welfare program participants placed in jobs',
   concat('$', format(SUM(pws.field_program_work_salary_value), 2)) as 'Annual salary (if applicable)',
   concat('$', format(SUM(pwws.field_program_work_welfare_salar_value), 2)) as 'Annual welfare salary (if applicable)',
-  SUM(pwwpl.field_program_work_welfare_place_value) as 'Number of welfare program participants placed in jobs',
-  SUM(pwtp.field_program_work_total_partici_value) as 'Total for number of participants in employment/workforce development programs and number of welfare participants in federal/stat'
+  format(SUM(pwwpl.field_program_work_welfare_place_value), 0) as 'Number of welfare program participants placed in jobs',
+  format(SUM(pwtp.field_program_work_total_partici_value), 0) as 'Total for number of participants in employment/workforce development programs and number of welfare participants in federal/stat'
   FROM node as tab
   LEFT JOIN field_data_field_parent_census parent
   ON tab.nid = parent.entity_id
@@ -400,12 +400,12 @@ function nul_census_custom_summary_export_to_csv($form) {
   WHERE tab.type = 'program_workforce' $whereClauses";
 
   $civicQuery = "SELECT
-  SUM(vsi.field_voter_societal_impact_value) as 'Voter - Total Number Served or Registered (Male and Female)',
-  SUM(vct.field_comm_org_total_value) as 'Community Organization Societal Impact',
-  SUM(fsi.field_forums_societal_impact_value) as 'Community Forums Societal Impact',
-  SUM(csi.field_crja_societal_impact_value) as 'Civil Rights & Justice Activities Societal Impact',
-  SUM(psi.field_police_societal_impact_value) as 'Police Brutality Societal Impact',
-  SUM(asi.field_advocacy_societal_impact_value) as 'Advocacy Efforts Societal Impact'
+  format(SUM(vsi.field_voter_societal_impact_value), 0) as 'Voter - Total Number Served or Registered (Male and Female)',
+  format(SUM(vct.field_comm_org_total_value), 0) as 'Community Organization Societal Impact',
+  format(SUM(fsi.field_forums_societal_impact_value), 0) as 'Community Forums Societal Impact',
+  format(SUM(csi.field_crja_societal_impact_value), 0) as 'Civil Rights & Justice Activities Societal Impact',
+  format(SUM(psi.field_police_societal_impact_value), 0) as 'Police Brutality Societal Impact',
+  format(SUM(asi.field_advocacy_societal_impact_value), 0) as 'Advocacy Efforts Societal Impact'
   FROM node as tab
   LEFT JOIN field_data_field_parent_census parent
   ON tab.nid = parent.entity_id
@@ -430,7 +430,7 @@ function nul_census_custom_summary_export_to_csv($form) {
   WHERE tab.type = 'civic_engagement' $whereClauses";
 
   $eraQuery = "SELECT
-  SUM(ts.field_relief_total_served_value) as 'Total Served'
+  format(SUM(ts.field_relief_total_served_value), 0) as 'Total Served'
   FROM node as tab
   LEFT JOIN field_data_field_parent_census parent
   ON tab.nid = parent.entity_id
