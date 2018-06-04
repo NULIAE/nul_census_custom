@@ -221,6 +221,11 @@ function nul_census_custom_update_nodes_status_field($tabsCompleted, $statusToCh
   if ($censusPart == 'census') {
     $vocabMachineName = 'status_type_for_census';
     $fieldName = 'field_census_status';
+    // IF changing to reviewed complete update civi
+    if ($statusToChangeTo == 'Reviewed Complete') {
+      $censusId = key($tabsCompleted);
+      nul_census_custom_update_civi($censusId);
+    }
   }
   $submittedTabTerm = key(taxonomy_get_term_by_name($statusToChangeTo, $vocabMachineName));
   foreach ($tabsCompleted as $nid => $object) {
@@ -228,6 +233,67 @@ function nul_census_custom_update_nodes_status_field($tabsCompleted, $statusToCh
     $tab->{$fieldName}[LANGUAGE_NONE][0]['tid'] = $submittedTabTerm;
     $tab = node_save($tab);
   }
+}
+
+function nul_census_custom_assemble_params($presetParams, $ifNotEmptyParams) {
+  foreach ($ifNotEmptyParams as $key => $value) {
+    if (!empty($value)) {
+      $presetParams[$key] = $value;
+    }
+  }
+  return $params;
+}
+
+function nul_census_custom_update_civi($censusId) {
+  $census = node_load($censusId);
+  if (!empty($census->field_affiliate_select[LANGUAGE_NONE][0]['value'])) {
+    $params = array(
+      'contact_type' => "Organization",
+      'contact_sub_type' => "Urban_League_Affiliate",
+      'custom_296' => $census->field_affiliate_select[LANGUAGE_NONE][0]['value'],
+    );
+    $civiAffiliate = nul_census_custom_civi_api('Contact', 'getsingle', $params);
+  }
+  $mainParams = array(
+    'contact_type' => "Individual",
+    "api.Relationship.get" => array(
+      'contact_id_b' => $census->field_affiliate_select[LANGUAGE_NONE][0]['value'],
+      'contact_id_a' => \$value.id,
+    );
+  );
+  $checkForIndiv = array(
+    'first_name' => $census->field_president_ceo_first_name[LANGUAGE_NONE][0]['value'],
+    'last_name' => $census->field_president_ceo_last_name[LANGUAGE_NONE][0]['value'],
+    'email' => $census->field_email_address[LANGUAGE_NONE][0]['value'],
+  );
+  $mainParams = nul_census_custom_assemble_params($mainParams, $checkForIndiv);
+
+  $civiContact = nul_census_custom_civi_api('Contact', 'get', $mainParams);
+  // TODO add fields to $checkForIndiv to update on the indiv contact record
+
+  // IF only one contact found update it
+  if ($civiContact['count'] == 1) {
+    $checkForIndiv['id'] = $civiContact['values'][0]['id'];
+  }
+  // IF no contact found create one
+  if ($civiContact['count'] == 0) {
+  }
+  // if more than one contact found
+  if ($civiContact['count'] > 1) {
+    
+    // check for relationship
+    foreach ($civiContact['values'] as $key => $value) {
+      // if only one contact has a relationship use that contact
+      if ($value['api.Relationship.get']['count'] == 1) {
+        $checkForIndiv['id'] = $value['api.Relationship.get']['values'][0]['contact_id_a'];
+      }
+      if ($value['api.Relationship.get']['count'] == 0) {
+        $checkForIndiv['id'] = $value['contact_id_a'];
+      }
+      // TODO deal with if
+    }
+  }
+  $contact = nul_census_custom_civi_api('Contact', 'create', $checkForIndiv);
 }
 
 function nul_census_custom_hide_and_disable_fields(&$form, $fieldsToHideAndDisable) {
