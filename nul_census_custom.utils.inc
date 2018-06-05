@@ -241,7 +241,7 @@ function nul_census_custom_assemble_params($presetParams, $ifNotEmptyParams) {
       $presetParams[$key] = $value;
     }
   }
-  return $params;
+  return $presetParams;
 }
 
 function nul_census_custom_update_civi($censusId) {
@@ -249,51 +249,69 @@ function nul_census_custom_update_civi($censusId) {
   if (!empty($census->field_affiliate_select[LANGUAGE_NONE][0]['value'])) {
     $params = array(
       'contact_type' => "Organization",
+      'sequential' => 1,
       'contact_sub_type' => "Urban_League_Affiliate",
       'custom_296' => $census->field_affiliate_select[LANGUAGE_NONE][0]['value'],
     );
-    $civiAffiliate = nul_census_custom_civi_api('Contact', 'getsingle', $params);
-  }
-  $mainParams = array(
-    'contact_type' => "Individual",
-    "api.Relationship.get" => array(
-      'contact_id_b' => $census->field_affiliate_select[LANGUAGE_NONE][0]['value'],
-      'contact_id_a' => \$value.id,
-    );
-  );
-  $checkForIndiv = array(
-    'first_name' => $census->field_president_ceo_first_name[LANGUAGE_NONE][0]['value'],
-    'last_name' => $census->field_president_ceo_last_name[LANGUAGE_NONE][0]['value'],
-    'email' => $census->field_email_address[LANGUAGE_NONE][0]['value'],
-  );
-  $mainParams = nul_census_custom_assemble_params($mainParams, $checkForIndiv);
-
-  $civiContact = nul_census_custom_civi_api('Contact', 'get', $mainParams);
-  // TODO add fields to $checkForIndiv to update on the indiv contact record
-
-  // IF only one contact found update it
-  if ($civiContact['count'] == 1) {
-    $checkForIndiv['id'] = $civiContact['values'][0]['id'];
-  }
-  // IF no contact found create one
-  if ($civiContact['count'] == 0) {
-  }
-  // if more than one contact found
-  if ($civiContact['count'] > 1) {
-    
-    // check for relationship
-    foreach ($civiContact['values'] as $key => $value) {
-      // if only one contact has a relationship use that contact
-      if ($value['api.Relationship.get']['count'] == 1) {
-        $checkForIndiv['id'] = $value['api.Relationship.get']['values'][0]['contact_id_a'];
+    $civiAffiliate = nul_census_custom_civi_api('Contact', 'get', $params);
+    if (!empty($civiAffiliate['count']) && $civiAffiliate['count'] == 0 || $civiAffiliate == array()) {
+      watchdog('nul_census_custom', 'No matching Urban League Affiliate found please make sure there is a valid org to connect to', WATCHDOG_NOTICE, $link = NULL);
+      drupal_set_message('No matching Urban League Affiliate found please make sure there is a valid org to connect to', 'error');
+    }
+    if (!empty($civiAffiliate['count']) && $civiAffiliate['count'] > 1) {
+      watchdog('nul_census_custom', 'More than one matching Urban League Affiliate found please de dupe', array('%matchingAffiliates' => $civiAffiliate['values']), WATCHDOG_ERROR, $link = NULL);
+      drupal_set_message('More than one matching Urban League Affiliate found please de dupe', 'error');
+    }
+    if (!empty($civiAffiliate['count']) && $civiAffiliate['count'] == 1 && !empty($civiAffiliate['values'][0]['id'])) {
+      $mainParams = array();
+      $checkForIndiv = array(
+        'contact_type' => "Individual",
+        'sequential' => 1,
+        'first_name' => $census->field_president_ceo_first_name[LANGUAGE_NONE][0]['value'],
+        'last_name' => $census->field_president_ceo_last_name[LANGUAGE_NONE][0]['value'],
+        // 'email' => $census->field_email_address[LANGUAGE_NONE][0]['value'],
+      );
+      $mainParams = nul_census_custom_assemble_params($mainParams, $checkForIndiv);
+      $civiContact = nul_census_custom_civi_api('Contact', 'get', $mainParams);
+      $civiContactId = 0;
+      // TODO add fields to $checkForIndiv to update on the indiv contact record
+      // IF only one contact found update it
+      if ($civiContact['count'] == 1) {
+        $civiContactId = $civiContact['values'][0]['id'];
       }
-      if ($value['api.Relationship.get']['count'] == 0) {
-        $checkForIndiv['id'] = $value['contact_id_a'];
+      // IF no contact found create one
+      if ($civiContact['count'] == 0) {
+        $createIndivParams = $mainParams;
+        $civiContactCreate = nul_census_custom_civi_api('Contact', 'create', $createIndivParams);
+        $civiContactId = $civiContactCreate['id'];
       }
-      // TODO deal with if
+      if ($civiContact['count'] > 1) {
+        // TODO figure out how to find best contact if more than one match
+        watchdog('nul_census_custom', 'More than one matching Contact found please de dupe', array('%matchingAffiliates' => $civiAffiliate['values']), WATCHDOG_ERROR, $link = NULL);
+        drupal_set_message('More than one matching contact found for this Urban League Affiliate found please de dupe', 'error');
+      }
+
+      // If contact found check for relationship and create if necessary
+      if ($civiContactId > 0) {
+        $civiRelationship = nul_census_custom_civi_api('Relationship', 'get', array(
+          'contact_id_b' => $civiAffiliate['values'][0]['id'],
+          'contact_id_a' => $civiContactId,
+        ));
+        if ($civiRelationship['count'] == 0) {
+          $createRelParams = array(
+            'contact_id_b' => $civiAffiliate['values'][0]['id'],
+            'contact_id_a' => $civiContactId,
+            'relationship_type_id' => 5,
+          );
+          $civiContact = nul_census_custom_civi_api('Relationship', 'create', $createRelParams);
+        }
+      }
     }
   }
-  $contact = nul_census_custom_civi_api('Contact', 'create', $checkForIndiv);
+  else {
+    watchdog('nul_census_custom', 'No Affiliate Selected so we cannot sync to Civi', WATCHDOG_ERROR, $link = NULL);
+
+  }
 }
 
 function nul_census_custom_hide_and_disable_fields(&$form, $fieldsToHideAndDisable) {

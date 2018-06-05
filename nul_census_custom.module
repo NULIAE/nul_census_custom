@@ -172,6 +172,16 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
     switch ($nodeType) {
       case 'census':
         drupal_add_css(drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css');
+        // Add Button to Sync to Civi
+        if (user_access('can mark census tabs resubmit and reviewed')) {
+          drupal_add_js(array('nul_census_custom' => array('censuspart' => 'civiSync')), array('type' => 'setting'));
+          drupal_add_js(array('nul_census_custom' => array('nid' => $node->nid)), array('type' => 'setting'));
+          drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/addButtons.js');
+        }
+        // if user clicks civi Sync -- run the sync
+        if (arg(0) == 'node' && arg(1) > 0 && in_array(arg(2), array('civiSync'))) {
+          nul_census_custom_update_civi(arg(1));
+        }
         // If all tabs are reviewed and census is submitted and user has permission add button to mark census as review complete
         if (!empty($node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name) && $node->field_census_status[LANGUAGE_NONE][0]['taxonomy_term']->name == 'Submitted' && user_access('can mark census tabs resubmit and reviewed')) {
           // check that all tabs have status reviewed
