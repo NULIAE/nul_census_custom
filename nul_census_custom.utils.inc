@@ -242,13 +242,14 @@ function nul_census_custom_assemble_params($presetParams, $ifNotEmptyParams) {
   }
   return $presetParams;
 }
-function nul_census_custom_update_civicontact_info($entity, $params) {
-  $params['sequential'] = 1;
-  $checkForExisting = nul_census_custom_civi_api($entity, 'get', $params);
+function nul_census_custom_update_civicontact_info($entity, $paramsToCheckOn, $paramsToUpdateOn = array()) {
+  $paramsToCheckOn['sequential'] = 1;
+  $checkForExisting = nul_census_custom_civi_api($entity, 'get', $paramsToCheckOn);
   if ($checkForExisting['count'] >= 1 && !empty($checkForExisting['values'][0]['id'])) {
-    $params['id'] = $checkForExisting['values'][0]['id'];
+    $paramsToCheckOn['id'] = $checkForExisting['values'][0]['id'];
   }
-  nul_census_custom_civi_api($entity, 'create', $params);
+  $paramsToUpdateOn = nul_census_custom_assemble_params($paramsToCheckOn, $paramsToUpdateOn);
+  nul_census_custom_civi_api($entity, 'create', $paramsToUpdateOn);
 }
 
 function nul_census_custom_update_civi($censusId) {
@@ -273,10 +274,14 @@ function nul_census_custom_update_civi($censusId) {
     if (!empty($civiAffiliate['count']) && $civiAffiliate['count'] == 1 && !empty($civiAffiliate['values'][0]['id'])) {
       // Find Community Relations Tab
       $comRel = nul_census_custom_load_tab('community_relations', $censusId);
-      $comRel = node_load(key($comRel['node']));
+      if (!empty($comRel['node']) && key($comRel['node']) > 0) {
+        $comRel = node_load(key($comRel['node']));
+      }
       // Find Service Areas Tab
       $serviceAreas = nul_census_custom_load_tab('service_areas', $censusId);
-      $serviceAreas = node_load(key($serviceAreas['node']));
+      if (!empty($serviceAreas['node']) && key($serviceAreas['node']) > 0) {
+        $serviceAreas = node_load(key($serviceAreas['node']));
+      }
 
       //TODO create fields to hold service area data (these are paragraphs in drupal so there will be more than one)
       // '' => $serviceAreas->field_service_area_population[LANGUAGE_NONE][0]['value'],
@@ -312,37 +317,45 @@ function nul_census_custom_update_civi($censusId) {
       }
 
       // Update Affiliate Address
-      $orgAddressParams = array(
+      $orgAddressParamsToCheck = array(
         'sequential' => 1,
         'contact_id' => $civiAffiliate['values'][0]['id'],
         'location_type_id' => "Main",
+      );
+      $orgAddressParamsToUpdate = array(
         'street_address' => $census->field_address_line_1[LANGUAGE_NONE][0]['value'],
         'supplemental_address_1' => $census->field_address_line_2[LANGUAGE_NONE][0]['value'],
         'city' => $census->field_city[LANGUAGE_NONE][0]['value'],
         'state_province_id' => $census->field_state_province[LANGUAGE_NONE][0]['value'],
         // 'postal_code' => $census->field_zip_code[LANGUAGE_NONE][0]['value'],
       );
-      $orgAddress = nul_census_custom_assemble_params(array(), $orgAddressParams);
-      nul_census_custom_update_civicontact_info('Address', $orgAddress);
+      // $orgAddress = nul_census_custom_assemble_params(array(), $orgAddressParams);
+      nul_census_custom_update_civicontact_info('Address', $orgAddressParamsToCheck, $orgAddressParamsToUpdate);
 
       // Update Org Telephone
       if (!empty($census->field_telephone[LANGUAGE_NONE][0]['value'])) {
-        nul_census_custom_update_civicontact_info('Phone', array(
+        $telephoneCheck = array(
           'contact_id' => $civiAffiliate['values'][0]['id'],
-          'phone' => $census->field_telephone[LANGUAGE_NONE][0]['value'],
           'location_type_id' => "Main",
           'phone_type_id' => "Phone",
-        ));
+        );
+        $telephoneUpdate = array(
+          'phone' => $census->field_telephone[LANGUAGE_NONE][0]['value'],
+        );
+        nul_census_custom_update_civicontact_info('Phone', $telephoneCheck, $telephoneUpdate);
       }
 
       // Update Org Fax
       if (!empty($census->field_fax[LANGUAGE_NONE][0]['value'])) {
-        nul_census_custom_update_civicontact_info('Phone', array(
+        $faxCheck = array(
           'contact_id' => $civiAffiliate['values'][0]['id'],
-          'phone' => $census->field_fax[LANGUAGE_NONE][0]['value'],
           'location_type_id' => "Main",
           'phone_type_id' => "Fax",
-        ));
+        );
+        $faxUpdate = array(
+          'phone' => $census->field_fax[LANGUAGE_NONE][0]['value'],
+        );
+        nul_census_custom_update_civicontact_info('Phone', $faxCheck, $faxUpdate);
       }
 
       $mainParams = array();
@@ -390,20 +403,27 @@ function nul_census_custom_update_civi($censusId) {
 
         // Update Cell Phone
         if (!empty($census->field_cellular_number[LANGUAGE_NONE][0]['value'])) {
-          $civiContactCell = nul_census_custom_update_civicontact_info('Phone', array(
+          $cellCheck = array(
             'contact_id' => $civiContactId,
-            'phone' => $census->field_cellular_number[LANGUAGE_NONE][0]['value'],
             'location_type_id' => "Main",
             'phone_type_id' => "Mobile",
-          ));
+          );
+          $cellUpdate = array(
+            'phone' => $census->field_cellular_number[LANGUAGE_NONE][0]['value'],
+          );
+          $civiContactCell = nul_census_custom_update_civicontact_info('Phone', $cellCheck, $cellUpdate);
         }
         // Update Email
         if (!empty($census->field_email_address[LANGUAGE_NONE][0]['value'])) {
-          $civiContactEmail = nul_census_custom_update_civicontact_info('Email', array(
+          $emailCheck = array(
             'contact_id' => $civiContactId,
             'email' => $census->field_email_address[LANGUAGE_NONE][0]['value'],
             'location_type_id' => "Main",
-          ));
+          );
+          $emailUpdate = array(
+            'email' => $census->field_email_address[LANGUAGE_NONE][0]['value'],
+          );
+          $civiContactEmail = nul_census_custom_update_civicontact_info('Email', $emailCheck, $emailUpdate);
         }
         // Update Relationship
         // check for relationship and create if necessary
