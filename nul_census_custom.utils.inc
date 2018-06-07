@@ -43,7 +43,6 @@ function nul_census_custom_check_status_permisions($status = NULL, $contentType,
     // check that logged in user and node affiliate match
     $loggedInUserAffiliate = nul_census_custom_get_affiliate_from_user();
     $nodeAffiliateNode = nul_census_custom_get_affiliate_from_node($nid, $contentType);
-    // print_r($nodeAffiliateNode); die();
     if ($loggedInUserAffiliate == $nodeAffiliateNode) {
       $myAffiliate = TRUE;
     }
@@ -244,9 +243,9 @@ function nul_census_custom_assemble_params($presetParams, $ifNotEmptyParams) {
   return $presetParams;
 }
 function nul_census_custom_update_civicontact_info($entity, $params) {
-  $checkForExisting = nul_census_custom_civi_api($entity, 'get', $params);
   $params['sequential'] = 1;
-  if ($checkForExisting['count'] >= 1) {
+  $checkForExisting = nul_census_custom_civi_api($entity, 'get', $params);
+  if ($checkForExisting['count'] >= 1 && !empty($checkForExisting['values'][0]['id'])) {
     $params['id'] = $checkForExisting['values'][0]['id'];
   }
   nul_census_custom_civi_api($entity, 'create', $params);
@@ -258,8 +257,9 @@ function nul_census_custom_update_civi($censusId) {
     $params = array(
       'contact_type' => "Organization",
       'sequential' => 1,
-      'contact_sub_type' => "Urban_League_Affiliate",
-      'custom_296' => $census->field_affiliate_select[LANGUAGE_NONE][0]['value'],
+      // 'contact_sub_type' => "Urban_League_Affiliate",
+      // 'custom_296' => $census->field_affiliate_select[LANGUAGE_NONE][0]['value'],
+      'id' => 1,
     );
     $civiAffiliate = nul_census_custom_civi_api('Contact', 'get', $params);
     if (!empty($civiAffiliate['count']) && $civiAffiliate['count'] == 0 || $civiAffiliate == array()) {
@@ -271,14 +271,45 @@ function nul_census_custom_update_civi($censusId) {
       drupal_set_message('More than one matching Urban League Affiliate found please de dupe', 'error');
     }
     if (!empty($civiAffiliate['count']) && $civiAffiliate['count'] == 1 && !empty($civiAffiliate['values'][0]['id'])) {
+      // Find Community Relations Tab
+      $comRel = nul_census_custom_load_tab('community_relations', $censusId);
+      $comRel = node_load(key($comRel['node']));
+      // Find Service Areas Tab
+      $serviceAreas = nul_census_custom_load_tab('service_areas', $censusId);
+      $serviceAreas = node_load(key($serviceAreas['node']));
+
+      //TODO create fields to hold service area data (these are paragraphs in drupal so there will be more than one)
+      // '' => $serviceAreas->field_service_area_population[LANGUAGE_NONE][0]['value'],
+      // '' => $serviceAreas->field_service_area_city_county[LANGUAGE_NONE][0]['value'],
+      // '' => $serviceAreas->field_service_area_white[LANGUAGE_NONE][0]['value'],
+      // '' => $serviceAreas->field_service_area_hispanic[LANGUAGE_NONE][0]['value'],
+      // '' => $serviceAreas->field_service_area_asian_am[LANGUAGE_NONE][0]['value'],
+      // '' => $serviceAreas->field_service_area_native_am[LANGUAGE_NONE][0]['value'],
+      // '' => $serviceAreas->field_service_area_african_am[LANGUAGE_NONE][0]['value'],
+      // '' => $serviceAreas->field_service_area_other[LANGUAGE_NONE][0]['value'],
+
       // Update Affiliate Contact
-      // if (!empty($census->field_date_established[LANGUAGE_NONE][0]['value'])) {
-      //   $civiOrgUpdate = nul_census_custom_civi_api('Contact', 'create', array(
-      //     //TODO create field
-      //     'custom_' => $census->field_date_established[LANGUAGE_NONE][0]['value'],
-      //     'id' => $civiAffiliate['values'][0]['id'],
-      //   ));
-      // }
+      if (!empty($census->field_date_established[LANGUAGE_NONE][0]['value'])) {
+        $civiOrgUpdate = nul_census_custom_civi_api('Contact', 'create', array(
+          // TODO create custom field to hold the "Year Organization was Established" data
+          // '' => $census->field_date_established[LANGUAGE_NONE][0]['value'],
+          // TODO create custom fields to hold Community Relations
+          // '' => $comRel->field_produces_annual_report[LANGUAGE_NONE][0]['value'],
+          // '' => $comRel->field_newsletter[LANGUAGE_NONE][0]['value'],
+          // '' => $comRel->field_state_of_black_report[LANGUAGE_NONE][0]['value'],
+          // '' => $comRel->field_maintains_website[LANGUAGE_NONE][0]['value'],
+          // '' => $comRel->field_affiliate_website_address[LANGUAGE_NONE][0]['value'],
+          // '' => $comRel->field_monthly_website_hits[LANGUAGE_NONE][0]['value'],
+          // '' => $comRel->field_is_website_linked_to_nul[LANGUAGE_NONE][0]['value'],
+          // '' => $comRel->field_produces_tv_or_cable_show[LANGUAGE_NONE][0]['value'],
+          // '' => $comRel->field_produces_a_radio_show[LANGUAGE_NONE][0]['value'],
+          // '' => $comRel->field_has_ad_marketing_campaign[LANGUAGE_NONE][0]['value'],
+          // '' => $comRel->field_method_of_ad_marketing[LANGUAGE_NONE][0]['value'],
+          // '' => $comRel->field_marketing_kit_or_pamphlet[LANGUAGE_NONE][0]['value'],
+
+          'id' => $civiAffiliate['values'][0]['id'],
+        ));
+      }
 
       // Update Affiliate Address
       $orgAddressParams = array(
@@ -287,9 +318,9 @@ function nul_census_custom_update_civi($censusId) {
         'location_type_id' => "Main",
         'street_address' => $census->field_address_line_1[LANGUAGE_NONE][0]['value'],
         'supplemental_address_1' => $census->field_address_line_2[LANGUAGE_NONE][0]['value'],
-        'city' => $census->field_telephone[LANGUAGE_NONE][0]['value'],
-        'state_province_id' => $census->field_city[LANGUAGE_NONE][0]['value'],
-        'postal_code' => $census->field_zip_code[LANGUAGE_NONE][0]['value'],
+        'city' => $census->field_city[LANGUAGE_NONE][0]['value'],
+        'state_province_id' => $census->field_state_province[LANGUAGE_NONE][0]['value'],
+        // 'postal_code' => $census->field_zip_code[LANGUAGE_NONE][0]['value'],
       );
       $orgAddress = nul_census_custom_assemble_params(array(), $orgAddressParams);
       nul_census_custom_update_civicontact_info('Address', $orgAddress);
@@ -347,8 +378,10 @@ function nul_census_custom_update_civi($censusId) {
         // Update contact details
         $fieldsToUpdateOnContact = array(
           'middle_name' => $census->field_president_ceo_middle_name[LANGUAGE_NONE][0]['value'],
-          'image_URL' => $census->field_photo[LANGUAGE_NONE][0]['value'],
+          'image_URL' => $census->field_photo[LANGUAGE_NONE][0]['uri'],
           'id' => $civiContactId,
+          'custom_296' => $census->field_affiliate_select[LANGUAGE_NONE][0]['value'],
+
           // TODO create fields in civi to store this data
           // $census->field_number_of_years_as_ceo[LANGUAGE_NONE][0]['value'],
           // $census->field_number_of_years_of_service[LANGUAGE_NONE][0]['value'],
@@ -386,6 +419,22 @@ function nul_census_custom_update_civi($censusId) {
     watchdog('nul_census_custom', 'No Affiliate Selected so we cannot sync to Civi', WATCHDOG_ERROR, $link = NULL);
 
   }
+}
+
+/**
+ * [nul_census_custom_load_tab description]
+ * @param  string $tabType  name of tab content type
+ * @param  int $censusId    id of census
+ * @return int              id of tab of this type for this census
+ */
+function nul_census_custom_load_tab($tabType, $censusId) {
+  $query = new EntityFieldQuery();
+  $results = $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', $tabType)
+    ->fieldCondition('field_parent_census', 'target_id', $censusId)
+    ->propertyCondition('status', NODE_PUBLISHED)
+    ->execute();
+  return $results;
 }
 
 function nul_census_custom_hide_and_disable_fields(&$form, $fieldsToHideAndDisable) {

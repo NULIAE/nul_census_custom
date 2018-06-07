@@ -1006,12 +1006,7 @@ function nul_census_custom_node_validate($node, $form, &$form_state) {
     // Validate that this is the only tab of this type for this parent census (do not let ppl create duplicate tabs)
     // check if there is an existing node of the same content type with the same parent census
     // search for node of that type AND parent census with NID passed to the function
-    $query = new EntityFieldQuery();
-    $results = $query->entityCondition('entity_type', 'node')
-      ->entityCondition('bundle', $node->type)
-      ->fieldCondition('field_parent_census', 'target_id', $node->field_parent_census[LANGUAGE_NONE][0]['target_id'])
-      ->propertyCondition('status', NODE_PUBLISHED)
-      ->execute();
+    $results = nul_census_custom_load_tab($node->type, $node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
     // Do not allow node with this parent census of this type to be saved unless
     $allowParentCensus = FALSE;
     // creating tab for the first time
