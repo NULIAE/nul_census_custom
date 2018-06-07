@@ -243,6 +243,14 @@ function nul_census_custom_assemble_params($presetParams, $ifNotEmptyParams) {
   }
   return $presetParams;
 }
+function nul_census_custom_update_civicontact_info($entity, $params) {
+  $checkForExisting = nul_census_custom_civi_api($entity, 'get', $params);
+  $params['sequential'] = 1;
+  if ($checkForExisting['count'] >= 1) {
+    $params['id'] = $checkForExisting['values'][0]['id'];
+  }
+  nul_census_custom_civi_api($entity, 'create', $params);
+}
 
 function nul_census_custom_update_civi($censusId) {
   $census = node_load($censusId);
@@ -263,6 +271,49 @@ function nul_census_custom_update_civi($censusId) {
       drupal_set_message('More than one matching Urban League Affiliate found please de dupe', 'error');
     }
     if (!empty($civiAffiliate['count']) && $civiAffiliate['count'] == 1 && !empty($civiAffiliate['values'][0]['id'])) {
+      // Update Affiliate Contact
+      // if (!empty($census->field_date_established[LANGUAGE_NONE][0]['value'])) {
+      //   $civiOrgUpdate = nul_census_custom_civi_api('Contact', 'create', array(
+      //     //TODO create field
+      //     'custom_' => $census->field_date_established[LANGUAGE_NONE][0]['value'],
+      //     'id' => $civiAffiliate['values'][0]['id'],
+      //   ));
+      // }
+
+      // Update Affiliate Address
+      $orgAddressParams = array(
+        'sequential' => 1,
+        'contact_id' => $civiAffiliate['values'][0]['id'],
+        'location_type_id' => "Main",
+        'street_address' => $census->field_address_line_1[LANGUAGE_NONE][0]['value'],
+        'supplemental_address_1' => $census->field_address_line_2[LANGUAGE_NONE][0]['value'],
+        'city' => $census->field_telephone[LANGUAGE_NONE][0]['value'],
+        'state_province_id' => $census->field_city[LANGUAGE_NONE][0]['value'],
+        'postal_code' => $census->field_zip_code[LANGUAGE_NONE][0]['value'],
+      );
+      $orgAddress = nul_census_custom_assemble_params(array(), $orgAddressParams);
+      nul_census_custom_update_civicontact_info('Address', $orgAddress);
+
+      // Update Org Telephone
+      if (!empty($census->field_telephone[LANGUAGE_NONE][0]['value'])) {
+        nul_census_custom_update_civicontact_info('Phone', array(
+          'contact_id' => $civiAffiliate['values'][0]['id'],
+          'phone' => $census->field_telephone[LANGUAGE_NONE][0]['value'],
+          'location_type_id' => "Main",
+          'phone_type_id' => "Phone",
+        ));
+      }
+
+      // Update Org Fax
+      if (!empty($census->field_fax[LANGUAGE_NONE][0]['value'])) {
+        nul_census_custom_update_civicontact_info('Phone', array(
+          'contact_id' => $civiAffiliate['values'][0]['id'],
+          'phone' => $census->field_fax[LANGUAGE_NONE][0]['value'],
+          'location_type_id' => "Main",
+          'phone_type_id' => "Fax",
+        ));
+      }
+
       $mainParams = array();
       $checkForIndiv = array(
         'contact_type' => "Individual",
@@ -291,20 +342,43 @@ function nul_census_custom_update_civi($censusId) {
         drupal_set_message('More than one matching contact found for this Urban League Affiliate found please de dupe', 'error');
       }
 
-      // If contact found check for relationship and create if necessary
+      // If contact found
       if ($civiContactId > 0) {
-        $civiRelationship = nul_census_custom_civi_api('Relationship', 'get', array(
+        // Update contact details
+        $fieldsToUpdateOnContact = array(
+          'middle_name' => $census->field_president_ceo_middle_name[LANGUAGE_NONE][0]['value'],
+          'image_URL' => $census->field_photo[LANGUAGE_NONE][0]['value'],
+          'id' => $civiContactId,
+          // TODO create fields in civi to store this data
+          // $census->field_number_of_years_as_ceo[LANGUAGE_NONE][0]['value'],
+          // $census->field_number_of_years_of_service[LANGUAGE_NONE][0]['value'],
+        );
+        $civiContactUpdate = nul_census_custom_civi_api('Contact', 'create', $fieldsToUpdateOnContact);
+
+        // Update Cell Phone
+        if (!empty($census->field_cellular_number[LANGUAGE_NONE][0]['value'])) {
+          $civiContactCell = nul_census_custom_update_civicontact_info('Phone', array(
+            'contact_id' => $civiContactId,
+            'phone' => $census->field_cellular_number[LANGUAGE_NONE][0]['value'],
+            'location_type_id' => "Main",
+            'phone_type_id' => "Mobile",
+          ));
+        }
+        // Update Email
+        if (!empty($census->field_email_address[LANGUAGE_NONE][0]['value'])) {
+          $civiContactEmail = nul_census_custom_update_civicontact_info('Email', array(
+            'contact_id' => $civiContactId,
+            'email' => $census->field_email_address[LANGUAGE_NONE][0]['value'],
+            'location_type_id' => "Main",
+          ));
+        }
+        // Update Relationship
+        // check for relationship and create if necessary
+        $civiRelationship = nul_census_custom_update_civicontact_info('Relationship', array(
           'contact_id_b' => $civiAffiliate['values'][0]['id'],
           'contact_id_a' => $civiContactId,
+          'relationship_type_id' => 5,
         ));
-        if ($civiRelationship['count'] == 0) {
-          $createRelParams = array(
-            'contact_id_b' => $civiAffiliate['values'][0]['id'],
-            'contact_id_a' => $civiContactId,
-            'relationship_type_id' => 5,
-          );
-          $civiContact = nul_census_custom_civi_api('Relationship', 'create', $createRelParams);
-        }
       }
     }
   }
