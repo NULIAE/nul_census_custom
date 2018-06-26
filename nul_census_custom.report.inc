@@ -526,6 +526,7 @@ function nul_census_custom_form($form, &$form_state) {
     '#value' => t('Export to csv'),
   );
   $form['export_button']['#submit'][] = 'nul_census_custom_summary_export_to_csv';
+  drupal_add_css(drupal_get_path('module', 'nul_census_custom') . '/css/censusSummary.css');
 
   return $form;
 }
