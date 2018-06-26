@@ -1,6 +1,7 @@
 <?php
 
 module_load_include('inc', 'nul_census_custom', './nul_census_custom.utils');
+module_load_include('inc', 'nul_census_custom', './nul_census_custom.report');
 
 function nul_census_custom_page_alter(&$page) {
   // PDF version of full census
@@ -34,7 +35,7 @@ function nul_census_custom_preprocess_views_view(&$vars) {
       array('type' => 'external')
     );
   }
-  if ($view->name == 'full_census' || $view->name == 'throwa') {
+  if ($view->name == 'full_census' || $view->name == 'throwa' || $view->name == 'census_summary_report') {
     // add needed stylesheet
     drupal_add_css(drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css');
     if ($view->name == 'full_census') {
@@ -282,15 +283,6 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
         '#access' => TRUE,
       );
       $form['export_to_csv']['#submit'][] = 'nul_census_custom_export_to_csv';
-    }
-    if (arg(0) == 'census-summary') {
-      $form['export_to_csv'] = array(
-        '#type' => 'submit',
-        '#value' => 'Export to CSV',
-        '#executes_submit_callback' => TRUE,
-        '#access' => TRUE,
-      );
-      $form['export_to_csv']['#submit'][] = 'nul_census_custom_redirect_to_csv';
     }
   }
   if ($form_id == "node_delete_confirm") {
@@ -1137,19 +1129,13 @@ function nul_census_custom_menu() {
     'file' => 'nul_census_custom.admin.inc',
     'file path' => drupal_get_path('module', 'nul_census_custom'),
   );
+  $items['censussummaryfilters'] = array(
+    'title' => 'Census Summary',
+    'description' => 'Census Summary Filters',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nul_census_custom_form'),
+    'access arguments' => array('can edit magic census fields'),
+  );
 
   return $items;
-}
-
-/**
- * Implements hook_views_api().
- */
-function nul_census_custom_views_api() {
-  // Tells views to look in templates folder for views template overrides
-  // Where there is a template override to put the content type sections on the census summary in the same order as the census tabs
-  return array(
-    'api' => 3,
-    'path' => drupal_get_path('module', 'nul_census_custom'),
-    'template path' => drupal_get_path('module', 'nul_census_custom') . '/templates',
-  );
 }

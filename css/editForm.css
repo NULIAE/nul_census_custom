@@ -26,13 +26,13 @@
 
 .nulTable .field-group-div:nth-child(odd),
 .nulTableRow:nth-child(odd),
-div.view.view-throwa div.views-field:nth-child(odd) {
+div.view.view-census-summary-report div.views-field:nth-child(odd) {
   background-color: #F3F4EE;
 }
 
 .nulTable .field-group-div:nth-child(even),
 .nulTableRow:nth-child(even),
-div.view.view-throwa div.views-field:nth-child(even) {
+div.view.view-census-summary-report div.views-field:nth-child(even) {
   background-color: white;
 }
 
@@ -200,39 +200,48 @@ div.view-full-census div.content .field div.field-item.even {
 
 /* programs view */
 
-div.view.view-throwa div.views-row {
+div.view.view-census-summary-report div.views-row {
  display: table;
  width: 100%;
  padding-top: 20px;
 }
 
-div.view.view-throwa div.views-field {
+div.view.view-census-summary-report div.views-field {
 display: table-row;
 }
 
-div.view.view-throwa div.views-label,
-div.view.view-throwa span.views-label {
+div.view.view-census-summary-report div.views-label,
+div.view.view-census-summary-report span.views-label {
  width: 40%;
  display: table-cell;
  padding: 5px;
 }
 
-div.view.view-throwa div.field-content {
+div.view.view-census-summary-report div.field-content {
  display: table-cell;
  padding: 5px;
+ text-align: right;
 }
 
-div.view.view-throwa div.field-content.nulHeader {
+div.view.view-census-summary-report div.field-content.nulHeader {
  font-weight: bold;
 }
 
-div.view.view-throwa div.views-field.views-field-type-1 {
+div.view.view-census-summary-report div.views-field.views-field-type-1 {
  background-color: white;
  width: 100%;
 }
 
-div.view.view-throwa div.views-field:nth-child(even) {
+div.view.view-census-summary-report div.views-field:nth-child(even) {
   background-color: #dfddde;
+}
+
+div.view.view-census-summary-report div.views-field.views-field-type {
+  background-color: white;
+}
+
+div.view.view-census-summary-report div.views-field.views-field-field-year {
+  display: none;
 }
 
 /* AGH #11788 hide submitted by text */
