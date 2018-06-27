@@ -23,6 +23,29 @@ function nul_census_custom_page_alter(&$page) {
   }
 }
 
+function nul_census_custom_views_pre_render(&$view) {
+  // If on the Census Summary Report view (Ex: /census-summary-report/2011/96) add the filter values to the title
+  if ($view->name == 'census_summary_report') {
+    $title = 'Report: Census Summary';
+    if (!empty(arg(1))) {
+      $title = $title . ' ' . arg(1);
+    }
+    if (!empty(arg(2))) {
+      if (arg(2) == 'All') {
+        $title = $title . ' All';
+      }
+      else {
+        $field = field_info_field('field_affiliate_select');
+        $allowed_values = list_allowed_values($field);
+        if (!empty($allowed_values[arg(2)])) {
+          $title = $title . ' ' . $allowed_values[arg(2)];
+        }
+      }
+    }
+    $view->build_info['title'] = $title;
+  }
+}
+
 /**
  * hook_preprocess_views_view()
  */

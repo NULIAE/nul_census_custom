@@ -39,15 +39,15 @@ function nul_census_custom_export_to_csv($form) {
     $query = "(SELECT
     parentCensus.title as 'Title',
     ye.field_year_value as 'Year',
-    pwc.field_program_work_counseling_value as '# clients who received counseling',
-    pwp.field_program_work_participants_value as 'Number of participants in employment/workforce development programs (exclude welfare recipients)?',
-    pwpl.field_program_work_placed_value as 'Number of participants placed in jobs',
-    pws.field_program_work_salary_value as 'Annual salary (if applicable)',
-    pwh.field_program_work_hourly_value as 'or Hourly wage rate',
-    pww.field_program_work_welfare_value as 'Number of welfare participants in federal/state funded programs',
-    pwwp.field_program_work_welfare_place_value as 'Number of welfare program participants placed in jobs',
-    pwws.field_program_work_welfare_salar_value as 'Annual welfare salary (if applicable)',
-    pwwh.field_program_work_welfare_hour_value as 'or Hourly wage rate (welfare)'
+    format(pwc.field_program_work_counseling_value, 0) as '# clients who received counseling',
+    format(pwp.field_program_work_participants_value, 0) as 'Number of participants in employment/workforce development programs (exclude welfare recipients)?',
+    format(pwpl.field_program_work_placed_value, 0) as 'Number of participants placed in jobs',
+    concat('$', format(pws.field_program_work_salary_value, 2)) as 'Annual salary (if applicable)',
+    concat('$', format(pwh.field_program_work_hourly_value, 2)) as 'or Hourly wage rate',
+    format(pww.field_program_work_welfare_value, 0) as 'Number of welfare participants in federal/state funded programs',
+    format(pwwp.field_program_work_welfare_place_value, 0) as 'Number of welfare program participants placed in jobs',
+    concat('$', format(pwws.field_program_work_welfare_salar_value, 2)) as 'Annual welfare salary (if applicable)',
+    concat('$', format(pwwh.field_program_work_welfare_hour_value, 2)) as 'or Hourly wage rate (welfare)'
     FROM node as workforce
     LEFT JOIN field_data_field_parent_census parent
     ON workforce.nid = parent.entity_id
@@ -81,15 +81,15 @@ function nul_census_custom_export_to_csv($form) {
     (SELECT
     '' as 'Title',
     '' as 'Year',
-    SUM(pwc.field_program_work_counseling_value) as '# clients who received counseling',
-    SUM(pwp.field_program_work_participants_value) as 'Number of participants in employment/workforce development programs (exclude welfare recipients)?',
-    SUM(pwpl.field_program_work_placed_value) as 'Number of participants placed in jobs',
-    SUM(pws.field_program_work_salary_value) as 'Annual salary (if applicable)',
-    SUM(pwh.field_program_work_hourly_value) as 'or Hourly wage rate',
-    SUM(pww.field_program_work_welfare_value) as 'Number of welfare participants in federal/state funded programs',
-    SUM(pwwp.field_program_work_welfare_place_value) as 'Number of welfare program participants placed in jobs',
-    SUM(pwws.field_program_work_welfare_salar_value) as 'Annual welfare salary (if applicable)',
-    SUM(pwwh.field_program_work_welfare_hour_value) as 'or Hourly wage rate (welfare)'
+    format(SUM(pwc.field_program_work_counseling_value), 0) as '# clients who received counseling',
+    format(SUM(pwp.field_program_work_participants_value), 0) as 'Number of participants in employment/workforce development programs (exclude welfare recipients)?',
+    format(SUM(pwpl.field_program_work_placed_value), 0) as 'Number of participants placed in jobs',
+    concat('$', format(SUM(pws.field_program_work_salary_value), 2)) as 'Annual salary (if applicable)',
+    concat('$', format(SUM(pwh.field_program_work_hourly_value), 2)) as 'or Hourly wage rate',
+    format(SUM(pww.field_program_work_welfare_value), 0) as 'Number of welfare participants in federal/state funded programs',
+    format(SUM(pwwp.field_program_work_welfare_place_value), 0) as 'Number of welfare program participants placed in jobs',
+    concat('$', format(SUM(pwws.field_program_work_welfare_salar_value), 2)) as 'Annual welfare salary (if applicable)',
+    concat('$', format(AVG(pwwh.field_program_work_welfare_hour_value), 2)) as 'or Hourly wage rate (welfare)'
     FROM node as workforce
     LEFT JOIN field_data_field_parent_census parent
     ON workforce.nid = parent.entity_id
@@ -526,6 +526,7 @@ function nul_census_custom_form($form, &$form_state) {
     '#value' => t('Export to csv'),
   );
   $form['export_button']['#submit'][] = 'nul_census_custom_summary_export_to_csv';
+  drupal_add_css(drupal_get_path('module', 'nul_census_custom') . '/css/censusSummary.css');
 
   return $form;
 }
