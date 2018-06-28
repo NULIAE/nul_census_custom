@@ -718,10 +718,13 @@ function nul_census_custom_permission() {
       'description' => t('Allows a user to access the certify field if the census has a status of complete this moves the census to submitted'),
     ),
     'can edit magic census fields' => array(
-      'title' => t('can edit magic census fields'),
-      'description' => t('can edit magic census fields'),
+      'title' => t('Administer Census'),
+      'description' => t('can edit magic census fields and other admin level access to Census'),
     ),
-
+    'can view reports' => array(
+      'title' => t('Can View Reports'),
+      'description' => t('Access to Census Reports'),
+    ),
   );
 }
 
@@ -1157,8 +1160,15 @@ function nul_census_custom_menu() {
     'description' => 'Census Summary Filters',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('nul_census_custom_form'),
-    'access arguments' => array('can edit magic census fields'),
+    'access callback' => 'nul_census_custom_access_reports',
   );
 
   return $items;
+}
+
+function nul_census_custom_access_reports() {
+  global $user;
+  if (user_access('can edit magic census fields', $user) || user_access('can view reports', $user)) {
+    return TRUE;
+  }
 }
