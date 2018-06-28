@@ -721,7 +721,10 @@ function nul_census_custom_permission() {
       'title' => t('Administer Census'),
       'description' => t('can edit magic census fields and other admin level access to Census'),
     ),
-
+    'can view reports' => array(
+      'title' => t('Can View Reports'),
+      'description' => t('Access to Census Reports'),
+    ),
   );
 }
 
@@ -1157,7 +1160,7 @@ function nul_census_custom_menu() {
     'description' => 'Census Summary Filters',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('nul_census_custom_form'),
-    'access arguments' => array('can edit magic census fields'),
+    'access arguments' => array('can view reports', 'can edit magic census fields'),
   );
 
   return $items;
