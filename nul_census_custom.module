@@ -718,8 +718,8 @@ function nul_census_custom_permission() {
       'description' => t('Allows a user to access the certify field if the census has a status of complete this moves the census to submitted'),
     ),
     'can edit magic census fields' => array(
-      'title' => t('can edit magic census fields'),
-      'description' => t('can edit magic census fields'),
+      'title' => t('Administer Census'),
+      'description' => t('can edit magic census fields and other admin level access to Census'),
     ),
 
   );
