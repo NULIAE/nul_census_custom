@@ -1160,8 +1160,15 @@ function nul_census_custom_menu() {
     'description' => 'Census Summary Filters',
     'page callback' => 'drupal_get_form',
     'page arguments' => array('nul_census_custom_form'),
-    'access arguments' => array('can view reports', 'can edit magic census fields'),
+    'access callback' => 'nul_census_custom_access_reports',
   );
 
   return $items;
+}
+
+function nul_census_custom_access_reports() {
+  global $user;
+  if (user_access('can edit magic census fields', $user) || user_access('can view reports', $user)) {
+    return TRUE;
+  }
 }
