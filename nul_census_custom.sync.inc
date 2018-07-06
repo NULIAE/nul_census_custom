@@ -1,5 +1,11 @@
 <?php
 
+/**
+ * Check if params not empty and add them to be updated if they have values
+ * @param  array $presetParams     params to be updated
+ * @param  array $ifNotEmptyParams params to be added to be updated if they are not empty
+ * @return array                  updated array of params
+ */
 function nul_census_custom_assemble_params($presetParams, $ifNotEmptyParams) {
   foreach ($ifNotEmptyParams as $key => $value) {
     if (!empty($value)) {
@@ -8,6 +14,13 @@ function nul_census_custom_assemble_params($presetParams, $ifNotEmptyParams) {
   }
   return $presetParams;
 }
+
+/**
+ * Update Phone, Email or Address in civi based on Census Data in Drupal
+ * @param  string $entity           Phone, Email, Address Etc.
+ * @param  array $paramsToCheckOn   parameters to use to check for an exisiting record
+ * @param  array $paramsToUpdateOn parameters to use to update the record
+ */
 function nul_census_custom_update_civicontact_info($entity, $paramsToCheckOn, $paramsToUpdateOn = array()) {
   $paramsToCheckOn['sequential'] = 1;
   $checkForExisting = nul_census_custom_civi_api($entity, 'get', $paramsToCheckOn);
@@ -18,63 +31,125 @@ function nul_census_custom_update_civicontact_info($entity, $paramsToCheckOn, $p
   nul_census_custom_civi_api($entity, 'create', $paramsToUpdateOn);
 }
 
+/**
+ * Find Affiliate in Civi based on Affiliate Select and dedupe rules see dedupe.md
+ * @param  int $affiliateSelect affiliate select value
+ * @return int                 civiContact Id if found else 0
+ */
+function nul_census_custom_find_affiliate($affiliateSelect) {
+  $affiliateIdInCivi = 0;
+  $params = array(
+    'contact_type' => "Organization",
+    'sequential' => 1,
+    'contact_sub_type' => "Urban_League_Affiliate",
+    'custom_296' => $affiliateSelect,
+  );
+  $civiAffiliate = nul_census_custom_civi_api('Contact', 'get', $params);
+  if (!empty($civiAffiliate['count']) && $civiAffiliate['count'] == 0 || $civiAffiliate == array()) {
+    watchdog('nul_census_custom', 'No matching Urban League Affiliate found please make sure there is a valid org to connect to', WATCHDOG_NOTICE, $link = NULL);
+    drupal_set_message('No matching Urban League Affiliate found please make sure there is a valid org to connect to', 'error');
+  }
+  if (!empty($civiAffiliate['count']) && $civiAffiliate['count'] > 1) {
+    // IF more than one affiliate found check which is in the ACL group
+    foreach ($civiAffiliate['values'] as $key => $value) {
+      $aclParams = array(
+        'group_id' => "Urban_League_Affiliate_19",
+        'contact_id' => $value['contact_id'],
+        'status' => 'added',
+      );
+      $checkACL = nul_census_custom_civi_api('GroupContact', 'get', $aclParams);
+      if ($checkACL['count'] == 1) {
+        $affiliateIdInCivi = $value['contact_id'];
+      }
+    }
+    // if still no affiliate id throw error
+    if ($affiliateIdInCivi == 0) {
+      watchdog('nul_census_custom', 'More than one matching Urban League Affiliate found please de dupe', array('%matchingAffiliates' => $civiAffiliate['values']), WATCHDOG_ERROR, $link = NULL);
+      drupal_set_message('More than one matching Urban League Affiliate found please de dupe', 'error');
+    }
+  }
+  if (!empty($civiAffiliate['count']) && $civiAffiliate['count'] == 1 && !empty($civiAffiliate['values'][0]['id'])) {
+    $affiliateIdInCivi = $civiAffiliate['values'][0]['id'];
+  }
+  return $affiliateIdInCivi;
+}
+
+/**
+ * Compile array of data to send to civi from tabs
+ * @param  int $censusId      census id
+ * @param  string $tabName       drupal content type machine name
+ * @param  array $fieldMatching  array of fields in civi matched to their fields in drupal
+ * @param  array $affiliateId  affiliate contactId in civi to be updated
+ */
+function nul_census_custom_get_tab_data($censusId, $tabName, $affiliateId, $fieldMatching) {
+  // Array to store fields to be updated on the Affiliate
+  $civiFieldsToUpdate = array(
+    'id' => $affiliateId,
+  );
+  // Find the tab of this type for the census
+  $tab = nul_census_custom_load_tab($tabName, $censusId);
+  if (!empty($tab['node']) && key($tab['node']) > 0) {
+    $tab = node_load(key($tab['node']));
+  }
+  // Compile Array of fields to update
+  foreach ($fieldMatching as $civiFieldName => $drupalFieldName) {
+    if (!empty($tab->{$drupalFieldName}[LANGUAGE_NONE][0]['value'])) {
+      $civiFieldsToUpdate[$civiFieldName] = $tab->{$drupalFieldName}[LANGUAGE_NONE][0]['value'];
+    }
+  }
+  nul_census_custom_civi_api('Contact', 'create', $civiFieldsToUpdate);
+}
+
+/**
+ * Update Affiliate and Affiliate CEO contact information in Civi Based on Census in Drupal
+ * @param  int $censusId nid of the census we are updating based off of
+ */
 function nul_census_custom_update_civi($censusId) {
   $census = node_load($censusId);
-  nul_census_custom_find_affiliate();
   // Find Affiliate
-  $affiliateIdInCivi = 0;
   if (!empty($census->field_affiliate_select[LANGUAGE_NONE][0]['value'])) {
-    $params = array(
-      'contact_type' => "Organization",
-      'sequential' => 1,
-      'contact_sub_type' => "Urban_League_Affiliate",
-      'custom_296' => $census->field_affiliate_select[LANGUAGE_NONE][0]['value'],
-    );
-    $civiAffiliate = nul_census_custom_civi_api('Contact', 'get', $params);
-    if (!empty($civiAffiliate['count']) && $civiAffiliate['count'] == 0 || $civiAffiliate == array()) {
-      watchdog('nul_census_custom', 'No matching Urban League Affiliate found please make sure there is a valid org to connect to', WATCHDOG_NOTICE, $link = NULL);
-      drupal_set_message('No matching Urban League Affiliate found please make sure there is a valid org to connect to', 'error');
-    }
-    if (!empty($civiAffiliate['count']) && $civiAffiliate['count'] > 1) {
-      // IF more than one affiliate found check which is in the ACL group
-      foreach ($civiAffiliate['values'] as $key => $value) {
-        $aclParams = array(
-          'group_id' => "Urban_League_Affiliate_19",
-          'contact_id' => $value['contact_id'],
-          'status' => 'added',
-        );
-        $checkACL = nul_census_custom_civi_api('GroupContact', 'get', $aclParams);
-        if ($checkACL['count'] == 1) {
-          $affiliateIdInCivi = $value['contact_id'];
-        }
-      }
-      // if still no affiliate id throw error
-      if ($affiliateIdInCivi == 0) {
-        watchdog('nul_census_custom', 'More than one matching Urban League Affiliate found please de dupe', array('%matchingAffiliates' => $civiAffiliate['values']), WATCHDOG_ERROR, $link = NULL);
-        drupal_set_message('More than one matching Urban League Affiliate found please de dupe', 'error');
-      }
-    }
-    if (!empty($civiAffiliate['count']) && $civiAffiliate['count'] == 1 && !empty($civiAffiliate['values'][0]['id'])) {
-      $affiliateIdInCivi = $civiAffiliate['values'][0]['id'];
-    }
+    $affiliateIdInCivi = nul_census_custom_find_affiliate($census->field_affiliate_select[LANGUAGE_NONE][0]['value']);
     if ($affiliateIdInCivi > 0) {
-      nul_census_custom_get_tab_data();
-      // Find Community Relations Tab
-      $comRel = nul_census_custom_load_tab('community_relations', $censusId);
-      if (!empty($comRel['node']) && key($comRel['node']) > 0) {
-        $comRel = node_load(key($comRel['node']));
-      }
+      // Send Data from Community Relations tab to Civi
+      nul_census_custom_get_tab_data($censusId, 'community_relations', $affiliateId, array(
+        'custom_1084' => 'field_produces_annual_report',
+        'custom_1085' => 'field_newsletter',
+        'custom_1086' => 'field_state_of_black_report',
+        'custom_1087' => 'field_maintains_website',
+        'custom_1089' => 'field_affiliate_website_address',
+        'custom_1090' => 'field_monthly_website_hits',
+        'custom_1091' => 'field_is_website_linked_to_nul',
+        'custom_1092' => 'field_produces_tv_or_cable_show',
+        'custom_1093' => 'field_produces_a_radio_show',
+        'custom_1094' => 'field_has_ad_marketing_campaign',
+        'custom_1096' => 'field_method_of_ad_marketing',
+        'custom_1095' => 'field_marketing_kit_or_pamphlet',
+      ));
 
-      // Find Service Areas Tab
+      // Send Data from Revenue tab to Civi
+      nul_census_custom_get_tab_data($censusId, 'revenue', $affiliateId, array(
+        'custom_1098' => 'field_revenue_investment',
+        'custom_1099' => 'field_revenue_corporations',
+        'custom_1100' => 'field_revenue_foundations',
+        'custom_1101' => 'field_revenue_individual_members',
+        'custom_1102' => 'field_revenue_special_events',
+        'custom_1103' => 'field_revenue_united_way',
+        'custom_1106' => 'field_revenue_federal',
+        'custom_1105' => 'field_revenue_state_local',
+        'custom_1107' => 'field_revenue_nul',
+        'custom_1108' => 'field_revenue_purpose_of_funding',
+        'custom_1109' => 'field_revenue_other',
+        'custom_1112' => 'field_revenue_total_budget',
+        'custom_1113' => 'field_revenue_has_endowment',
+        'custom_1111' => 'field_revenue_endowment_amount',
+      ));
+
+      // TODO deal with programs (multiple)
+
+      // TODO deal with Service Areas (multiple)
       $serviceAreas = nul_census_custom_load_tab('service_areas', $censusId);
       if (!empty($serviceAreas['node']) && key($serviceAreas['node']) > 0) {
         $serviceAreas = node_load(key($serviceAreas['node']));
-      }
-
-      // Find Revenue Tab
-      $revenue = nul_census_custom_load_tab('revenue', $censusId);
-      if (!empty($revenue['node']) && key($revenue['node']) > 0) {
-        $revenue = node_load(key($revenue['node']));
       }
 
       //TODO create fields to hold service area data (these are paragraphs in drupal so there will be more than one)
@@ -87,24 +162,10 @@ function nul_census_custom_update_civi($censusId) {
       // '' => $serviceAreas->field_service_area_african_am[LANGUAGE_NONE][0]['value'],
       // '' => $serviceAreas->field_service_area_other[LANGUAGE_NONE][0]['value'],
 
-      // Update Affiliate Contact
+      // Update Affiliate Contact For fields on Census
       if (!empty($census->field_date_established[LANGUAGE_NONE][0]['value'])) {
         $civiOrgUpdate = nul_census_custom_civi_api('Contact', 'create', array(
           'custom_1069' => $census->field_date_established[LANGUAGE_NONE][0]['value'],
-          // TODO create custom fields to hold Community Relations
-          // '' => $comRel->field_produces_annual_report[LANGUAGE_NONE][0]['value'],
-          // '' => $comRel->field_newsletter[LANGUAGE_NONE][0]['value'],
-          // '' => $comRel->field_state_of_black_report[LANGUAGE_NONE][0]['value'],
-          // '' => $comRel->field_maintains_website[LANGUAGE_NONE][0]['value'],
-          // '' => $comRel->field_affiliate_website_address[LANGUAGE_NONE][0]['value'],
-          // '' => $comRel->field_monthly_website_hits[LANGUAGE_NONE][0]['value'],
-          // '' => $comRel->field_is_website_linked_to_nul[LANGUAGE_NONE][0]['value'],
-          // '' => $comRel->field_produces_tv_or_cable_show[LANGUAGE_NONE][0]['value'],
-          // '' => $comRel->field_produces_a_radio_show[LANGUAGE_NONE][0]['value'],
-          // '' => $comRel->field_has_ad_marketing_campaign[LANGUAGE_NONE][0]['value'],
-          // '' => $comRel->field_method_of_ad_marketing[LANGUAGE_NONE][0]['value'],
-          // '' => $comRel->field_marketing_kit_or_pamphlet[LANGUAGE_NONE][0]['value'],
-
           'id' => $civiAffiliate['values'][0]['id'],
         ));
       }
@@ -151,32 +212,14 @@ function nul_census_custom_update_civi($censusId) {
         nul_census_custom_update_civicontact_info('Phone', $faxCheck, $faxUpdate);
       }
 
-      $mainParams = array();
-      $checkForIndiv = array(
+      // Find Affiliate CEO
+      $civiContactId = nul_census_custom_find_affiliate_ceo(array(
         'contact_type' => "Individual",
         'sequential' => 1,
         'first_name' => $census->field_president_ceo_first_name[LANGUAGE_NONE][0]['value'],
         'last_name' => $census->field_president_ceo_last_name[LANGUAGE_NONE][0]['value'],
         'custom_1014' => "Affiliate CEO",
-        // 'email' => $census->field_email_address[LANGUAGE_NONE][0]['value'],
-      );
-      $mainParams = nul_census_custom_assemble_params($mainParams, $checkForIndiv);
-      $civiContact = nul_census_custom_civi_api('Contact', 'get', $mainParams);
-      $civiContactId = 0;
-      // TODO add fields to $checkForIndiv to update on the indiv contact record
-      // IF only one contact found update it
-      if ($civiContact['count'] == 1) {
-        $civiContactId = $civiContact['values'][0]['id'];
-      }
-      // IF no contact found create one
-      if ($civiContact['count'] == 0) {
-        watchdog('nul_census_custom', 'No matching contact found for Affiliate CEO', array('%matchingAffiliates' => $civiAffiliate['values']), WATCHDOG_ERROR, $link = NULL);
-        drupal_set_message('No matching CEO contact found for this Urban League Affiliate found please', 'error');
-      }
-      if ($civiContact['count'] > 1) {
-        watchdog('nul_census_custom', 'More than one matching Contact found please de dupe', array('%matchingAffiliates' => $civiAffiliate['values']), WATCHDOG_ERROR, $link = NULL);
-        drupal_set_message('More than one matching contact found for this Urban League Affiliate found please de dupe', 'error');
-      }
+      ));
 
       // If contact found
       if ($civiContactId > 0) {
@@ -226,7 +269,30 @@ function nul_census_custom_update_civi($censusId) {
     }
   }
   else {
-    watchdog('nul_census_custom', 'No Affiliate Selected so we cannot sync to Civi', WATCHDOG_ERROR, $link = NULL);
-
+    watchdog('nul_census_custom', 'No Affiliate Selected on Census so we cannot sync to Civi', WATCHDOG_ERROR, $link = NULL);
   }
+}
+
+/**
+ * Find Affiliate CEO
+ * @param  array $checkForIndiv params to search on
+ * @return int              CEO civi Contact ID
+ */
+function nul_census_custom_find_affiliate_ceo($checkForIndiv) {
+  $civiContact = nul_census_custom_civi_api('Contact', 'get', $checkForIndiv);
+  $civiContactId = 0;
+  // IF only one contact found update it
+  if ($civiContact['count'] == 1) {
+    $civiContactId = $civiContact['values'][0]['id'];
+  }
+  // IF no contact found throw error
+  if ($civiContact['count'] == 0) {
+    watchdog('nul_census_custom', 'No matching contact found for Affiliate CEO', array('%matchingAffiliates' => $civiAffiliate['values']), WATCHDOG_ERROR, $link = NULL);
+    drupal_set_message('No matching CEO contact found for this Urban League Affiliate found please', 'error');
+  }
+  if ($civiContact['count'] > 1) {
+    watchdog('nul_census_custom', 'More than one matching Contact found please de dupe', array('%matchingAffiliates' => $civiAffiliate['values']), WATCHDOG_ERROR, $link = NULL);
+    drupal_set_message('More than one matching contact found for this Urban League Affiliate found please de dupe', 'error');
+  }
+  return $civiContactId;
 }
