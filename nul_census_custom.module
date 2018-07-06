@@ -1,6 +1,7 @@
 <?php
 
 module_load_include('inc', 'nul_census_custom', './nul_census_custom.utils');
+module_load_include('inc', 'nul_census_custom', './nul_census_custom.sync');
 
 function nul_census_custom_page_alter(&$page) {
   // PDF version of full census
