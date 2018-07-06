@@ -1,6 +1,10 @@
 This Module:
 -----------
 
+Additional Documentation
+
++ [dedupe](dedupe.md)
+
 ## Installation
 
 To set up the nul census one should:
