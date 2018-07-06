@@ -3,7 +3,7 @@ This Module:
 
 Additional Documentation
 
-+ [dedupe](dedupe.md)
++ [Dedupe rules when syncing drupal census data to civi](dedupe.md)
 
 ## Installation
 
