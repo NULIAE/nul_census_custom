@@ -90,6 +90,19 @@ function nul_census_custom_get_tab_data($censusId, $tabName, $affiliateId, $fiel
   }
   switch ($tabName) {
     case 'service_areas':
+      // TODO First make sure to clear out existing data
+      $existing = nul_census_custom_civi_api('CustomValue', 'get', array(
+        'sequential' => 1,
+        'entity_id' => $affiliateId,
+        'return.custom_1073' => 1,
+      ));
+
+      foreach ($existing['values'] as $key => $value) {
+        if ($key !== "entity_id" || $key !== "latest" || $key !== "id") {
+          CRM_Core_BAO_CustomValue::deleteCustomValue($key, 139);
+        }
+      }
+
       if (!empty($tab->field_service_areas[LANGUAGE_NONE])) {
         foreach ($tab->field_service_areas[LANGUAGE_NONE] as $key => $paragraphInfo) {
           $paragraphParamsToSendToCivi = array(
