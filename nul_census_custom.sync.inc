@@ -73,7 +73,18 @@ function nul_census_custom_find_affiliate($affiliateSelect) {
   }
   return $affiliateIdInCivi;
 }
-
+function nul_census_custom_clear_out_custom_values($affiliateId, $customFieldInGroup, $customGroupId) {
+  $existing = nul_census_custom_civi_api('CustomValue', 'get', array(
+    'sequential' => 1,
+    'entity_id' => $affiliateId,
+    $customFieldInGroup => 1,
+  ));
+  foreach ($existing['values'][0] as $key => $value) {
+    if (is_numeric($key)) {
+      CRM_Core_BAO_CustomValue::deleteCustomValue($key, $customGroupId);
+    }
+  }
+}
 /**
  * Compile array of data to send to civi from tabs
  * @param  int $censusId      census id
@@ -91,16 +102,7 @@ function nul_census_custom_get_tab_data($censusId, $tabName, $affiliateId, $fiel
   switch ($tabName) {
     case 'service_areas':
       // First make sure to clear out existing data
-      $existing = nul_census_custom_civi_api('CustomValue', 'get', array(
-        'sequential' => 1,
-        'entity_id' => $affiliateId,
-        'return.custom_1073' => 1,
-      ));
-      foreach ($existing['values'][0] as $key => $value) {
-        if (is_numeric($key)) {
-          CRM_Core_BAO_CustomValue::deleteCustomValue($key, 139);
-        }
-      }
+      nul_census_custom_clear_out_custom_values($affiliateId, 'return.custom_1073', 139);
 
       if (!empty($tab->field_service_areas[LANGUAGE_NONE])) {
         foreach ($tab->field_service_areas[LANGUAGE_NONE] as $key => $paragraphInfo) {
@@ -181,7 +183,7 @@ function nul_census_custom_update_civi($censusId) {
 
       // TODO deal with programs (multiple)
 
-      // TODO deal with Service Areas (multiple)
+      // Send Data from Service Areas tab to Civi
       nul_census_custom_get_tab_data($censusId, 'service_areas', $affiliateIdInCivi, array(
         'custom_1073' => 'field_service_area_population',
         'custom_1072' => 'field_service_area_city_county',
