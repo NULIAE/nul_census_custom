@@ -287,11 +287,11 @@ function nul_census_custom_find_affiliate_ceo($checkForIndiv) {
   }
   // IF no contact found throw error
   if ($civiContact['count'] == 0) {
-    watchdog('nul_census_custom', 'No matching contact found for Affiliate CEO', array('%matchingAffiliates' => $civiAffiliate['values']), WATCHDOG_ERROR, $link = NULL);
+    watchdog('nul_census_custom', 'No matching contact found for Affiliate CEO', array('%matchingAffiliates' => $civiContact['values']), WATCHDOG_ERROR, $link = NULL);
     drupal_set_message('No matching CEO contact found for this Urban League Affiliate found please', 'error');
   }
   if ($civiContact['count'] > 1) {
-    watchdog('nul_census_custom', 'More than one matching Contact found please de dupe', array('%matchingAffiliates' => $civiAffiliate['values']), WATCHDOG_ERROR, $link = NULL);
+    watchdog('nul_census_custom', 'More than one matching Contact found please de dupe', array('%matchingAffiliates' => $civiContact['values']), WATCHDOG_ERROR, $link = NULL);
     drupal_set_message('More than one matching contact found for this Urban League Affiliate found please de dupe', 'error');
   }
   return $civiContactId;
