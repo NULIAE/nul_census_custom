@@ -91,13 +91,25 @@ function nul_census_custom_get_tab_data($censusId, $tabName, $affiliateId, $fiel
   if (!empty($tab['node']) && key($tab['node']) > 0) {
     $tab = node_load(key($tab['node']));
   }
-  // Compile Array of fields to update
-  foreach ($fieldMatching as $civiFieldName => $drupalFieldName) {
-    if (!empty($tab->{$drupalFieldName}[LANGUAGE_NONE][0]['value'])) {
-      $civiFieldsToUpdate[$civiFieldName] = $tab->{$drupalFieldName}[LANGUAGE_NONE][0]['value'];
-    }
+  switch ($tabName) {
+    case 'service_areas':
+
+      print_r($tab);
+      die();
+
+    break;
+
+    default:
+      // Compile Array of fields to update
+      foreach ($fieldMatching as $civiFieldName => $drupalFieldName) {
+        if (!empty($tab->{$drupalFieldName}[LANGUAGE_NONE][0]['value'])) {
+          $civiFieldsToUpdate[$civiFieldName] = $tab->{$drupalFieldName}[LANGUAGE_NONE][0]['value'];
+        }
+      }
+      nul_census_custom_civi_api('Contact', 'create', $civiFieldsToUpdate);
+
+      break;
   }
-  nul_census_custom_civi_api('Contact', 'create', $civiFieldsToUpdate);
 }
 
 /**
@@ -147,20 +159,16 @@ function nul_census_custom_update_civi($censusId) {
       // TODO deal with programs (multiple)
 
       // TODO deal with Service Areas (multiple)
-      // $serviceAreas = nul_census_custom_load_tab('service_areas', $censusId);
-      // if (!empty($serviceAreas['node']) && key($serviceAreas['node']) > 0) {
-      //   $serviceAreas = node_load(key($serviceAreas['node']));
-      // }
-
-      //TODO create fields to hold service area data (these are paragraphs in drupal so there will be more than one)
-      // '' => $serviceAreas->field_service_area_population[LANGUAGE_NONE][0]['value'],
-      // '' => $serviceAreas->field_service_area_city_county[LANGUAGE_NONE][0]['value'],
-      // '' => $serviceAreas->field_service_area_white[LANGUAGE_NONE][0]['value'],
-      // '' => $serviceAreas->field_service_area_hispanic[LANGUAGE_NONE][0]['value'],
-      // '' => $serviceAreas->field_service_area_asian_am[LANGUAGE_NONE][0]['value'],
-      // '' => $serviceAreas->field_service_area_native_am[LANGUAGE_NONE][0]['value'],
-      // '' => $serviceAreas->field_service_area_african_am[LANGUAGE_NONE][0]['value'],
-      // '' => $serviceAreas->field_service_area_other[LANGUAGE_NONE][0]['value'],
+      nul_census_custom_get_tab_data($censusId, 'service_areas', $affiliateIdInCivi, array(
+        'custom_1073' => 'field_service_area_population',
+        'custom_1072' => 'field_service_area_city_county',
+        'custom_1074' => 'field_service_area_white',
+        'custom_1075' => 'field_service_area_hispanic',
+        'custom_1076' => 'field_service_area_asian_am',
+        'custom_1077' => 'field_service_area_native_am',
+        'custom_1078' => 'field_service_area_african_am',
+        'custom_1079' => 'field_service_area_other',
+      ));
 
       // Update Affiliate Contact For fields on Census
       if (!empty($census->field_date_established[LANGUAGE_NONE][0]['value'])) {
