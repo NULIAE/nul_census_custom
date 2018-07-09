@@ -78,14 +78,11 @@ function nul_census_custom_find_affiliate($affiliateSelect) {
  * Compile array of data to send to civi from tabs
  * @param  int $censusId      census id
  * @param  string $tabName       drupal content type machine name
+ * @param  int $affiliateId  affiliate contactId in civi to be updated
  * @param  array $fieldMatching  array of fields in civi matched to their fields in drupal
- * @param  array $affiliateId  affiliate contactId in civi to be updated
  */
 function nul_census_custom_get_tab_data($censusId, $tabName, $affiliateId, $fieldMatching) {
-  // Array to store fields to be updated on the Affiliate
-  $civiFieldsToUpdate = array(
-    'id' => $affiliateId,
-  );
+
   // Find the tab of this type for the census
   $tab = nul_census_custom_load_tab($tabName, $censusId);
   if (!empty($tab['node']) && key($tab['node']) > 0) {
@@ -93,13 +90,27 @@ function nul_census_custom_get_tab_data($censusId, $tabName, $affiliateId, $fiel
   }
   switch ($tabName) {
     case 'service_areas':
-
-      print_r($tab);
-      die();
-
-    break;
+      if (!empty($tab->field_service_areas[LANGUAGE_NONE])) {
+        foreach ($tab->field_service_areas[LANGUAGE_NONE] as $key => $paragraphInfo) {
+          $paragraphParamsToSendToCivi = array(
+            'entity_id' => $affiliateId,
+          );
+          $paragraph = entity_load('paragraphs_item', array($paragraphInfo['value']));
+          foreach ($fieldMatching as $civiFieldName => $drupalFieldName) {
+            if (!empty($paragraph[$paragraphInfo['value']]->{$drupalFieldName}[LANGUAGE_NONE][0]['value'])) {
+              $paragraphParamsToSendToCivi[$civiFieldName] = $paragraph[$paragraphInfo['value']]->{$drupalFieldName}[LANGUAGE_NONE][0]['value'];
+            }
+          }
+          nul_census_custom_civi_api('CustomValue', 'create', $paragraphParamsToSendToCivi);
+        }
+      }
+      break;
 
     default:
+      // Array to store fields to be updated on the Affiliate
+      $civiFieldsToUpdate = array(
+        'id' => $affiliateId,
+      );
       // Compile Array of fields to update
       foreach ($fieldMatching as $civiFieldName => $drupalFieldName) {
         if (!empty($tab->{$drupalFieldName}[LANGUAGE_NONE][0]['value'])) {
