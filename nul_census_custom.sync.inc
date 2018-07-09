@@ -111,7 +111,7 @@ function nul_census_custom_update_civi($censusId) {
     $affiliateIdInCivi = nul_census_custom_find_affiliate($census->field_affiliate_select[LANGUAGE_NONE][0]['value']);
     if ($affiliateIdInCivi > 0) {
       // Send Data from Community Relations tab to Civi
-      nul_census_custom_get_tab_data($censusId, 'community_relations', $affiliateId, array(
+      nul_census_custom_get_tab_data($censusId, 'community_relations', $affiliateIdInCivi, array(
         'custom_1084' => 'field_produces_annual_report',
         'custom_1085' => 'field_newsletter',
         'custom_1086' => 'field_state_of_black_report',
@@ -127,7 +127,7 @@ function nul_census_custom_update_civi($censusId) {
       ));
 
       // Send Data from Revenue tab to Civi
-      nul_census_custom_get_tab_data($censusId, 'revenue', $affiliateId, array(
+      nul_census_custom_get_tab_data($censusId, 'revenue', $affiliateIdInCivi, array(
         'custom_1098' => 'field_revenue_investment',
         'custom_1099' => 'field_revenue_corporations',
         'custom_1100' => 'field_revenue_foundations',
@@ -147,10 +147,10 @@ function nul_census_custom_update_civi($censusId) {
       // TODO deal with programs (multiple)
 
       // TODO deal with Service Areas (multiple)
-      $serviceAreas = nul_census_custom_load_tab('service_areas', $censusId);
-      if (!empty($serviceAreas['node']) && key($serviceAreas['node']) > 0) {
-        $serviceAreas = node_load(key($serviceAreas['node']));
-      }
+      // $serviceAreas = nul_census_custom_load_tab('service_areas', $censusId);
+      // if (!empty($serviceAreas['node']) && key($serviceAreas['node']) > 0) {
+      //   $serviceAreas = node_load(key($serviceAreas['node']));
+      // }
 
       //TODO create fields to hold service area data (these are paragraphs in drupal so there will be more than one)
       // '' => $serviceAreas->field_service_area_population[LANGUAGE_NONE][0]['value'],
