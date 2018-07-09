@@ -100,6 +100,18 @@ function nul_census_custom_get_tab_data($censusId, $tabName, $affiliateId, $fiel
     $tab = node_load(key($tab['node']));
   }
   switch ($tabName) {
+    case 'programs':
+      // First make sure to clear out existing data
+      nul_census_custom_clear_out_custom_values($affiliateId, 'return.custom_1080', 140);
+      $query = new EntityFieldQuery();
+      $results = $query->entityCondition('entity_type', 'node')
+        ->entityCondition('bundle', 'programs')
+        ->fieldCondition('field_parent_census', 'target_id', $censusId)
+        ->execute();
+      print_r($results);
+      die();
+      break;
+
     case 'service_areas':
       // First make sure to clear out existing data
       nul_census_custom_clear_out_custom_values($affiliateId, 'return.custom_1073', 139);
@@ -182,6 +194,13 @@ function nul_census_custom_update_civi($censusId) {
       ));
 
       // TODO deal with programs (multiple)
+      nul_census_custom_get_tab_data($censusId, 'programs', $affiliateIdInCivi, array(
+        'custom_1080' => 'title',
+        'custom_1081' => 'field_program_budget',
+        'custom_1082' => 'field_program_served_total',
+        'custom_1083' => 'field_program_area',
+        'custom_1097' => 'field_program_nul_funded',
+      ));
 
       // Send Data from Service Areas tab to Civi
       nul_census_custom_get_tab_data($censusId, 'service_areas', $affiliateIdInCivi, array(
