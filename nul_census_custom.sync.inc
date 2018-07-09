@@ -93,27 +93,35 @@ function nul_census_custom_clear_out_custom_values($affiliateId, $customFieldInG
  * @param  array $fieldMatching  array of fields in civi matched to their fields in drupal
  */
 function nul_census_custom_get_tab_data($censusId, $tabName, $affiliateId, $fieldMatching) {
-
-  // Find the tab of this type for the census
-  $tab = nul_census_custom_load_tab($tabName, $censusId);
-  if (!empty($tab['node']) && key($tab['node']) > 0) {
-    $tab = node_load(key($tab['node']));
-  }
   switch ($tabName) {
     case 'programs':
-      // First make sure to clear out existing data
+      // Clear out existing data
       nul_census_custom_clear_out_custom_values($affiliateId, 'return.custom_1080', 140);
-      $query = new EntityFieldQuery();
-      $results = $query->entityCondition('entity_type', 'node')
-        ->entityCondition('bundle', 'programs')
-        ->fieldCondition('field_parent_census', 'target_id', $censusId)
-        ->execute();
-      print_r($results);
-      die();
+
+      $programs = nul_census_custom_load_tab($tabName, $censusId);
+      if (!empty($programs['node']) && count($programs['node']) > 1) {
+        foreach ($programs['node'] as $nid => $otherInfo) {
+          $program = node_load($nid);
+          $programDataToSendToCivi = array(
+            'entity_id' => $affiliateId,
+          );
+          foreach ($fieldMatching as $civiFieldName => $drupalFieldName) {
+            if (!empty($program->{$drupalFieldName}[LANGUAGE_NONE][0]['value'])) {
+              $programDataToSendToCivi[$civiFieldName] = $program->{$drupalFieldName}[LANGUAGE_NONE][0]['value'];
+            }
+          }
+          nul_census_custom_civi_api('CustomValue', 'create', $programDataToSendToCivi);
+        }
+      }
       break;
 
     case 'service_areas':
-      // First make sure to clear out existing data
+      // Find the tab of this type for the census
+      $tab = nul_census_custom_load_tab($tabName, $censusId);
+      if (!empty($tab['node']) && key($tab['node']) > 0 && count($tab['node']) == 1) {
+        $tab = node_load(key($tab['node']));
+      }
+      // make sure to clear out existing data
       nul_census_custom_clear_out_custom_values($affiliateId, 'return.custom_1073', 139);
 
       if (!empty($tab->field_service_areas[LANGUAGE_NONE])) {
@@ -133,6 +141,11 @@ function nul_census_custom_get_tab_data($censusId, $tabName, $affiliateId, $fiel
       break;
 
     default:
+      // Find the tab of this type for the census
+      $tab = nul_census_custom_load_tab($tabName, $censusId);
+      if (!empty($tab['node']) && key($tab['node']) > 0 && count($tab['node']) == 1) {
+        $tab = node_load(key($tab['node']));
+      }
       // Array to store fields to be updated on the Affiliate
       $civiFieldsToUpdate = array(
         'id' => $affiliateId,
