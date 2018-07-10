@@ -1,21 +1,6 @@
 <?php
 
 /**
- * Check if params not empty and add them to be updated if they have values
- * @param  array $presetParams     params to be updated
- * @param  array $ifNotEmptyParams params to be added to be updated if they are not empty
- * @return array                  updated array of params
- */
-function nul_census_custom_assemble_params($presetParams, $ifNotEmptyParams) {
-  foreach ($ifNotEmptyParams as $key => $value) {
-    if (!empty($value)) {
-      $presetParams[$key] = $value;
-    }
-  }
-  return $presetParams;
-}
-
-/**
  * Update Phone, Email or Address in civi based on Census Data in Drupal
  * @param  string $entity           Phone, Email, Address Etc.
  * @param  array $paramsToCheckOn   parameters to use to check for an exisiting record
@@ -56,7 +41,6 @@ function nul_census_custom_find_affiliate($affiliateSelect, $censusId) {
   );
   $civiAffiliate = nul_census_custom_civi_api('Contact', 'get', $params);
   if (!empty($civiAffiliate['count']) && $civiAffiliate['count'] == 0 || $civiAffiliate == array()) {
-    watchdog('nul_census_custom', 'No matching Urban League Affiliate found please make sure there is a valid org to connect to', WATCHDOG_NOTICE, $link = NULL);
     drupal_set_message(t('No Affiliate Organization found in civi for Census nid <a href="node/!nid">!nid</a>', array(
       '!nid' => $censusId,
     )), 'warning');
@@ -76,7 +60,6 @@ function nul_census_custom_find_affiliate($affiliateSelect, $censusId) {
     }
     // if still no affiliate id throw error
     if ($affiliateIdInCivi == 0) {
-      watchdog('nul_census_custom', 'More than one matching Urban League Affiliate found please de dupe', array('%matchingAffiliates' => $civiAffiliate['values']), WATCHDOG_ERROR, $link = NULL);
       drupal_set_message(t('More than one matching Urban League Affiliate found in civi for Census nid <a href="node/!nid">!nid</a>', array(
         '!nid' => $censusId,
       )), 'warning');
@@ -101,6 +84,7 @@ function nul_census_custom_clear_out_custom_values($affiliateId, $customFieldInG
     }
   }
 }
+
 /**
  * Compile array of data to send to civi from tabs
  * @param  int $censusId      census id
@@ -189,6 +173,9 @@ function nul_census_custom_get_tab_data($censusId, $tabName, $affiliateId, $fiel
       foreach ($fieldMatching as $civiFieldName => $drupalFieldName) {
         if (!empty($tab->{$drupalFieldName}[LANGUAGE_NONE][0])) {
           $civiFieldsToUpdate[$civiFieldName] = $tab->{$drupalFieldName}[LANGUAGE_NONE][0]['value'];
+        }
+        else {
+          $civiFieldsToUpdate[$civiFieldName] = '';
         }
       }
       nul_census_custom_civi_api('Contact', 'create', $civiFieldsToUpdate);
@@ -391,7 +378,6 @@ function nul_census_custom_update_civi($censusId) {
     drupal_set_message(t('No Affiliate Organization found in civi for Census nid <a href="node/!nid">!nid</a>', array(
       '!nid' => $censusId,
     )), 'warning');
-    watchdog('nul_census_custom', 'No Affiliate Selected on Census so we cannot sync to Civi', WATCHDOG_ERROR, $link = NULL);
   }
 }
 
@@ -409,13 +395,11 @@ function nul_census_custom_find_affiliate_ceo($checkForIndiv, $censusId) {
   }
   // IF no contact found throw error
   if ($civiContact['count'] == 0) {
-    watchdog('nul_census_custom', 'No matching contact found for Affiliate CEO', array('%matchingAffiliates' => $civiContact['values']), WATCHDOG_ERROR, $link = NULL);
     drupal_set_message(t('No Affiliate CEO found in civi for Census nid <a href="node/!nid">!nid</a>', array(
       '!nid' => $censusId,
     )), 'warning');
   }
   if ($civiContact['count'] > 1) {
-    watchdog('nul_census_custom', 'More than one matching Contact found please de dupe', array('%matchingAffiliates' => $civiContact['values']), WATCHDOG_ERROR, $link = NULL);
     drupal_set_message(t('More than one matching Affiliate CEO Contact found Census nid <a href="node/!nid">!nid</a>', array(
       '!nid' => $censusId,
     )), 'warning');
