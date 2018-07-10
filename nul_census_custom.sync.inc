@@ -397,13 +397,17 @@ function nul_census_custom_sync_form($form, &$form_state) {
 
   // status_type_for_census vocab
   $censusStatusVocabulary = taxonomy_vocabulary_machine_name_load('status_type_for_census');
-  $censusTabs = taxonomy_get_tree($censusStatusVocabulary->vid);
+  $censusStatuses = taxonomy_get_tree($censusStatusVocabulary->vid);
+  $statusOptions = array();
+  foreach ($censusStatuses as $key => $statusInfo) {
+    $statusOptions[$statusInfo['tid']] = $statusInfo['name'];
+  }
   print_r($censusTabs); die();
   $form['field_census_status'] = array(
     '#title' => 'Census Status',
     '#type' => 'select',
     '#default_value' => 'Reviewed Complete',
-    '#options' => $fieldInfo['settings']['allowed_values'],
+    '#options' => $statusOptions,
     '#required' => TRUE,
   );
 
