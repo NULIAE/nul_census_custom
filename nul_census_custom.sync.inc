@@ -386,29 +386,27 @@ function nul_census_custom_find_affiliate_ceo($checkForIndiv) {
  */
 function nul_census_custom_sync_form($form, &$form_state) {
   $year = date('Y');
-  $fieldsToAdd = array(
-    'field_year' => array(
-      'default_value' => $year,
-      'title' => 'Year',
-    ),
-    'field_census_status' => array(
-      'default_value' => 'Reviewed Complete',
-      'title' => 'Census Status',
-    ),
+  $yearFieldInfo = field_info_field('field_year');
+  $form['field_year'] = array(
+    '#title' => 'Year',
+    '#type' => 'select',
+    '#default_value' => $year,
+    '#options' => $fieldInfo['settings']['allowed_values'],
+    '#required' => TRUE,
   );
-  foreach ($fieldsToAdd as $fieldName => $fieldHardcodedDetails) {
-    $fieldInfo = field_info_field($fieldName);
-    if (empty($fieldInfo['settings']['allowed_values'][$fieldHardcodedDetails['default_value']])) {
-      $fieldInfo['settings']['allowed_values'][$fieldHardcodedDetails['default_value']] = $fieldHardcodedDetails['default_value'];
-    }
-    $form[$fieldName] = array(
-      '#title' => $fieldHardcodedDetails['title'],
-      '#type' => 'select',
-      '#default_value' => $fieldHardcodedDetails['default_value'],
-      '#options' => $fieldInfo['settings']['allowed_values'],
-      '#required' => TRUE,
-    );
-  }
+
+  // status_type_for_census vocab
+  $censusStatusVocabulary = taxonomy_vocabulary_machine_name_load('status_type_for_census');
+  $censusTabs = taxonomy_get_tree($censusStatusVocabulary->vid);
+  print_r($censusTabs); die();
+  $form['field_census_status'] = array(
+    '#title' => 'Census Status',
+    '#type' => 'select',
+    '#default_value' => 'Reviewed Complete',
+    '#options' => $fieldInfo['settings']['allowed_values'],
+    '#required' => TRUE,
+  );
+
   $form['submit_button'] = array(
     '#type' => 'submit',
     '#value' => t('Submit'),
@@ -423,7 +421,7 @@ function nul_census_custom_sync_form_submit($form, &$form_state) {
     $results = $query->entityCondition('entity_type', 'node')
       ->entityCondition('bundle', 'census')
       ->fieldCondition('field_year', 'value', $form['field_year']['#value'])
-      ->fieldCondition('field_tab_status', 'tid', key($completeTerm))
+      ->fieldCondition('field_census_status', 'tid', key($completeTerm))
       ->propertyCondition('status', NODE_PUBLISHED)
       ->execute();
     return $results;
