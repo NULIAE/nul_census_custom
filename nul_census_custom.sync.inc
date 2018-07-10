@@ -37,7 +37,7 @@ function nul_census_custom_update_civicontact_info($census, $entity, $paramsToCh
       }
     }
   }
-  $paramsToUpdateOn = nul_census_custom_assemble_params($paramsToCheckOn, $paramsToUpdateOn);
+  $paramsToUpdateOn = array_merge($paramsToCheckOn, $paramsToUpdateOn);
   nul_census_custom_civi_api($entity, 'create', $paramsToUpdateOn);
 }
 
