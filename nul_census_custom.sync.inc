@@ -29,7 +29,9 @@ function nul_census_custom_update_civicontact_info($census, $entity, $paramsToCh
   }
   if (!empty($paramsToUpdateOn)) {
     foreach ($paramsToUpdateOn as $type => $drupalField) {
-      $paramsToUpdateOn[$type] = $census->{$drupalField}[LANGUAGE_NONE][0]['value'];
+      if (!empty($census->{$drupalField}[LANGUAGE_NONE][0]['value'])) {
+        $paramsToUpdateOn[$type] = $census->{$drupalField}[LANGUAGE_NONE][0]['value'];
+      }
     }
   }
   $paramsToUpdateOn = nul_census_custom_assemble_params($paramsToCheckOn, $paramsToUpdateOn);
