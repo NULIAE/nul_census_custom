@@ -349,15 +349,21 @@ function nul_census_custom_update_civi($censusId) {
           'contact_id_a' => $civiContactId,
           'relationship_type_id' => 5,
         ));
+        drupal_set_message(t('Census nid !nid synced to Affiliate CEO civi id !ceo', array(
+          '!nid' => $censusId,
+          '!ceo' => $civiContactId,
+        )));
       }
-      drupal_set_message(t('Census nid !nid synced to Affiliate civi id !civicid and CEO civi id !ceo', array(
+      drupal_set_message(t('Census nid !nid synced to Affiliate civi id !civicid', array(
         '!nid' => $censusId,
         '!civicid' => $affiliateIdInCivi,
-        '!ceo' => $civiContactId,
       )));
     }
   }
   else {
+    drupal_set_message(t('No Affiliate Organization found in civi for Census nid !nid', array(
+      '!nid' => $censusId,
+    )), 'warning');
     watchdog('nul_census_custom', 'No Affiliate Selected on Census so we cannot sync to Civi', WATCHDOG_ERROR, $link = NULL);
   }
 }
