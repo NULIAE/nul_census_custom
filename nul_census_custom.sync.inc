@@ -373,7 +373,7 @@ function nul_census_custom_update_civi($censusId) {
  * @param  array $checkForIndiv params to search on
  * @return int              CEO civi Contact ID
  */
-function nul_census_custom_find_affiliate_ceo($checkForIndiv. $censusId) {
+function nul_census_custom_find_affiliate_ceo($checkForIndiv, $censusId) {
   $civiContact = nul_census_custom_civi_api('Contact', 'get', $checkForIndiv);
   $civiContactId = 0;
   // IF only one contact found update it
