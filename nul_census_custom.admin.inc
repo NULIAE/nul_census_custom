@@ -4,6 +4,10 @@ function nul_census_custom_settings_form($form, &$form_state) {
   // Creates a settings form for the settings for the module
   civicrm_initialize();
   require_once 'api/api.php';
+
+  $form['civisync'] = array(
+    '#markup' => '<p>To Sync data to civi visit <a href="/civisync">CiviCRM Sync</a></p>',
+  );
   $form['#submit'] = array('nul_census_custom_settings_form_submit');
   // Email to send notification of status changes to/from
   // TODO make seperate setting for email notifications from and email notifications to

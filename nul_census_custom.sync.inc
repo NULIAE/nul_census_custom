@@ -350,6 +350,11 @@ function nul_census_custom_update_civi($censusId) {
           'relationship_type_id' => 5,
         ));
       }
+      drupal_set_message(t('Census nid !nid synced to Affiliate civi id !civicid and CEO civi id !ceo', array(
+        '!nid' => $censusId,
+        '!civicid' => $affiliateIdInCivi,
+        '!ceo' => $civiContactId,
+      )));
     }
   }
   else {
