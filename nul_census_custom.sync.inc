@@ -272,14 +272,14 @@ function nul_census_custom_update_civi($censusId) {
         'location_type_id' => "Main",
       );
 
-      $orgAddressParams = array(
+      $orgAddressParamsToUpdate = array(
         'street_address' => 'field_address_line_1',
         'supplemental_address_1' => 'field_address_line_2',
         'city' => 'field_city',
         'state_province_id' => 'field_state_province',
         'postal_code' => 'field_zip_code',
       );
-      $orgAddressParamsToUpdate = nul_census_custom_compile_api_params($orgAddressParams, $census);
+      // $orgAddressParamsToUpdate = nul_census_custom_compile_api_params($orgAddressParams, $census);
 
       nul_census_custom_update_civicontact_info($census, 'Address', $orgAddressParamsToCheck, $orgAddressParamsToUpdate);
 
