@@ -301,25 +301,39 @@ function nul_census_custom_update_civi($censusId) {
       }
 
       // Find Affiliate CEO
-      $civiContactId = nul_census_custom_find_affiliate_ceo(array(
+      $paramsToSearchForCEO = array(
         'contact_type' => "Individual",
         'sequential' => 1,
-        'first_name' => $census->field_president_ceo_first_name[LANGUAGE_NONE][0]['value'],
-        'last_name' => $census->field_president_ceo_last_name[LANGUAGE_NONE][0]['value'],
         'custom_1014' => "Affiliate CEO",
-      ), $censusId);
+      );
+      if (!empty($census->field_president_ceo_first_name[LANGUAGE_NONE][0]['value'])) {
+        $paramsToSearchForCEO['first_name'] = $census->field_president_ceo_first_name[LANGUAGE_NONE][0]['value'];
+      }
+      if (!empty($census->field_president_ceo_last_name[LANGUAGE_NONE][0]['value'])) {
+        $paramsToSearchForCEO['last_name'] = $census->field_president_ceo_last_name[LANGUAGE_NONE][0]['value'];
+      }
+      $civiContactId = nul_census_custom_find_affiliate_ceo($paramsToSearchForCEO, $censusId);
 
       // If contact found
       if ($civiContactId > 0) {
         // Update contact details
         $fieldsToUpdateOnContact = array(
-          'middle_name' => $census->field_president_ceo_middle_name[LANGUAGE_NONE][0]['value'],
-          'image_URL' => file_create_url($census->field_photo[LANGUAGE_NONE][0]['uri']),
           'id' => $civiContactId,
-          'custom_296' => $census->field_affiliate_select[LANGUAGE_NONE][0]['value'],
-          'custom_1070' => $census->field_number_of_years_as_ceo[LANGUAGE_NONE][0]['value'],
-          'custom_1071' => $census->field_number_of_years_of_service[LANGUAGE_NONE][0]['value'],
         );
+        $fieldsKeyed = array(
+          'middle_name' => 'field_president_ceo_middle_name',
+          'custom_296' => 'field_affiliate_select',
+          'custom_1070' => 'field_number_of_years_as_ceo',
+          'custom_1071' => 'field_number_of_years_of_service',
+        );
+        foreach ($fieldsKeyed as $civiField => $drupalField) {
+          if (!empty($census->{$drupalField}[LANGUAGE_NONE][0]['value'])) {
+            $fieldsToUpdateOnContact[$civiField] = $census->{$drupalField}[LANGUAGE_NONE][0]['value'];
+          }
+        }
+        if (!empty(file_create_url($census->field_photo[LANGUAGE_NONE][0]['uri']))) {
+          $fieldsToUpdateOnContact['image_URL'] = file_create_url($census->field_photo[LANGUAGE_NONE][0]['uri']);
+        }
         $civiContactUpdate = nul_census_custom_civi_api('Contact', 'create', $fieldsToUpdateOnContact);
 
         // Update Cell Phone
@@ -353,12 +367,12 @@ function nul_census_custom_update_civi($censusId) {
           'contact_id_a' => $civiContactId,
           'relationship_type_id' => 5,
         ));
-        drupal_set_message(t('Census nid <a href="node/!nid">!nid</a> synced to Affiliate CEO civi id <a href="civicrm/contact/view?reset=1&cid=!ceo">!ceo</a>', array(
+        drupal_set_message(t('Census <a href="node/!nid">!nid</a> synced to Affiliate CEO civi id <a href="civicrm/contact/view?reset=1&cid=!ceo">!ceo</a>', array(
           '!nid' => $censusId,
           '!ceo' => $civiContactId,
         )));
       }
-      drupal_set_message(t('Census nid <a href="node/!nid">!nid</a> synced to Affiliate civi id <a href="civicrm/contact/view?reset=1&cid=!civicid">!civicid</a>', array(
+      drupal_set_message(t('Census <a href="node/!nid">!nid</a> synced to Affiliate ORG id <a href="civicrm/contact/view?reset=1&cid=!civicid">!civicid</a>', array(
         '!nid' => $censusId,
         '!civicid' => $affiliateIdInCivi,
       )));
