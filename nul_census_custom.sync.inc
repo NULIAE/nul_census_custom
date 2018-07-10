@@ -303,7 +303,7 @@ function nul_census_custom_update_civi($censusId) {
         'first_name' => $census->field_president_ceo_first_name[LANGUAGE_NONE][0]['value'],
         'last_name' => $census->field_president_ceo_last_name[LANGUAGE_NONE][0]['value'],
         'custom_1014' => "Affiliate CEO",
-      ));
+      ), $censusId);
 
       // If contact found
       if ($civiContactId > 0) {
@@ -373,7 +373,7 @@ function nul_census_custom_update_civi($censusId) {
  * @param  array $checkForIndiv params to search on
  * @return int              CEO civi Contact ID
  */
-function nul_census_custom_find_affiliate_ceo($checkForIndiv) {
+function nul_census_custom_find_affiliate_ceo($checkForIndiv. $censusId) {
   $civiContact = nul_census_custom_civi_api('Contact', 'get', $checkForIndiv);
   $civiContactId = 0;
   // IF only one contact found update it
@@ -383,11 +383,15 @@ function nul_census_custom_find_affiliate_ceo($checkForIndiv) {
   // IF no contact found throw error
   if ($civiContact['count'] == 0) {
     watchdog('nul_census_custom', 'No matching contact found for Affiliate CEO', array('%matchingAffiliates' => $civiContact['values']), WATCHDOG_ERROR, $link = NULL);
-    drupal_set_message('No matching CEO contact found for this Urban League Affiliate found please', 'error');
+    drupal_set_message(t('No Affiliate CEO found in civi for Census nid !nid', array(
+      '!nid' => $censusId,
+    )), 'warning');
   }
   if ($civiContact['count'] > 1) {
     watchdog('nul_census_custom', 'More than one matching Contact found please de dupe', array('%matchingAffiliates' => $civiContact['values']), WATCHDOG_ERROR, $link = NULL);
-    drupal_set_message('More than one matching contact found for this Urban League Affiliate found please de dupe', 'error');
+    drupal_set_message(t('More than one matching Contact found for this !nid Affiliate CEO found in civi for Census nid !nid', array(
+      '!nid' => $censusId,
+    )), 'warning');
   }
   return $civiContactId;
 }
