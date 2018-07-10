@@ -152,7 +152,7 @@ function nul_census_custom_get_tab_data($censusId, $tabName, $affiliateId, $fiel
       );
       // Compile Array of fields to update
       foreach ($fieldMatching as $civiFieldName => $drupalFieldName) {
-        if (!empty($tab->{$drupalFieldName}[LANGUAGE_NONE][0]['value'])) {
+        if (!empty($tab->{$drupalFieldName}[LANGUAGE_NONE][0])) {
           $civiFieldsToUpdate[$civiFieldName] = $tab->{$drupalFieldName}[LANGUAGE_NONE][0]['value'];
         }
       }
