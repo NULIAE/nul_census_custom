@@ -246,7 +246,7 @@ function nul_census_custom_update_civi($censusId) {
         'supplemental_address_1' => $census->field_address_line_2[LANGUAGE_NONE][0]['value'],
         'city' => $census->field_city[LANGUAGE_NONE][0]['value'],
         'state_province_id' => $census->field_state_province[LANGUAGE_NONE][0]['value'],
-        // 'postal_code' => $census->field_zip_code[LANGUAGE_NONE][0]['value'],
+        'postal_code' => $census->field_zip_code[LANGUAGE_NONE][0]['value'],
       );
       // $orgAddress = nul_census_custom_assemble_params(array(), $orgAddressParams);
       nul_census_custom_update_civicontact_info('Address', $orgAddressParamsToCheck, $orgAddressParamsToUpdate);
@@ -291,7 +291,7 @@ function nul_census_custom_update_civi($censusId) {
         // Update contact details
         $fieldsToUpdateOnContact = array(
           'middle_name' => $census->field_president_ceo_middle_name[LANGUAGE_NONE][0]['value'],
-          'image_URL' => $census->field_photo[LANGUAGE_NONE][0]['uri'],
+          'image_URL' => file_create_url($census->field_photo[LANGUAGE_NONE][0]['uri']),
           'id' => $civiContactId,
           'custom_296' => $census->field_affiliate_select[LANGUAGE_NONE][0]['value'],
           'custom_1070' => $census->field_number_of_years_as_ceo[LANGUAGE_NONE][0]['value'],
