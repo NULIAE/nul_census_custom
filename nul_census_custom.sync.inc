@@ -373,12 +373,12 @@ function nul_census_custom_update_civi($censusId) {
           'contact_id_a' => $civiContactId,
           'relationship_type_id' => 5,
         ));
-        drupal_set_message(t('Census <a href="node/!nid">!nid</a> synced to Affiliate CEO civi id <a href="civicrm/contact/view?reset=1&cid=!ceo">!ceo</a>', array(
+        drupal_set_message(t('Census <a href="node/!nid">!nid</a> synced to Affiliate CEO civi id <a href="/civicrm/contact/view?reset=1&cid=!ceo">!ceo</a>', array(
           '!nid' => $censusId,
           '!ceo' => $civiContactId,
         )));
       }
-      drupal_set_message(t('Census <a href="node/!nid">!nid</a> synced to Affiliate ORG id <a href="civicrm/contact/view?reset=1&cid=!civicid">!civicid</a>', array(
+      drupal_set_message(t('Census <a href="node/!nid">!nid</a> synced to Affiliate ORG id <a href="/civicrm/contact/view?reset=1&cid=!civicid">!civicid</a>', array(
         '!nid' => $censusId,
         '!civicid' => $affiliateIdInCivi,
       )));
