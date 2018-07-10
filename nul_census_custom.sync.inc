@@ -99,15 +99,33 @@ function nul_census_custom_get_tab_data($censusId, $tabName, $affiliateId, $fiel
       nul_census_custom_clear_out_custom_values($affiliateId, 'return.custom_1080', 140);
 
       $programs = nul_census_custom_load_tab($tabName, $censusId);
-      if (!empty($programs['node']) && count($programs['node']) > 1) {
+      if (!empty($programs['node']) && count($programs['node']) >= 1) {
         foreach ($programs['node'] as $nid => $otherInfo) {
           $program = node_load($nid);
           $programDataToSendToCivi = array(
             'entity_id' => $affiliateId,
           );
           foreach ($fieldMatching as $civiFieldName => $drupalFieldName) {
-            if (!empty($program->{$drupalFieldName}[LANGUAGE_NONE][0]['value'])) {
-              $programDataToSendToCivi[$civiFieldName] = $program->{$drupalFieldName}[LANGUAGE_NONE][0]['value'];
+            switch ($drupalFieldName) {
+              case 'title':
+                if (!empty($program->{$drupalFieldName})) {
+                  $programDataToSendToCivi[$civiFieldName] = $program->{$drupalFieldName};
+                }
+                break;
+
+              case 'field_program_area':
+                if (!empty($program->{$drupalFieldName}[LANGUAGE_NONE][0]['tid'])) {
+                  $taxonomy_term = taxonomy_term_load($program->{$drupalFieldName}[LANGUAGE_NONE][0]['tid']);
+                  print_r($taxonomy_term); die();
+                  $programDataToSendToCivi[$civiFieldName] = $program->{$drupalFieldName};
+                }
+                break;
+
+              default:
+                if (!empty($program->{$drupalFieldName}[LANGUAGE_NONE][0])) {
+                  $programDataToSendToCivi[$civiFieldName] = $program->{$drupalFieldName}[LANGUAGE_NONE][0]['value'];
+                }
+                break;
             }
           }
           nul_census_custom_civi_api('CustomValue', 'create', $programDataToSendToCivi);
