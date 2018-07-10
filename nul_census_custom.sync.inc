@@ -429,11 +429,12 @@ function nul_census_custom_sync_form_submit($form, &$form_state) {
       ->fieldCondition('field_census_status', 'tid', $form['field_census_status']['#value'])
       ->propertyCondition('status', NODE_PUBLISHED)
       ->execute();
-    return $results;
-    print_r($results['node']); die();
-    foreach ($results['node'] as $key => $value) {
-      nul_census_custom_update_civi($censusId);
+    if (!empty($results['node'])) {
+      foreach ($results['node'] as $censusId => $values) {
+        if ($censusId > 0) {
+          nul_census_custom_update_civi($censusId);
+        }
+      }
     }
   }
-
 }
