@@ -41,7 +41,7 @@ function nul_census_custom_find_affiliate($affiliateSelect, $censusId) {
   );
   $civiAffiliate = nul_census_custom_civi_api('Contact', 'get', $params);
   if (!empty($civiAffiliate['count']) && $civiAffiliate['count'] == 0 || $civiAffiliate == array()) {
-    drupal_set_message(t('No Affiliate Organization found in civi for Census nid <a href="node/!nid">!nid</a>', array(
+    drupal_set_message(t('No Affiliate Organization found in civi for Census nid <a href="/node/!nid">!nid</a>', array(
       '!nid' => $censusId,
     )), 'warning');
   }
@@ -60,7 +60,7 @@ function nul_census_custom_find_affiliate($affiliateSelect, $censusId) {
     }
     // if still no affiliate id throw error
     if ($affiliateIdInCivi == 0) {
-      drupal_set_message(t('More than one matching Urban League Affiliate found in civi for Census nid <a href="node/!nid">!nid</a>', array(
+      drupal_set_message(t('More than one matching Urban League Affiliate found in civi for Census nid <a href="/node/!nid">!nid</a>', array(
         '!nid' => $censusId,
       )), 'warning');
     }
@@ -363,19 +363,19 @@ function nul_census_custom_update_civi($censusId) {
           'contact_id_a' => $civiContactId,
           'relationship_type_id' => 5,
         ));
-        drupal_set_message(t('Census <a href="node/!nid">!nid</a> synced to Affiliate CEO civi id <a href="/civicrm/contact/view?reset=1&cid=!ceo">!ceo</a>', array(
+        drupal_set_message(t('Census <a href="/node/!nid">!nid</a> synced to Affiliate CEO civi id <a href="/civicrm/contact/view?reset=1&cid=!ceo">!ceo</a>', array(
           '!nid' => $censusId,
           '!ceo' => $civiContactId,
         )));
       }
-      drupal_set_message(t('Census <a href="node/!nid">!nid</a> synced to Affiliate ORG id <a href="/civicrm/contact/view?reset=1&cid=!civicid">!civicid</a>', array(
+      drupal_set_message(t('Census <a href="/node/!nid">!nid</a> synced to Affiliate ORG id <a href="/civicrm/contact/view?reset=1&cid=!civicid">!civicid</a>', array(
         '!nid' => $censusId,
         '!civicid' => $affiliateIdInCivi,
       )));
     }
   }
   else {
-    drupal_set_message(t('No Affiliate Organization found in civi for Census nid <a href="node/!nid">!nid</a>', array(
+    drupal_set_message(t('No Affiliate Organization found in civi for Census nid <a href="/node/!nid">!nid</a>', array(
       '!nid' => $censusId,
     )), 'warning');
   }
@@ -395,12 +395,12 @@ function nul_census_custom_find_affiliate_ceo($checkForIndiv, $censusId) {
   }
   // IF no contact found throw error
   if ($civiContact['count'] == 0) {
-    drupal_set_message(t('No Affiliate CEO found in civi for Census nid <a href="node/!nid">!nid</a>', array(
+    drupal_set_message(t('No Affiliate CEO found in civi for Census nid <a href="/node/!nid">!nid</a>', array(
       '!nid' => $censusId,
     )), 'warning');
   }
   if ($civiContact['count'] > 1) {
-    drupal_set_message(t('More than one matching Affiliate CEO Contact found Census nid <a href="node/!nid">!nid</a>', array(
+    drupal_set_message(t('More than one matching Affiliate CEO Contact found Census nid <a href="/node/!nid">!nid</a>', array(
       '!nid' => $censusId,
     )), 'warning');
   }
