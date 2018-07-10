@@ -1143,6 +1143,13 @@ function nul_census_custom_menu() {
     'file' => 'nul_census_custom.admin.inc',
     'file path' => drupal_get_path('module', 'nul_census_custom'),
   );
+  $items['civisync'] = array(
+    'title' => 'Sync Census Data to CiviCRM',
+    'description' => 'Sync all Censuses for a given year to Civi',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nul_census_custom_sync_form'),
+    'access arguments' => array('can edit magic census fields'),
+  );
 
   return $items;
 }

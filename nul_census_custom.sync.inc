@@ -380,3 +380,35 @@ function nul_census_custom_find_affiliate_ceo($checkForIndiv) {
   }
   return $civiContactId;
 }
+
+function nul_census_custom_sync_form($form, &$form_state) {
+  $year = date('Y');
+  $fieldsToAdd = array(
+    'field_year' => array(
+      'default_value' => $year,
+      'title' => 'Year',
+    ),
+  );
+  foreach ($fieldsToAdd as $fieldName => $fieldHardcodedDetails) {
+    $fieldInfo = field_info_field($fieldName);
+    if (empty($fieldInfo['settings']['allowed_values'][$fieldHardcodedDetails['default_value']])) {
+      $fieldInfo['settings']['allowed_values'][$fieldHardcodedDetails['default_value']] = $fieldHardcodedDetails['default_value'];
+    }
+    $form[$fieldName] = array(
+      '#title' => $fieldHardcodedDetails['title'],
+      '#type' => 'select',
+      '#default_value' => $fieldHardcodedDetails['default_value'],
+      '#options' => $fieldInfo['settings']['allowed_values'],
+    );
+  }
+  $form['submit_button'] = array(
+    '#type' => 'submit',
+    '#value' => t('Submit'),
+  );
+  // $form['submit_button']['#submit'][] = 'nul_census_custom_sync_all_to_civi';
+  return $form;
+}
+
+function nul_census_custom_sync_form_submit($form, &$form_state) {
+  print_r($form['field_year']['#value']); die();
+}
