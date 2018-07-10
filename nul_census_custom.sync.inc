@@ -426,11 +426,12 @@ function nul_census_custom_sync_form_submit($form, &$form_state) {
     $results = $query->entityCondition('entity_type', 'node')
       ->entityCondition('bundle', 'census')
       ->fieldCondition('field_year', 'value', $form['field_year']['#value'])
-      ->fieldCondition('field_census_status', 'tid', key($completeTerm))
+      ->fieldCondition('field_census_status', 'tid', $form['field_census_status']['#value'])
       ->propertyCondition('status', NODE_PUBLISHED)
       ->execute();
     return $results;
-    foreach ($variable as $key => $value) {
+    print_r($results['node']); die();
+    foreach ($results['node'] as $key => $value) {
       nul_census_custom_update_civi($censusId);
     }
   }
