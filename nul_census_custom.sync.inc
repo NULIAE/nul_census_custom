@@ -404,10 +404,13 @@ function nul_census_custom_sync_form($form, &$form_state) {
   $form['field_census_status'] = array(
     '#title' => 'Census Status',
     '#type' => 'select',
-    '#default_value' => 'Reviewed Complete',
     '#options' => $statusOptions,
     '#required' => TRUE,
   );
+  $defaultValue = array_search('Reviewed Complete', $statusOptions);
+  if ($defaultValue > 0) {
+    $form['field_census_status']['#default_value'] = $defaultValue;
+  }
 
   $form['submit_button'] = array(
     '#type' => 'submit',
