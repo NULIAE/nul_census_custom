@@ -116,8 +116,9 @@ function nul_census_custom_get_tab_data($censusId, $tabName, $affiliateId, $fiel
               case 'field_program_area':
                 if (!empty($program->{$drupalFieldName}[LANGUAGE_NONE][0]['tid'])) {
                   $taxonomy_term = taxonomy_term_load($program->{$drupalFieldName}[LANGUAGE_NONE][0]['tid']);
-                  print_r($taxonomy_term); die();
-                  $programDataToSendToCivi[$civiFieldName] = $program->{$drupalFieldName};
+                  if (!empty($taxonomy_term->name)) {
+                    $programDataToSendToCivi[$civiFieldName] = $taxonomy_term->name;
+                  }
                 }
                 break;
 
