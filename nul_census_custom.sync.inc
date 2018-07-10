@@ -47,7 +47,7 @@ function nul_census_custom_find_affiliate($affiliateSelect, $censusId) {
   $civiAffiliate = nul_census_custom_civi_api('Contact', 'get', $params);
   if (!empty($civiAffiliate['count']) && $civiAffiliate['count'] == 0 || $civiAffiliate == array()) {
     watchdog('nul_census_custom', 'No matching Urban League Affiliate found please make sure there is a valid org to connect to', WATCHDOG_NOTICE, $link = NULL);
-    (t('No Affiliate Organization found in civi for Census nid <a href="node/!nid">!nid</a>', array(
+    drupal_set_message(t('No Affiliate Organization found in civi for Census nid <a href="node/!nid">!nid</a>', array(
       '!nid' => $censusId,
     )), 'warning');
   }
