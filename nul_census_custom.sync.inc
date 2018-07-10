@@ -381,12 +381,19 @@ function nul_census_custom_find_affiliate_ceo($checkForIndiv) {
   return $civiContactId;
 }
 
+/**
+ * Form to sync all censuses for a given year to civi (/civisync)
+ */
 function nul_census_custom_sync_form($form, &$form_state) {
   $year = date('Y');
   $fieldsToAdd = array(
     'field_year' => array(
       'default_value' => $year,
       'title' => 'Year',
+    ),
+    'field_census_status' => array(
+      'default_value' => 'Reviewed Complete',
+      'title' => 'Census Status',
     ),
   );
   foreach ($fieldsToAdd as $fieldName => $fieldHardcodedDetails) {
@@ -399,16 +406,30 @@ function nul_census_custom_sync_form($form, &$form_state) {
       '#type' => 'select',
       '#default_value' => $fieldHardcodedDetails['default_value'],
       '#options' => $fieldInfo['settings']['allowed_values'],
+      '#required' => TRUE,
     );
   }
   $form['submit_button'] = array(
     '#type' => 'submit',
     '#value' => t('Submit'),
   );
-  // $form['submit_button']['#submit'][] = 'nul_census_custom_sync_all_to_civi';
   return $form;
 }
 
 function nul_census_custom_sync_form_submit($form, &$form_state) {
-  print_r($form['field_year']['#value']); die();
+  if (!empty($form['field_year']['#value']) && !empty($form['field_census_status']['#value'])) {
+    // Get all censuses for a given year
+    $query = new EntityFieldQuery();
+    $results = $query->entityCondition('entity_type', 'node')
+      ->entityCondition('bundle', 'census')
+      ->fieldCondition('field_year', 'value', $form['field_year']['#value'])
+      ->fieldCondition('field_tab_status', 'tid', key($completeTerm))
+      ->propertyCondition('status', NODE_PUBLISHED)
+      ->execute();
+    return $results;
+    foreach ($variable as $key => $value) {
+      nul_census_custom_update_civi($censusId);
+    }
+  }
+
 }
