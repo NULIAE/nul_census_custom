@@ -220,11 +220,11 @@ function nul_census_custom_update_nodes_status_field($tabsCompleted, $statusToCh
   if ($censusPart == 'census') {
     $vocabMachineName = 'status_type_for_census';
     $fieldName = 'field_census_status';
-    // IF changing to reviewed complete update civi
-    if ($statusToChangeTo == 'Reviewed Complete') {
-      $censusId = key($tabsCompleted);
-      nul_census_custom_update_civi($censusId);
-    }
+    // TO HAVE CIVI UPDATE WHEN A CENSUS STATUS CHANGES TO "Reviewed Complete" UNCOMMENT THIS BLOCK
+    // if ($statusToChangeTo == 'Reviewed Complete') {
+    //   $censusId = key($tabsCompleted);
+    //   nul_census_custom_update_civi($censusId);
+    // }
   }
   $submittedTabTerm = key(taxonomy_get_term_by_name($statusToChangeTo, $vocabMachineName));
   foreach ($tabsCompleted as $nid => $object) {
