@@ -2,6 +2,7 @@
 
 module_load_include('inc', 'nul_census_custom', './nul_census_custom.utils');
 module_load_include('inc', 'nul_census_custom', './nul_census_custom.sync');
+module_load_include('inc', 'nul_census_custom', './nul_census_custom.report');
 
 function nul_census_custom_page_alter(&$page) {
   // PDF version of full census
@@ -23,6 +24,29 @@ function nul_census_custom_page_alter(&$page) {
   }
 }
 
+function nul_census_custom_views_pre_render(&$view) {
+  // If on the Census Summary Report view (Ex: /census-summary-report/2011/96) add the filter values to the title
+  if ($view->name == 'census_summary_report') {
+    $title = 'Report: Census Summary';
+    if (!empty(arg(1))) {
+      $title = $title . ' ' . arg(1);
+    }
+    if (!empty(arg(2))) {
+      if (arg(2) == 'All') {
+        $title = $title . ' All';
+      }
+      else {
+        $field = field_info_field('field_affiliate_select');
+        $allowed_values = list_allowed_values($field);
+        if (!empty($allowed_values[arg(2)])) {
+          $title = $title . ' ' . $allowed_values[arg(2)];
+        }
+      }
+    }
+    $view->build_info['title'] = $title;
+  }
+}
+
 /**
  * hook_preprocess_views_view()
  */
@@ -35,7 +59,7 @@ function nul_census_custom_preprocess_views_view(&$vars) {
       array('type' => 'external')
     );
   }
-  if ($view->name == 'full_census' || $view->name == 'throwa') {
+  if ($view->name == 'full_census' || $view->name == 'throwa' || $view->name == 'census_summary_report') {
     // add needed stylesheet
     drupal_add_css(drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css');
     if ($view->name == 'full_census') {
@@ -293,15 +317,6 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
         '#access' => TRUE,
       );
       $form['export_to_csv']['#submit'][] = 'nul_census_custom_export_to_csv';
-    }
-    if (arg(0) == 'census-summary') {
-      $form['export_to_csv'] = array(
-        '#type' => 'submit',
-        '#value' => 'Export to CSV',
-        '#executes_submit_callback' => TRUE,
-        '#access' => TRUE,
-      );
-      $form['export_to_csv']['#submit'][] = 'nul_census_custom_redirect_to_csv';
     }
   }
   if ($form_id == "node_delete_confirm") {
@@ -714,10 +729,13 @@ function nul_census_custom_permission() {
       'description' => t('Allows a user to access the certify field if the census has a status of complete this moves the census to submitted'),
     ),
     'can edit magic census fields' => array(
-      'title' => t('can edit magic census fields'),
-      'description' => t('can edit magic census fields'),
+      'title' => t('Administer Census'),
+      'description' => t('can edit magic census fields and other admin level access to Census'),
     ),
-
+    'can view reports' => array(
+      'title' => t('Can View Reports'),
+      'description' => t('Access to Census Reports'),
+    ),
   );
 }
 
@@ -1150,19 +1168,20 @@ function nul_census_custom_menu() {
     'page arguments' => array('nul_census_custom_sync_form'),
     'access arguments' => array('can edit magic census fields'),
   );
+  $items['censussummaryfilters'] = array(
+    'title' => 'Census Summary',
+    'description' => 'Census Summary Filters',
+    'page callback' => 'drupal_get_form',
+    'page arguments' => array('nul_census_custom_form'),
+    'access callback' => 'nul_census_custom_access_reports',
+  );
 
   return $items;
 }
 
-/**
- * Implements hook_views_api().
- */
-function nul_census_custom_views_api() {
-  // Tells views to look in templates folder for views template overrides
-  // Where there is a template override to put the content type sections on the census summary in the same order as the census tabs
-  return array(
-    'api' => 3,
-    'path' => drupal_get_path('module', 'nul_census_custom'),
-    'template path' => drupal_get_path('module', 'nul_census_custom') . '/templates',
-  );
+function nul_census_custom_access_reports() {
+  global $user;
+  if (user_access('can edit magic census fields', $user) || user_access('can view reports', $user)) {
+    return TRUE;
+  }
 }
