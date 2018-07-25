@@ -680,6 +680,10 @@ function nul_census_custom_permission() {
       'title' => t('edit all affiliate census and tabs'),
       'description' => t('Allows a user to edit any census'),
     ),
+    'view all affiliate censuses' => array(
+      'title' => t('view all affiliate census and tabs'),
+      'description' => t('Allows a user to view any census, these users cannot edit any Censuses'),
+    ),
     'can create census for own affiliate' => array(
       'title' => t('can create census for own affiliate'),
       'description' => t('Allows a user to create a census for the affiliate on their contact record.'),
@@ -1116,6 +1120,10 @@ function nul_census_custom_node_access($node, $op, $account) {
           else {
             return NODE_ACCESS_DENY;
           }
+        }
+        elseif (!empty($perms) && user_access('view all affiliate censuses') && $perms['canView'] == TRUE && $op == 'view') {
+          // for when user can view but not edit
+          return NODE_ACCESS_ALLOW;
         }
         else {
           // Deny access to users without the permission.
