@@ -603,8 +603,8 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
 
           );
           $parentCensus = 0;
-          if ($form['field_parent_census'][LANGUAGE_NONE]['#value']) {
-            $parentCensus = $form['field_parent_census'][LANGUAGE_NONE]['#value'];
+          if (!empty($form['#node']->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
+            $parentCensus = $form['#node']->field_parent_census[LANGUAGE_NONE][0]['target_id'];
           }
           nul_census_custom_hide_and_disable_fields($form, $fieldsToHideAndDisableOnTab);
           // IF ON A TAB IN CREATE MODE
@@ -644,12 +644,11 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               drupal_goto("/node/" . arg(3));
             }
           }
-
           if (!empty($parentCensus)) {
             // TODO get year of parent census
             $parentCensusNode = node_load($parentCensus);
             // IF year greater than 2018 add js to total
-            if (!empty($parentCensusNode['field_year'][LANGUAGE_NONE][0]['value']) && $parentCensusNode['field_year'][LANGUAGE_NONE][0]['value'] < 2017) {
+            if (!empty($parentCensusNode->field_year[LANGUAGE_NONE][0]['value']) && $parentCensusNode->field_year[LANGUAGE_NONE][0]['value'] > 2017) {
               // AGH #11789 making revenue fields total
               if ($form['#node']->type == 'revenue') {
                 drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/revenueTotal.js');
