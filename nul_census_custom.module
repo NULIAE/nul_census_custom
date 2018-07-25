@@ -493,6 +493,10 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
 
       case 'tab':
         if (!empty($form['#node']->type) && $form['#node']->type . '_node_form' == $form_id) {
+          // If on program details tab add js to hide and show fields based on checkbox
+          if (!empty($form['field_do_you_offer_programs_of_t'])) {
+            drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/programDetailsTab.js');
+          }
           // Remove commas from number fields
           nul_census_custom_remove_commas($form_state);
           // IF user does not have permission to edit this tab with this status redirect to home page
@@ -656,11 +660,6 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
 
               if ($form['#node']->type == 'expenditures') {
                 drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/expendituresTotal.js');
-              }
-
-              // If on program details tab add js to hide and show fields based on checkbox
-              if (!empty($form['field_do_you_offer_programs_of_t'])) {
-                drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/programDetailsTab.js');
               }
               // Add totaling js
               drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/totaling.js');
