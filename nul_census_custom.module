@@ -495,20 +495,6 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
         if (!empty($form['#node']->type) && $form['#node']->type . '_node_form' == $form_id) {
           // Remove commas from number fields
           nul_census_custom_remove_commas($form_state);
-
-          // AGH #11789 making revenue fields total
-          if ($form['#node']->type == 'revenue') {
-            drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/revenueTotal.js');
-          }
-
-          if ($form['#node']->type == 'expenditures') {
-            drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/expendituresTotal.js');
-          }
-
-          // If on program details tab add js to hide and show fields based on checkbox
-          if (!empty($form['field_do_you_offer_programs_of_t'])) {
-            drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/programDetailsTab.js');
-          }
           // IF user does not have permission to edit this tab with this status redirect to home page
           if (!empty($form['#node']->field_tab_status) && !empty($form['field_tab_status'][LANGUAGE_NONE]['#options'][$form['#node']->field_tab_status[LANGUAGE_NONE][0]['tid']]) && substr($form_id, 0, 7) !== 'comment') {
             // TODO check this is working
@@ -523,8 +509,6 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               }
             }
           }
-          // Add totaling js
-          drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/totaling.js');
           // make tooltips for all fields (most important for table fields)
           foreach ($form as $key => $value) {
             if (substr($key, 0, 6) == 'field_') {
@@ -618,7 +602,10 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
             'field_legacy_budgetnulfunding',
 
           );
-
+          $parentCensus = 0;
+          if (!empty($form['#node']->field_parent_census[LANGUAGE_NONE][0]['target_id'])) {
+            $parentCensus = $form['#node']->field_parent_census[LANGUAGE_NONE][0]['target_id'];
+          }
           nul_census_custom_hide_and_disable_fields($form, $fieldsToHideAndDisableOnTab);
           // IF ON A TAB IN CREATE MODE
           if (
@@ -644,6 +631,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               // set parent census based on value in url
               if (!empty($form['field_parent_census'][LANGUAGE_NONE]['#options'][arg(3)])) {
                 $form['field_parent_census'][LANGUAGE_NONE]['#default_value'] = arg(3);
+                $parentCensus = arg(3);
               }
               // TODO have census part function return this object
               $censusTab = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $form['type']['#value']);
@@ -654,6 +642,28 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
             else {
               drupal_set_message('You do not have permission to create tabs for this census');
               drupal_goto("/node/" . arg(3));
+            }
+          }
+          if (!empty($parentCensus)) {
+            // TODO get year of parent census
+            $parentCensusNode = node_load($parentCensus);
+            // IF year greater than 2018 add js to total
+            if (!empty($parentCensusNode->field_year[LANGUAGE_NONE][0]['value']) && $parentCensusNode->field_year[LANGUAGE_NONE][0]['value'] > 2017) {
+              // AGH #11789 making revenue fields total
+              if ($form['#node']->type == 'revenue') {
+                drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/revenueTotal.js');
+              }
+
+              if ($form['#node']->type == 'expenditures') {
+                drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/expendituresTotal.js');
+              }
+
+              // If on program details tab add js to hide and show fields based on checkbox
+              if (!empty($form['field_do_you_offer_programs_of_t'])) {
+                drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/programDetailsTab.js');
+              }
+              // Add totaling js
+              drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/totaling.js');
             }
           }
         }
