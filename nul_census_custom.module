@@ -680,6 +680,10 @@ function nul_census_custom_permission() {
       'title' => t('edit all affiliate census and tabs'),
       'description' => t('Allows a user to edit any census'),
     ),
+    'view all affiliate censuses' => array(
+      'title' => t('view all affiliate census and tabs'),
+      'description' => t('Allows a user to view any census, these users cannot edit any Censuses'),
+    ),
     'can create census for own affiliate' => array(
       'title' => t('can create census for own affiliate'),
       'description' => t('Allows a user to create a census for the affiliate on their contact record.'),

@@ -55,6 +55,11 @@ function nul_census_custom_check_status_permisions($status = NULL, $contentType,
     $canResubmit = TRUE;
     $canView = TRUE;
   }
+  elseif (user_access('view all affiliate censuses')) {
+    $canEdit = FALSE;
+    $canResubmit = FALSE;
+    $canView = TRUE;
+  }
   // If user is not admin check permissions
   elseif ($myAffiliate && user_access('edit own affiliate censuses')) {
     $canView = TRUE;
