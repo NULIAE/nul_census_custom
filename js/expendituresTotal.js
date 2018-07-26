@@ -12,6 +12,7 @@
       'input#edit-field-g-interest-payments-und-0-value',
       'input#edit-field-h-dues-subscription-regist-und-0-value',
       'input#edit-field-i-depreciation-und-0-value',
+      'input#edit-field-j-taxes-including-property-und-0-value',
       'input#edit-field-k-utilities-und-0-value',
       'input#edit-field-l-equipment-space-rental-und-0-value',
       'input#edit-field-m-goods-and-services-und-0-value',
