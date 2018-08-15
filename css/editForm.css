@@ -184,7 +184,7 @@ div.article-content .field .field-label {
 
 div.view-full-census .field-items,
 div.view-full-parent-census .field-items,
-div.article-content .field-items  {
+div.article-content .nulTable .field-items  {
   padding: 5px;
   width: 60%;
 }
