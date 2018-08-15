@@ -601,9 +601,14 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
 
             // Entrepreneurship
             'field_legacy_business_sales_tot',
+            'field_ennumofparticipantbusdev',
 
             // revenue
             'field_legacy_budgetnulfunding',
+
+            // Housing
+            'field_legacy_months_behind',
+            'field_legacy_foreclosures_boolea',
 
           );
           $parentCensus = 0;
