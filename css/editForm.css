@@ -189,7 +189,7 @@ div.article-content .field-items  {
   width: 60%;
 }
 div.view-full-census .field-label-inline .field-items,
-div.article-content .field-label-inline .field-items {
+div.article-content .nulTable .field-label-inline .field-items {
   width: 60%;
   float: left;
   padding: 5px;
