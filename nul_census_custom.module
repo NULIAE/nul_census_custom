@@ -362,6 +362,10 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
             // set year to be current year
             $year = date("Y");
             $canCreate = nul_census_custom_census_creation_permissions(arg(3), $year);
+            if ($canCreate['any'] == FALSE && count($canCreate) == 1) {
+              drupal_set_message('You do not have permission to create tabs for this census');
+              drupal_goto('/');
+            }
             // If an affiliate id for which the logged in user has access to is found
             if (arg(3) >= 1 && $canCreate['affiliateId'] >= 1 && !empty($form['field_affiliate_select'][LANGUAGE_NONE]['#options'][arg(3)])) {
               // look up display name

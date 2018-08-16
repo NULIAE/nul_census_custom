@@ -362,6 +362,9 @@ function nul_census_custom_census_creation_permissions($affiliateId, $year) {
     $canCreate['any'] = FALSE;
     drupal_goto('/');
   }
+  if (user_access('view all affiliate censuses')) {
+    $canCreate['any'] = FALSE;
+  }
   // If can only create censuses for their affiliate check that the id passed from the url is for an affiliate the user has access to
   if (user_access('can create census for own affiliate') && !user_access('can create census for any affiliate') && !user_access('can edit magic census fields')) {
     $canCreate['any'] = FALSE;
