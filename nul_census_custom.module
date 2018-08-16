@@ -601,7 +601,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
 
             // Entrepreneurship
             'field_legacy_business_sales_tot',
-            'field_ennumofparticipantbusdev',
+            'field_ennumofparticipantsbusdev',
 
             // revenue
             'field_legacy_budgetnulfunding',
