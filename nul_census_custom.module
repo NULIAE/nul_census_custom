@@ -363,7 +363,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
             $year = date("Y");
             $canCreate = nul_census_custom_census_creation_permissions(arg(3), $year);
             if ($canCreate['any'] == FALSE && count($canCreate) == 1) {
-              drupal_set_message('You do not have permission to create tabs for this census');
+              drupal_set_message('You do not have permission to create censuses');
               drupal_goto('/');
             }
             // If an affiliate id for which the logged in user has access to is found
