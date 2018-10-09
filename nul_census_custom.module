@@ -5,13 +5,14 @@ module_load_include('inc', 'nul_census_custom', './nul_census_custom.report');
 
 function nul_census_custom_page_alter(&$page) {
   // PDF version of full census
-  if (arg(0) == 'full-census' && arg(1) > 0) {
+ $censusview = arg(0);
+  if (($censusview  == 'full-census' || $censusview  == 'allcensuses') && arg(1) > 0) {
     $parentCensusId = arg(1);
     global $base_url;
     $css1 = $base_url . '/' . drupal_get_path('module', 'nul_census_custom') . '/css/pdfStyling.css';
     $headerImage = $base_url . '/' . drupal_get_path('module', 'nul_census_custom') . '/img/greenCensusHeader.png';
 
-    $buttonToPDF = "<a href='/full-census/{$parentCensusId}/pdf/full-{$parentCensusId}.pdf'>Print To PDF</a>";
+    $buttonToPDF = "<a href='/$censusview/{$parentCensusId}/pdf/full-{$parentCensusId}.pdf'>Print To PDF</a>";
     // Add a special region for the HTML header of PDF files:
     $markup = $page['content']['system_main']['main']['#markup'];
     $page['content']['system_main']['main']['#markup'] = $buttonToPDF . $page['content']['system_main']['main']['#markup'] . $buttonToPDF;

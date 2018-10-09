@@ -6,7 +6,7 @@ div.nulTable h3 {
 }
 
 body {
-  font-size: 12px;
+  font-size: 14px;
 }
 
 div.article-content div.field-label,
@@ -15,7 +15,8 @@ div.article-content h2.field-label {
   display: inline-block;
   width: 300px;
   margin: 0px;
-  font-size: 12px;
+  font-size: 178px;
+  text-align:left!important;
 }
 
 div.article-content div.field-items,
@@ -32,7 +33,10 @@ div.view-empty h2,
 #crm-container article h1.article-title a {
   text-decoration: none;
   color: #708340;
+  text-align: left!important;
   clear: both;
+  margin:0;
+  padding:0:
 }
 
 section.field.field-name-field-photo, 
@@ -104,3 +108,48 @@ section.field {
 #crm-container ul li {
     list-style-type: none;
 }
+
+
+div.ceo-photo-wrapper {
+    width: 240px;
+    height: 220px;
+    float: left!important;
+    border-color: 1px solid  red important;
+}
+
+
+div.views-field-title
+{font-size:178px;}
+
+
+div.views-field.views-field-title h1, div.views-field.views-field-title h1 a{
+     text-align:left!important;
+     text-decoration: none !important;
+}
+
+
+li div.ceo-photo-wrapper div.ceo-photo img{
+    float:left!important; 
+   /* width: 5px!important;*/
+    margin-bottom: 20px;    
+    height: 220px;}
+
+
+
+
+div.view-header div, view-grouping-header, div.view-footer.view-header{
+     text-align:left!important;
+     margin: 20 0px!important;
+     padding:0px!important;
+}
+
+caption {
+     text-align:left!important;
+     margin: 0px!important;
+     padding:0px!important;
+     font-size:14px;
+     font-weight:600;
+}
+
+div.view-content div.item-list ul {margin:0px!important;padding:0px!important}
+
