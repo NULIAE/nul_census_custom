@@ -1,6 +1,10 @@
 This Module:
 -----------
 
+Additional Documentation
+
++ [Dedupe rules when syncing drupal census data to civi](dedupe.md)
+
 ## Installation
 
 To set up the nul census one should:

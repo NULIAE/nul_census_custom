@@ -29,6 +29,12 @@
        "/Complete'>Mark Tab as Complete</a></li";
     }
 
+    if (Drupal.settings.nul_census_custom.censuspart == 'civiSync') {
+      var buttonsToAdd = "<li><a href='"
+       + href  +
+       "/civiSync'>Sync to Civi</a></li";
+    }
+
     // Insert buttons to mark as reviewed and resubmit
     $($('ul.tabs.primary')).prepend(buttonsToAdd);
   });

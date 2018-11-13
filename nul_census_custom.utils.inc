@@ -43,7 +43,6 @@ function nul_census_custom_check_status_permisions($status = NULL, $contentType,
     // check that logged in user and node affiliate match
     $loggedInUserAffiliate = nul_census_custom_get_affiliate_from_user();
     $nodeAffiliateNode = nul_census_custom_get_affiliate_from_node($nid, $contentType);
-    // print_r($nodeAffiliateNode); die();
     if ($loggedInUserAffiliate == $nodeAffiliateNode) {
       $myAffiliate = TRUE;
     }
@@ -226,6 +225,11 @@ function nul_census_custom_update_nodes_status_field($tabsCompleted, $statusToCh
   if ($censusPart == 'census') {
     $vocabMachineName = 'status_type_for_census';
     $fieldName = 'field_census_status';
+    // TO HAVE CIVI UPDATE WHEN A CENSUS STATUS CHANGES TO "Reviewed Complete" UNCOMMENT THIS BLOCK
+    // if ($statusToChangeTo == 'Reviewed Complete') {
+    //   $censusId = key($tabsCompleted);
+    //   nul_census_custom_update_civi($censusId);
+    // }
   }
   $submittedTabTerm = key(taxonomy_get_term_by_name($statusToChangeTo, $vocabMachineName));
   foreach ($tabsCompleted as $nid => $object) {
@@ -233,6 +237,22 @@ function nul_census_custom_update_nodes_status_field($tabsCompleted, $statusToCh
     $tab->{$fieldName}[LANGUAGE_NONE][0]['tid'] = $submittedTabTerm;
     $tab = node_save($tab);
   }
+}
+
+/**
+ * [nul_census_custom_load_tab description]
+ * @param  string $tabType  name of tab content type
+ * @param  int $censusId    id of census
+ * @return int              id of tab of this type for this census
+ */
+function nul_census_custom_load_tab($tabType, $censusId) {
+  $query = new EntityFieldQuery();
+  $results = $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', $tabType)
+    ->fieldCondition('field_parent_census', 'target_id', $censusId)
+    ->propertyCondition('status', NODE_PUBLISHED)
+    ->execute();
+  return $results;
 }
 
 function nul_census_custom_hide_and_disable_fields(&$form, $fieldsToHideAndDisable) {
