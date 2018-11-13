@@ -255,7 +255,6 @@ function nul_census_custom_summary_export_to_csv($form) {
   concat('$', format(SUM(rsl.field_revenue_state_local_value), 2)) as 'State/Local',
   concat('$', format(SUM(ro.field_revenue_other_value), 2)) as 'Other',
   concat('$', format(SUM(ri.field_revenue_investment_value), 2)) as 'How much investment earnings (money market account, endowment)?',
-  concat('$', format(SUM(rv.field_revenue_ventures_value), 2)) as 'Affiliate Social Entrepreneurship Ventures and/or Income Generating Activities',
   concat('$', format(SUM(rhe.field_revenue_has_endowment_value), 2)) as 'Does the affiliate have an endowment?',
   concat('$', format(SUM(rea.field_revenue_endowment_amount_value), 2)) as 'If so, what is the present amount?'
   FROM node as tab
@@ -289,8 +288,6 @@ function nul_census_custom_summary_export_to_csv($form) {
   ON ro.entity_id = tab.nid
   LEFT JOIN field_data_field_revenue_investment ri
   ON ri.entity_id = tab.nid
-  LEFT JOIN field_data_field_revenue_ventures rv
-  ON rv.entity_id = tab.nid
   LEFT JOIN field_data_field_revenue_has_endowment rhe
   ON rhe.entity_id = tab.nid
   LEFT JOIN field_data_field_revenue_endowment_amount rea
