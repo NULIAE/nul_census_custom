@@ -31,7 +31,7 @@ function nul_census_custom_update_civicontact_info($census, $entity, $paramsToCh
  * @param  int $affiliateSelect affiliate select value
  * @return int                 civiContact Id if found else 0
  */
-function nul_census_custom_find_affiliate($affiliateSelect, $censusId) {
+function nul_census_custom_find_affiliate($affiliateSelect, $censusId = NULL) {
   $affiliateIdInCivi = 0;
   $params = array(
     'contact_type' => "Organization",

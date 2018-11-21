@@ -547,3 +547,30 @@ function nul_census_custom_check_for_required_url_parts($part) {
     }
   }
 }
+
+/**
+ * Autopopulate the tab based on the content in civi
+ * @param  string $tab               name of content type
+ * @param  int $affiliateIdInCivi    affiliate organization contact id in Civi
+ * @param  int $affiliateCEO         affiliate ceo contact id in Civi (only for census)
+ */
+function nul_census_custom_autopopulate_basic($tab, $affiliateIdInCivi, $affiliateCEO = NULL) {
+  switch ($tab) {
+    case 'census':
+      # code...
+      break;
+
+    case 'revenue':
+      # code...
+      break;
+
+    case 'community_relations':
+      # code...
+      break;
+
+    default:
+      # code...
+      break;
+  }
+
+}
