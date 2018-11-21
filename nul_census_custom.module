@@ -338,6 +338,10 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           // Remove commas from number fields
           nul_census_custom_remove_commas($form_state);
 
+
+          // add js so that one picks a CEO from the contact reference the relevant CEO info below updates
+          drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/chooseCEO.js');
+
           $form['#attached']['css'] = array(
             drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
           );
