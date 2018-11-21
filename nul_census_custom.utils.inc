@@ -555,6 +555,7 @@ function nul_census_custom_check_for_required_url_parts($part) {
  * @param  int $affiliateCEO         affiliate ceo contact id in Civi (only for census)
  */
 function nul_census_custom_autopopulate_basic($tab, $affiliateIdInCivi, $affiliateCEO = NULL) {
+  $fieldMapping = nul_census_custom_fieldmapping($tab);
   switch ($tab) {
     case 'census':
       # code...
