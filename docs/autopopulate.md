@@ -14,7 +14,7 @@ Looks for a Email, Phone or Address for the contact of Location Type Main and pi
 ### Fields
 
 | Contact | Field Label in Drupal                  | Field Machine Name in Drupal     | Field in CiviCRM       | Location/Type |
-+---------+----------------------------------------+----------------------------------+------------------------+---------------+
+|---------|----------------------------------------|----------------------------------|------------------------|---------------|
 | Org     | Affiliate Select                       | field_affiliate_select           | Contact Id             | n/a           |
 | Org     | Year Organization was Established      | field_date_established           | custom_1069            | n/a           |
 | Org     | Address Line 1                         | field_address_line_1             | Street Address         | Main/Address  |
@@ -50,7 +50,7 @@ If on a new Service Area tab I think we should create one paragraph for each exi
 ### Fields
 
 | Contact | Field Label in Drupal                  | Field Machine Name in Drupal     | Field in CiviCRM       | Location/Type |
-+---------+----------------------------------------+----------------------------------+------------------------+---------------+
+|---------|----------------------------------------|----------------------------------|------------------------|---------------|
 | Org     | Service Area City/County	             | field_service_area_city_county	  |	custom_1072            | n/a           |
 | Org     | Service Area Population	               | field_service_area_population	  | custom_1073            | n/a           |
 | Org     | Service Area White	                   | field_service_area_white	Decimal	| custom_1074            | n/a           |
