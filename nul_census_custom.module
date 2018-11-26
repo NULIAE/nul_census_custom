@@ -398,7 +398,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               // TODO get affiliate CEO id... should we do this assuming its the logged in user?
               $CEO  = nul_census_custom_get_user_info();
               if (!empty($CEO['contact_id.id'])) {
-                nul_census_custom_autopopulate_basic('census', $affiliateIdInCivi, $CEO['contact_id.id']);
+                nul_census_custom_autopopulate_basic($form, 'census', $affiliateIdInCivi, $CEO['contact_id.id']);
               }
 
               // set default status to inclomplete

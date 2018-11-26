@@ -188,6 +188,7 @@ function nul_census_custom_fieldmapping($tab) {
   switch ($tab) {
     case 'census':
       $mapping = array(
+        // Fields on the CEO
         'CEO' => array(
           'field_ceo' => 'id',
           'field_president_ceo_first_name' => 'first_name',
@@ -195,23 +196,52 @@ function nul_census_custom_fieldmapping($tab) {
           'field_president_ceo_last_name' => 'last_name',
           'field_number_of_years_as_ceo' => 'custom_1070',
           'field_number_of_years_of_service' => 'custom_1071',
-          'field_cellular_number' => 'Phone',
-          'field_email_address' => 'Email',
           'field_photo' => 'image_URL',
         ),
+
+        // Email/Phones
+        'contact' => array(
+          // CEO Contact Info
+          'field_cellular_number' => array(
+            'entity' => 'Phone',
+            'phone_type_id' => 'phone',
+            'location' => 'mobile',
+            'contact' => 'CEO',
+          ),
+          'field_email_address' => array(
+            'entity' => 'Email',
+            'location' => 'main',
+            'contact' => 'CEO',
+          ),
+          'field_telephone' => array(
+            'entity' => 'Phone',
+            'phone_type_id' => 'phone',
+            'location' => 'main',
+            'contact' => 'org',
+          ),
+          'field_fax' => array(
+            'entity' => 'Phone',
+            'phone_type_id' => 'fax',
+            'location' => 'main',
+            'contact' => 'org',
+          ),
+        ),
+
+        // Fields On the Org
         'org' => array(
           'field_affiliate_select' => 'id',
           'field_date_established' => 'custom_1069',
-          'field_telephone' => 'phone',
-          'field_fax' => 'phone',
-          'address' => array(
-            'field_address_line_1' => 'street_address',
-            'field_address_line_2' => 'supplemental_address_1',
-            'field_city' => 'city',
-            'field_state_province' => 'state_province',
-            'field_zip_code' => 'postal_code',
-          ),
         ),
+
+        // Org Address Fields
+        'address' => array(
+          'field_address_line_1' => 'street_address',
+          'field_address_line_2' => 'supplemental_address_1',
+          'field_city' => 'city',
+          'field_state_province' => 'state_province_id',
+          'field_zip_code' => 'postal_code',
+        ),
+
       );
 
       break;

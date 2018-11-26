@@ -3,10 +3,13 @@
 ## Census (Contact Information)
 
 ### Finding the Matching Affiliate Organization
+based on the id in the url
 
 ### Finding the Matching Affiliate CEO
+Defaults to the current user but one can change it using the CEO field I think this should be permissioned
 
 ### Finding the Matching Email, Phone, Addresses
+Looks for a Email, Phone or Address for the contact of Location Type Main and picks the first one
 
 ### Fields
 
@@ -31,7 +34,16 @@
 | CEO     | Email Address                          | field_email_address              | Email                  | Main/Email    |
 | CEO     | Photo                                  | field_photo                      | Contact Image          | n/a           |
 
-## Service Areas
+## Revenue
+
+### TODO make grid for Revenue Fields
+
+## Community Relations
+
+### TODO make grid for Community Relations Fields
+
+## TODO Service Areas
+If on a new Service Area tab I think we should create one paragraph for each exisiting service area in civi for the affiliate then we would not be matching per say... we could create a new hidden field for the entity id so that we are matching exactly
 
 ### Matching Service Areas
 
@@ -47,3 +59,13 @@
 | Org     | Service Area Native American	         | field_service_area_native_am	    | custom_1077            | n/a           |
 | Org     | Service Area African American	         | field_service_area_african_am	  | custom_1078            | n/a           |
 | Org     | Service Area Other	                   | field_service_area_other	        | custom_1079            | n/a           |
+
+## TODO Programs
+When one clicks Add program they should be able to choose a program in civi to default to.
+
+## TODO TEST USING 2019
+# Questions:
+
+1. Should we have a contact ref for address, email, Etc (allow user to pick from the exisiting ones in civi)
+2. Assuming we are looking for phones, emails etc of type "Main"
+3. What assumption should we make about who the CEO is if not basing it off of the logged in user or data entered into the first, last fields
