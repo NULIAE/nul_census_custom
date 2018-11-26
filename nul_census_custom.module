@@ -396,8 +396,10 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               $affiliateIdInCivi = nul_census_custom_find_affiliate($canCreate['affiliateId']);
 
               // TODO get affiliate CEO id... should we do this assuming its the logged in user?
-              $CEOId = NULL;
-              nul_census_custom_autopopulate_basic('census', $affiliateIdInCivi, $CEOId);
+              $CEO  = nul_census_custom_get_user_info();
+              if (!empty($CEO['contact_id.id'])) {
+                nul_census_custom_autopopulate_basic('census', $affiliateIdInCivi, $CEO['contact_id.id']);
+              }
 
               // set default status to inclomplete
               $defaultStatus = array_search('Incomplete', $form['field_census_status'][LANGUAGE_NONE]['#options']);

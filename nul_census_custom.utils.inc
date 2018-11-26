@@ -347,23 +347,29 @@ function nul_census_custom_civi_api($entity, $action, $params) {
   return $results;
 }
 
+function nul_census_custom_get_user_info($drupalUserId = NULL) {
+  if ($drupalUserId == NULL) {
+    global $user;
+    $drupalUserId = $user->uid;
+  }
+  $affiliateField = "contact_id.custom_" . variable_get('affiliatefield');
+  $params = array(
+    'return' => array($affiliateField, "contact_id.id"),
+    'uf_id' => $drupalUserId,
+  );
+  $civiContact = nul_census_custom_civi_api('UFMatch', 'getsingle', $params);
+  return $civiContact;
+}
+
 /**
  * lookup the affiliate on the civicrm contact
  * @param  id $drupalUserId drupal user id
  * @return int    Civicrm Contact ID of the affiliate the user has on their contact record
  */
 function nul_census_custom_get_affiliate_from_user($drupalUserId = NULL) {
-  if ($drupalUserId == NULL) {
-    global $user;
-    $drupalUserId = $user->uid;
-  }
-  $affiliateField = "contact_id.custom_" . variable_get('affiliatefield');
   $affiliate = NULL;
-  $params = array(
-    'return' => array($affiliateField, "contact_id.id"),
-    'uf_id' => $drupalUserId,
-  );
-  $civiContact = nul_census_custom_civi_api('UFMatch', 'getsingle', $params);
+  $affiliateField = "contact_id.custom_" . variable_get('affiliatefield');
+  $civiContact = nul_census_custom_get_user_info($drupalUserId = NULL);
   if (!empty($civiContact[$affiliateField])) {
     $affiliate = $civiContact[$affiliateField];
   }
@@ -558,6 +564,8 @@ function nul_census_custom_autopopulate_basic($tab, $affiliateIdInCivi, $affilia
   $fieldMapping = nul_census_custom_fieldmapping($tab);
   switch ($tab) {
     case 'census':
+      
+
       # code...
       break;
 
