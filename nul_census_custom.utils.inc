@@ -560,22 +560,26 @@ function nul_census_custom_check_for_required_url_parts($part) {
  * @param  int $affiliateIdInCivi    affiliate organization contact id in Civi
  * @param  int $affiliateCEO         affiliate ceo contact id in Civi (only for census)
  */
-function nul_census_custom_autopopulate_basic($form, $tab, $affiliateIdInCivi, $affiliateCEO = NULL) {
+function nul_census_custom_autopopulate_basic(&$form, $tab, $affiliateIdInCivi, $affiliateCEO = NULL) {
   $fieldMapping = nul_census_custom_fieldmapping($tab);
-  $orgInCivi = nul_census_custom_civi_api('Contact', 'getsingle', array('id' => $affiliateIdInCivi));
-
   switch ($tab) {
     case 'census':
+     $orgInCivi = nul_census_custom_civi_api('Contact', 'getsingle', array('id' => $affiliateIdInCivi, 'return' => array_values($fieldMapping['org'])));
+
       if (!empty($affiliateCEO)) {
-        $CEOInCivi = nul_census_custom_civi_api('Contact', 'getsingle', array('id' => $affiliateCEO));
-        foreach ($fieldMapping['CEO'] as $fieldInDrupal => $fieldInCivi) {
+        $CEOInCivi = nul_census_custom_civi_api('Contact', 'getsingle', array('id' => $affiliateCEO, 'return' => array_values($fieldMapping['CEO'])));
+foreach ($fieldMapping['CEO'] as $fieldInDrupal => $fieldInCivi) {
           if (!empty($CEOInCivi[$fieldInCivi])) {
-            $form[$fieldInDrupal][LANGUAGE_NONE]['#default_value'][] = $CEOInCivi[$fieldInCivi];
+            // TODO set value for CEO entity reference field
+            if ($fieldInDrupal == 'field_civicrm_ceo_contact_id') {
+              // $form[$fieldInDrupal][LANGUAGE_NONE][0]['contact_id']['#default_value'] = $CEOInCivi[$fieldInCivi];
+            }
+            $form[$fieldInDrupal][LANGUAGE_NONE][0]['value']['#default_value'] = $CEOInCivi[$fieldInCivi];
           }
         }
         foreach ($fieldMapping['org'] as $fieldInDrupal => $fieldInCivi) {
           if (!empty($orgInCivi[$fieldInCivi])) {
-            $form[$fieldInDrupal][LANGUAGE_NONE]['#default_value'][] = $orgInCivi[$fieldInCivi];
+            $form[$fieldInDrupal][LANGUAGE_NONE][0]['value']['#default_value'] = $orgInCivi[$fieldInCivi];
           }
         }
         foreach ($fieldMapping['contact'] as $fieldInDrupal => $civiMatchDets) {
@@ -594,7 +598,7 @@ function nul_census_custom_autopopulate_basic($form, $tab, $affiliateIdInCivi, $
           }
           $contactInfo = nul_census_custom_civi_api($civiMatchDets['entity'], 'get', $params);
           if (!empty($contactInfo['values'][0][$civiMatchDets['entity']])) {
-            $form[$fieldInDrupal][LANGUAGE_NONE]['#default_value'][] = $contactInfo['values'][0][$civiMatchDets['entity']];
+            $form[$fieldInDrupal][LANGUAGE_NONE][0]['value']['#default_value'] = $contactInfo['values'][0][$civiMatchDets['entity']];
           }
         }
         $orgAddress = nul_census_custom_civi_api('Address', 'get', array(
@@ -605,7 +609,14 @@ function nul_census_custom_autopopulate_basic($form, $tab, $affiliateIdInCivi, $
         if (!empty($orgAddress['values'][0]['location_type_id'])) {
           foreach ($fieldMapping['address'] as $drupalField => $civiField) {
             if (!empty($orgAddress['values'][0][$civiField])) {
-              $form[$drupalField][LANGUAGE_NONE]['#default_value'][] = $orgAddress['values'][0][$civiField];
+              if ($civiField == 'state_province_id') {
+                  $states = nul_census_custom_civi_api('Address', 'getoptions', array('field' => "state_province_id")); 
+                  if (!empty($states['values'][$orgAddress['values'][0]['state_province_id']])) {
+                    $form[$drupalField][LANGUAGE_NONE]['#default_value'][] = $form[$drupalField][LANGUAGE_NONE]['#options'][$states['values'][$orgAddress['values'][0]['state_province_id']]];
+                  }     
+              }
+
+              $form[$drupalField][LANGUAGE_NONE][0]['value']['#default_value'] = $orgAddress['values'][0][$civiField];
             }
           }
         }
@@ -631,10 +642,15 @@ function nul_census_custom_autopopulate_basic($form, $tab, $affiliateIdInCivi, $
       }
       break;
 
+    case 'community-relations':
     case 'revenue':
-    case 'community_relations':
+      $orgInCivi = nul_census_custom_civi_api('Contact', 'getsingle', array('id' => $affiliateIdInCivi, 'return' => array_keys($fieldMapping)));
       foreach ($fieldMapping as $civiField => $drupalField) {
-        $form[$drupalField][LANGUAGE_NONE]['#default_value'][] = $orgInCivi[$civiField];
+        if (!empty($form[$drupalField][LANGUAGE_NONE]['#options'][$orgInCivi[$civiField]])) {
+          $form[$drupalField][LANGUAGE_NONE]['#default_value'] = $orgInCivi[$civiField];
+        } else {
+          $form[$drupalField][LANGUAGE_NONE][0]['value']['#default_value'] = $orgInCivi[$civiField];
+        }
       }
       break;
 

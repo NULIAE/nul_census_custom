@@ -190,7 +190,7 @@ function nul_census_custom_fieldmapping($tab) {
       $mapping = array(
         // Fields on the CEO
         'CEO' => array(
-          'field_ceo' => 'id',
+          'field_civicrm_ceo_contact_id' => 'id',
           'field_president_ceo_first_name' => 'first_name',
           'field_president_ceo_middle_name' => 'middle_name',
           'field_president_ceo_last_name' => 'last_name',
@@ -203,24 +203,24 @@ function nul_census_custom_fieldmapping($tab) {
         'contact' => array(
           // CEO Contact Info
           'field_cellular_number' => array(
-            'entity' => 'Phone',
+            'entity' => 'phone',
             'phone_type_id' => 'phone',
             'location' => 'mobile',
             'contact' => 'CEO',
           ),
           'field_email_address' => array(
-            'entity' => 'Email',
+            'entity' => 'email',
             'location' => 'main',
             'contact' => 'CEO',
           ),
           'field_telephone' => array(
-            'entity' => 'Phone',
+            'entity' => 'phone',
             'phone_type_id' => 'phone',
             'location' => 'main',
             'contact' => 'org',
           ),
           'field_fax' => array(
-            'entity' => 'Phone',
+            'entity' => 'phone',
             'phone_type_id' => 'fax',
             'location' => 'main',
             'contact' => 'org',
@@ -246,7 +246,7 @@ function nul_census_custom_fieldmapping($tab) {
 
       break;
 
-    case 'community_relations':
+    case 'community-relations':
       $mapping = array(
         'custom_1084' => 'field_produces_annual_report',
         'custom_1085' => 'field_newsletter',

@@ -383,6 +383,8 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           arg(3) >= 1) {
             // set year to be current year
             $year = date("Y");
+            // FOR TESTING DELETE THIS LINE WHEN DONE TESTING SO IT REVERTS BACK TO THE CURRENT YEAR
+            $year = 2019;
             $canCreate = nul_census_custom_census_creation_permissions(arg(3), $year);
             if ($canCreate['any'] == FALSE && count($canCreate) == 1) {
               drupal_set_message('You do not have permission to create censuses');
@@ -407,7 +409,6 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               if (!empty($CEO['contact_id.id'])) {
                 nul_census_custom_autopopulate_basic($form, 'census', $affiliateIdInCivi, $CEO['contact_id.id']);
               }
-
               // set default status to inclomplete
               $defaultStatus = array_search('Incomplete', $form['field_census_status'][LANGUAGE_NONE]['#options']);
               if (empty($form['field_census_status'][LANGUAGE_NONE]['#default_value'])) {
@@ -684,9 +685,9 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               }
 
               // auto populate fields from civi
-              if (arg(2) == 'revenue' || arg(2) == 'community_relations') {
-                $affiliateIdInCivi = nul_census_custom_find_affiliate($canCreate['affiliateId']);
-                nul_census_custom_autopopulate_basic(arg(2), $affiliateIdInCivi);
+              if (arg(2) == 'revenue' || arg(2) == 'community-relations') {
+                $affiliateIdInCivi = nul_census_custom_find_affiliate($nodeAffiliate);
+                nul_census_custom_autopopulate_basic($form, arg(2), $affiliateIdInCivi);
               }
             }
             else {
@@ -948,7 +949,7 @@ function nul_census_custom_node_update($node) {
           if (!empty($ogStatusTerm->name)) {
             $params['prev_status'] = $ogStatusTerm->name;
           }
-          drupal_mail('nul_census_custom', 'status_change', $toAndFrom['to'], $language, $params, $toAndFrom['from'], TRUE);
+         // drupal_mail('nul_census_custom', 'status_change', $toAndFrom['to'], $language, $params, $toAndFrom['from'], TRUE);
         }
       }
     }
@@ -992,7 +993,7 @@ function nul_census_custom_node_insert($node) {
       'title' => $node->title,
     );
     $toAndFrom = nul_census_custom_get_emails_to_notify($node);
-    drupal_mail('nul_census_custom', 'census_created', $toAndFrom['to'], $language, $params, $toAndFrom['from'], TRUE);
+    // drupal_mail('nul_census_custom', 'census_created', $toAndFrom['to'], $language, $params, $toAndFrom['from'], TRUE);
   }
 }
 
