@@ -612,6 +612,25 @@ function nul_census_custom_autopopulate_basic($form, $tab, $affiliateIdInCivi, $
       }
       break;
 
+    case 'service_areas':
+
+      // TODO create the node with status not started
+      $node = node_load();
+
+      // TODO get all the existing service areas using ApI something like below or a db query
+      $serviceAreas = nul_census_custom_civi_api('Customvalue', 'get', array('entity_id' => $affiliateIdInCivi));
+
+      // create a paragraph for each exisiting service area
+      foreach ($serviceArea as $key => $value) {
+        $paragraph = new ParagraphsItemEntity(array('field_name' => 'name_of_field_in_node', 'bundle' => 'name_of_paragraph_bundle'));
+        $paragraph->is_new = TRUE;
+        $paragraph->setHostEntity('node', $node);
+        $paragraph->field1_name_in_paragraph_bundle[LANGUAGE_NONE][0]['value'] = 'Test Data';
+        $paragraph->field2_name_in_paragraph_bundle[LANGUAGE_NONE][0]['value'] = 'Test Data';
+        $paragraph->save();
+      }
+      break;
+
     case 'revenue':
     case 'community_relations':
       foreach ($fieldMapping as $civiField => $drupalField) {
