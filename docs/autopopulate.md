@@ -36,11 +36,43 @@ Looks for a Email, Phone or Address for the contact of Location Type Main and pi
 
 ## Revenue
 
-### TODO make grid for Revenue Fields
+### Fields
+
+| Contact | Field Label in Drupal                  | Field Machine Name in Drupal     | Field in CiviCRM       | Location/Type |
+|---------|----------------------------------------|----------------------------------|------------------------|---------------|
+| Org     | How much investment earnings...?       | field_revenue_investment     	  |	custom_1098            | n/a           |
+| Org     | Corporations                           | field_revenue_corporations   	  | custom_1099            | n/a           |
+| Org     | Foundations       	                   | field_revenue_foundations      	| custom_1100            | n/a           |
+| Org     | Individual Memberships      	         | field_revenue_individual_members | custom_1101            | n/a           |
+| Org     | Special Events            	           | field_revenue_special_events     | custom_1102            | n/a           |
+| Org     | United Way                             | field_revenue_united_way   	    | custom_1103            | n/a           |
+| Org     | Federal                                | field_revenue_federal            | custom_1106            | n/a           |
+| Org     | State/Local                            | field_revenue_state_local        | custom_1105            | n/a           |
+| Org     | NUL               	                   | field_revenue_nul              	| custom_1107            | n/a           |
+| Org     | Purpose of NUL Funding      	         | field_revenue_purpose_of_funding | custom_1108            | n/a           |
+| Org     | Other                     	           | field_revenue_other              | custom_1109            | n/a           |
+| Org     | Total revenue for your affiliate       | field_revenue_total_budget       | custom_1112            | n/a           |
+| Org     | Does the affiliate have an endowment?  | field_revenue_has_endowment      | custom_1113            | n/a           |
+| Org     | If so, what is the present amount?     | field_revenue_endowment_amount   | custom_1111            | n/a           |
 
 ## Community Relations
 
-### TODO make grid for Community Relations Fields
+### Fields
+
+| Contact | Field Label in Drupal                                              | Field Machine Name in Drupal     | Field in CiviCRM       | Location/Type |
+|---------|--------------------------------------------------------------------|----------------------------------|------------------------|---------------|
+| Org     | Does the affiliate produce an annual report?                       | field_produces_annual_report  	  |	custom_1084            | n/a           |
+| Org     | Does the affiliate produce a monthly/quarterly newsletter?         | field_newsletter             	  | custom_1085            | n/a           |
+| Org     | Does affiliate produce a "State of Black (Affiliate Name)" Report? | field_state_of_black_report     	| custom_1086            | n/a           |
+| Org     | Does the affiliate maintain a website?                             | field_maintains_website          | custom_1087            | n/a           |
+| Org     | If so, what is your affiliate's website address?                   | field_affiliate_website_address  | custom_1089            | n/a           |
+| Org     | How many hits does your website receive monthly?                   | field_monthly_website_hits  	    | custom_1090            | n/a           |
+| Org     | Is website linked to NUL website?                                  | field_is_website_linked_to_nul   | custom_1091            | n/a           |
+| Org     | Does affiliate produce a regular TV or cable show?                 | field_produces_tv_or_cable_show  | custom_1092            | n/a           |
+| Org     | Does affiliate produce a radio show?          	                   | field_produces_a_radio_show    	| custom_1093            | n/a           |
+| Org     | Does affiliate have an advertising or marketing campaign?	         | field_has_ad_marketing_campaign  | custom_1094            | n/a           |
+| Org     | What is the method of advertising or marketing?       	           | field_method_of_ad_marketing     | custom_1096            | n/a           |
+| Org     | Does affiliate do a marketing kit and/or pamphlet?                 | field_marketing_kit_or_pamphlet  | custom_1095            | n/a           |
 
 ## TODO Service Areas
 If on a new Service Area tab I think we should create one paragraph for each exisiting service area in civi for the affiliate then we would not be matching per say... we could create a new hidden field for the entity id so that we are matching exactly
