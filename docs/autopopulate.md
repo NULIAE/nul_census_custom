@@ -34,26 +34,6 @@ Looks for a Email, Phone or Address for the contact of Location Type Main and pi
 | CEO     | Email Address                          | field_email_address              | Email                  | Main/Email    |
 | CEO     | Photo                                  | field_photo                      | Contact Image          | n/a           |
 
-## Revenue
-
-### Fields
-
-| Contact | Field Label in Drupal                  | Field Machine Name in Drupal     | Field in CiviCRM       | Location/Type |
-|---------|----------------------------------------|----------------------------------|------------------------|---------------|
-| Org     | How much investment earnings...?       | field_revenue_investment     	  |	custom_1098            | n/a           |
-| Org     | Corporations                           | field_revenue_corporations   	  | custom_1099            | n/a           |
-| Org     | Foundations       	                   | field_revenue_foundations      	| custom_1100            | n/a           |
-| Org     | Individual Memberships      	         | field_revenue_individual_members | custom_1101            | n/a           |
-| Org     | Special Events            	           | field_revenue_special_events     | custom_1102            | n/a           |
-| Org     | United Way                             | field_revenue_united_way   	    | custom_1103            | n/a           |
-| Org     | Federal                                | field_revenue_federal            | custom_1106            | n/a           |
-| Org     | State/Local                            | field_revenue_state_local        | custom_1105            | n/a           |
-| Org     | NUL               	                   | field_revenue_nul              	| custom_1107            | n/a           |
-| Org     | Purpose of NUL Funding      	         | field_revenue_purpose_of_funding | custom_1108            | n/a           |
-| Org     | Other                     	           | field_revenue_other              | custom_1109            | n/a           |
-| Org     | Total revenue for your affiliate       | field_revenue_total_budget       | custom_1112            | n/a           |
-| Org     | Does the affiliate have an endowment?  | field_revenue_has_endowment      | custom_1113            | n/a           |
-| Org     | If so, what is the present amount?     | field_revenue_endowment_amount   | custom_1111            | n/a           |
 
 ## Community Relations
 
