@@ -72,8 +72,6 @@ If on a new Service Area tab I think we should create one paragraph for each exi
 | Org     | Service Area African American	         | field_service_area_african_am	  | custom_1078            | n/a           |
 | Org     | Service Area Other	                   | field_service_area_other	        | custom_1079            | n/a           |
 
-## TODO Programs
-When one clicks Add program they should be able to choose a program in civi to default to.
 
 ## TODO TEST USING 2019
 # Questions:
