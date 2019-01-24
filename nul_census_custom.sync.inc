@@ -190,7 +190,6 @@ function nul_census_custom_fieldmapping($tab) {
       $mapping = array(
         // Fields on the CEO
         'CEO' => array(
-          'field_civicrm_ceo_contact_id' => 'id',
           'field_president_ceo_first_name' => 'first_name',
           'field_president_ceo_middle_name' => 'middle_name',
           'field_president_ceo_last_name' => 'last_name',
