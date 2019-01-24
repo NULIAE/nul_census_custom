@@ -6,7 +6,7 @@
 based on the id in the url
 
 ### Finding the Matching Affiliate CEO
-Defaults to the current user but one can change it using the CEO field I think this should be permissioned
+Defaults to the current user 
 
 ### Finding the Matching Email, Phone, Addresses
 Looks for a Email, Phone or Address for the contact of Location Type Main and picks the first one
