@@ -31,7 +31,7 @@ function nul_census_custom_update_civicontact_info($census, $entity, $paramsToCh
  * @param  int $affiliateSelect affiliate select value
  * @return int                 civiContact Id if found else 0
  */
-function nul_census_custom_find_affiliate($affiliateSelect, $censusId) {
+function nul_census_custom_find_affiliate($affiliateSelect, $censusId = NULL) {
   $affiliateIdInCivi = 0;
   $params = array(
     'contact_type' => "Organization",
@@ -184,18 +184,69 @@ function nul_census_custom_get_tab_data($censusId, $tabName, $affiliateId, $fiel
   }
 }
 
-/**
- * Update Affiliate and Affiliate CEO contact information in Civi Based on Census in Drupal
- * @param  int $censusId nid of the census we are updating based off of
- */
-function nul_census_custom_update_civi($censusId) {
-  $census = node_load($censusId);
-  // Find Affiliate
-  if (!empty($census->field_affiliate_select[LANGUAGE_NONE][0]['value'])) {
-    $affiliateIdInCivi = nul_census_custom_find_affiliate($census->field_affiliate_select[LANGUAGE_NONE][0]['value'], $censusId);
-    if ($affiliateIdInCivi > 0) {
-      // Send Data from Community Relations tab to Civi
-      nul_census_custom_get_tab_data($censusId, 'community_relations', $affiliateIdInCivi, array(
+function nul_census_custom_fieldmapping($tab) {
+  switch ($tab) {
+    case 'census':
+      $mapping = array(
+        // Fields on the CEO
+        'CEO' => array(
+          'field_president_ceo_first_name' => 'first_name',
+          'field_president_ceo_middle_name' => 'middle_name',
+          'field_president_ceo_last_name' => 'last_name',
+          'field_number_of_years_as_ceo' => 'custom_1070',
+          'field_number_of_years_of_service' => 'custom_1071',
+          'field_photo' => 'image_URL',
+        ),
+
+        // Email/Phones
+        'contact' => array(
+          // CEO Contact Info
+          'field_cellular_number' => array(
+            'entity' => 'phone',
+            'phone_type_id' => 'phone',
+            'location' => 'mobile',
+            'contact' => 'CEO',
+          ),
+          'field_email_address' => array(
+            'entity' => 'email',
+            'location' => 'main',
+            'contact' => 'CEO',
+          ),
+          'field_telephone' => array(
+            'entity' => 'phone',
+            'phone_type_id' => 'phone',
+            'location' => 'main',
+            'contact' => 'org',
+          ),
+          'field_fax' => array(
+            'entity' => 'phone',
+            'phone_type_id' => 'fax',
+            'location' => 'main',
+            'contact' => 'org',
+          ),
+        ),
+
+        // Fields On the Org
+        'org' => array(
+          'field_affiliate_select' => 'id',
+          'field_date_established' => 'custom_1069',
+        ),
+
+        // Org Address Fields
+        'address' => array(
+          'field_address_line_1' => 'street_address',
+          'field_address_line_2' => 'supplemental_address_1',
+          'field_city' => 'city',
+          'field_state_province' => 'state_province_id',
+          'field_zip_code' => 'postal_code',
+        ),
+
+      );
+
+      break;
+
+    case 'community-relations':
+      $mapping = array(
         'custom_1084' => 'field_produces_annual_report',
         'custom_1085' => 'field_newsletter',
         'custom_1086' => 'field_state_of_black_report',
@@ -208,10 +259,11 @@ function nul_census_custom_update_civi($censusId) {
         'custom_1094' => 'field_has_ad_marketing_campaign',
         'custom_1096' => 'field_method_of_ad_marketing',
         'custom_1095' => 'field_marketing_kit_or_pamphlet',
-      ));
+      );
+      break;
 
-      // Send Data from Revenue tab to Civi
-      nul_census_custom_get_tab_data($censusId, 'revenue', $affiliateIdInCivi, array(
+    case 'revenue':
+      $mapping = array(
         'custom_1098' => 'field_revenue_investment',
         'custom_1099' => 'field_revenue_corporations',
         'custom_1100' => 'field_revenue_foundations',
@@ -226,19 +278,21 @@ function nul_census_custom_update_civi($censusId) {
         'custom_1112' => 'field_revenue_total_budget',
         'custom_1113' => 'field_revenue_has_endowment',
         'custom_1111' => 'field_revenue_endowment_amount',
-      ));
+      );
+      break;
 
-      // TODO deal with programs (multiple)
-      nul_census_custom_get_tab_data($censusId, 'programs', $affiliateIdInCivi, array(
+    case 'programs':
+      $mapping = array(
         'custom_1080' => 'title',
         'custom_1081' => 'field_program_budget',
         'custom_1082' => 'field_program_served_total',
         'custom_1083' => 'field_program_area',
         'custom_1097' => 'field_program_nul_funded',
-      ));
+      );
+      break;
 
-      // Send Data from Service Areas tab to Civi
-      nul_census_custom_get_tab_data($censusId, 'service_areas', $affiliateIdInCivi, array(
+    case 'service_areas':
+      $mapping = array(
         'custom_1073' => 'field_service_area_population',
         'custom_1072' => 'field_service_area_city_county',
         'custom_1074' => 'field_service_area_white',
@@ -247,7 +301,37 @@ function nul_census_custom_update_civi($censusId) {
         'custom_1077' => 'field_service_area_native_am',
         'custom_1078' => 'field_service_area_african_am',
         'custom_1079' => 'field_service_area_other',
-      ));
+      );
+      break;
+
+    default:
+      $mapping = array();
+      break;
+  }
+  return $mapping;
+}
+/**
+ * Update Affiliate and Affiliate CEO contact information in Civi Based on Census in Drupal
+ * @param  int $censusId nid of the census we are updating based off of
+ */
+function nul_census_custom_update_civi($censusId) {
+  $census = node_load($censusId);
+  // Find Affiliate
+  if (!empty($census->field_affiliate_select[LANGUAGE_NONE][0]['value'])) {
+    $affiliateIdInCivi = nul_census_custom_find_affiliate($census->field_affiliate_select[LANGUAGE_NONE][0]['value'], $censusId);
+    if ($affiliateIdInCivi > 0) {
+      $tabsWithBasicFields = array(
+        'community_relations',
+        'revenue',
+        'service_areas',
+        'programs',
+      );
+      foreach ($tabsWithBasicFields as $key => $tab) {
+        // TODO deal with programs (multiple)
+        // TODO deal with service areas (multiple)
+        $mapping = nul_census_custom_fieldmapping($tab);
+        nul_census_custom_get_tab_data($censusId, $tab, $affiliateIdInCivi, $mapping);
+      }
 
       // Update Affiliate Contact For fields on Census
       if (!empty($census->field_date_established[LANGUAGE_NONE][0]['value'])) {

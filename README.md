@@ -3,7 +3,8 @@ This Module:
 
 Additional Documentation
 
-+ [Dedupe rules when syncing drupal census data to civi](dedupe.md)
++ [Dedupe rules when syncing drupal census data to civi](docs/dedupe.md)
++ [Auto populating new Censuses](docs/autopopulate.md)
 
 ## Installation
 

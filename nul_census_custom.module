@@ -389,8 +389,14 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               // Update affliate select field
               $form['field_affiliate_select'][LANGUAGE_NONE]['#default_value'][] = $canCreate['affiliateId'];
 
-              // $form['field_affiliate'][LANGUAGE_NONE][0]['value']['#default_value'] = $canCreate['affiliateId'];
-              // $form['field_first_name'][LANGUAGE_NONE][0]['value']['#default_value'] = $displayName;
+              // auto populate relevant fields
+              $affiliateIdInCivi = nul_census_custom_find_affiliate($canCreate['affiliateId']);
+
+              // TODO get affiliate CEO id... should we do this assuming its the logged in user?
+              $CEO  = nul_census_custom_get_user_info();
+              if (!empty($CEO['contact_id.id'])) {
+                nul_census_custom_autopopulate_basic($form, 'census', $affiliateIdInCivi, $CEO['contact_id.id']);
+              }
               // set default status to inclomplete
               $defaultStatus = array_search('Incomplete', $form['field_census_status'][LANGUAGE_NONE]['#options']);
               if (empty($form['field_census_status'][LANGUAGE_NONE]['#default_value'])) {
@@ -662,6 +668,12 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               $censusTab = nul_census_custom_searchTaxonomyByField('census_tabs', 'field_content_type_machine_name', $form['type']['#value']);
               if ($censusTab->name) {
                 $form['title']['#default_value'] = $censusTab->name;
+              }
+
+              // auto populate fields from civi
+              if (arg(2) == 'revenue' || arg(2) == 'community-relations') {
+                $affiliateIdInCivi = nul_census_custom_find_affiliate($nodeAffiliate);
+                nul_census_custom_autopopulate_basic($form, arg(2), $affiliateIdInCivi);
               }
             }
             else {
