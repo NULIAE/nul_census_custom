@@ -345,9 +345,6 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           // Remove commas from number fields
           nul_census_custom_remove_commas($form_state);
 
-          // add js so that one picks a CEO from the contact reference the relevant CEO info below updates
-          drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/chooseCEO.js');
-
           $form['#attached']['css'] = array(
             drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css',
           );
@@ -383,8 +380,6 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
           arg(3) >= 1) {
             // set year to be current year
             $year = date("Y");
-            // FOR TESTING DELETE THIS LINE WHEN DONE TESTING SO IT REVERTS BACK TO THE CURRENT YEAR
-            $year = 2019;
             $canCreate = nul_census_custom_census_creation_permissions(arg(3), $year);
             if ($canCreate['any'] == FALSE && count($canCreate) == 1) {
               drupal_set_message('You do not have permission to create censuses');
@@ -949,7 +944,7 @@ function nul_census_custom_node_update($node) {
           if (!empty($ogStatusTerm->name)) {
             $params['prev_status'] = $ogStatusTerm->name;
           }
-         // drupal_mail('nul_census_custom', 'status_change', $toAndFrom['to'], $language, $params, $toAndFrom['from'], TRUE);
+          drupal_mail('nul_census_custom', 'status_change', $toAndFrom['to'], $language, $params, $toAndFrom['from'], TRUE);
         }
       }
     }
@@ -993,7 +988,7 @@ function nul_census_custom_node_insert($node) {
       'title' => $node->title,
     );
     $toAndFrom = nul_census_custom_get_emails_to_notify($node);
-    // drupal_mail('nul_census_custom', 'census_created', $toAndFrom['to'], $language, $params, $toAndFrom['from'], TRUE);
+    drupal_mail('nul_census_custom', 'census_created', $toAndFrom['to'], $language, $params, $toAndFrom['from'], TRUE);
   }
 }
 
