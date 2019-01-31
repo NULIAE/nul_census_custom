@@ -677,8 +677,13 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
                 $form['title']['#default_value'] = $censusTab->name;
               }
 
+              // autopopulate fields from drupal
+              if (arg(2) == 'service-areas' || arg(2) == 'employees-and-board-members') {
+                nul_census_custom_autopopulate_from_last_year_census_node($nodeAffiliate);
+              }
+
               // auto populate fields from civi
-              if (arg(2) == 'revenue' || arg(2) == 'community-relations') {
+              if (arg(2) == 'community-relations') {
                 $affiliateIdInCivi = nul_census_custom_find_affiliate($nodeAffiliate);
                 nul_census_custom_autopopulate_from_civi($form, arg(2), $affiliateIdInCivi);
               }
