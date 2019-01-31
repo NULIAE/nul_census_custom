@@ -610,10 +610,10 @@ foreach ($fieldMapping['CEO'] as $fieldInDrupal => $fieldInCivi) {
           foreach ($fieldMapping['address'] as $drupalField => $civiField) {
             if (!empty($orgAddress['values'][0][$civiField])) {
               if ($civiField == 'state_province_id') {
-                  $states = nul_census_custom_civi_api('Address', 'getoptions', array('field' => "state_province_id")); 
+                  $states = nul_census_custom_civi_api('Address', 'getoptions', array('field' => "state_province_id"));
                   if (!empty($states['values'][$orgAddress['values'][0]['state_province_id']])) {
                     $form[$drupalField][LANGUAGE_NONE]['#default_value'][] = $form[$drupalField][LANGUAGE_NONE]['#options'][$states['values'][$orgAddress['values'][0]['state_province_id']]];
-                  }     
+                  }
               }
 
               $form[$drupalField][LANGUAGE_NONE][0]['value']['#default_value'] = $orgAddress['values'][0][$civiField];
@@ -643,7 +643,6 @@ foreach ($fieldMapping['CEO'] as $fieldInDrupal => $fieldInCivi) {
       break;
 
     case 'community-relations':
-    case 'revenue':
       $orgInCivi = nul_census_custom_civi_api('Contact', 'getsingle', array('id' => $affiliateIdInCivi, 'return' => array_keys($fieldMapping)));
       foreach ($fieldMapping as $civiField => $drupalField) {
         if (!empty($form[$drupalField][LANGUAGE_NONE]['#options'][$orgInCivi[$civiField]])) {
