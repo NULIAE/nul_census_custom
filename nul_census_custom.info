@@ -6,6 +6,7 @@ files[] = nul_census_custom.utils.inc
 files[] = nul_census_custom.admin.inc
 files[] = nul_census_custom.sync.inc
 files[] = nul_census_custom.report.inc
+files[] = nul_census_custom.autopop.inc
 
 version = "7.x-1.0"
 core = "7.x"

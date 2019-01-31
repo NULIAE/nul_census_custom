@@ -3,6 +3,7 @@
 module_load_include('inc', 'nul_census_custom', './nul_census_custom.utils');
 module_load_include('inc', 'nul_census_custom', './nul_census_custom.sync');
 module_load_include('inc', 'nul_census_custom', './nul_census_custom.report');
+module_load_include('inc', 'nul_census_custom', './nul_census_custom.autopop');
 
 function nul_census_custom_page_alter(&$page) {
   // PDF version of full census
@@ -392,10 +393,16 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               // auto populate relevant fields
               $affiliateIdInCivi = nul_census_custom_find_affiliate($canCreate['affiliateId']);
 
-              // TODO get affiliate CEO id... should we do this assuming its the logged in user?
-              $CEO  = nul_census_custom_get_user_info();
-              if (!empty($CEO['contact_id.id'])) {
-                nul_census_custom_autopopulate_basic($form, 'census', $affiliateIdInCivi, $CEO['contact_id.id']);
+              // Autopopulate CEO using sync logic
+              $CEO = nul_census_custom_civi_api('Contact', 'getsingle', array(
+                'contact_type' => "Individual",
+                'sequential' => 1,
+                'custom_1014' => "Affiliate CEO",
+                'custom_296' => $canCreate['affiliateId'],
+              ));
+
+              if (!empty($CEO['id'])) {
+                nul_census_custom_autopopulate_from_civi($form, 'census', $affiliateIdInCivi, $CEO['id']);
               }
               // set default status to inclomplete
               $defaultStatus = array_search('Incomplete', $form['field_census_status'][LANGUAGE_NONE]['#options']);
@@ -673,7 +680,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               // auto populate fields from civi
               if (arg(2) == 'revenue' || arg(2) == 'community-relations') {
                 $affiliateIdInCivi = nul_census_custom_find_affiliate($nodeAffiliate);
-                nul_census_custom_autopopulate_basic($form, arg(2), $affiliateIdInCivi);
+                nul_census_custom_autopopulate_from_civi($form, arg(2), $affiliateIdInCivi);
               }
             }
             else {
