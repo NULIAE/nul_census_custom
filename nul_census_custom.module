@@ -691,16 +691,24 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
 
                   // populate parent census, tab status and tab title
                   $node->title = $censusTab->name;
-                  $node->field_parent_census[LANGUAGE_NONE]['#default_value'] = arg(3);
-                  $node->field_tab_status[LANGUAGE_NONE]['#default_value'][0] = array_search("Incomplete", $form['field_tab_status'][LANGUAGE_NONE]['#options']);
+                  // Term reference (taxonomy) field
+                  $node->field_tab_status[$node->language][]['tid'] =  array_search("Incomplete", $form['field_tab_status'][LANGUAGE_NONE]['#options']);
+
+                  // Entity reference field.
+                  $node->field_parent_census[$node->language][] = array(
+                    'target_id' => arg(3),
+                    // Default target_type is 'node', Other possible values are "user",
+                    // "taxonomy_term" or other valid entity machine name.
+                    'target_type' => 'node',
+                  );
+                  //$node->field_parent_census[LANGUAGE_NONE]['#default_value'] = arg(3);
+                  // $node->field_tab_status[LANGUAGE_NONE]['#default_value'][0] = array_search("Incomplete", $form['field_tab_status'][LANGUAGE_NONE]['#options']);
 
                   $node = node_submit($node); // Prepare node for saving
                   node_save($node);
-                  print_r($node); die();
-
                   // add last years paragraphs
-                  nul_census_custom_autopopulate_service_areas_paragraphs($nodeAffiliate, $form['type']['#value']);
-                  // drupal_goto("/node/" . arg(3));
+                  nul_census_custom_autopopulate_service_areas_paragraphs($nodeAffiliate, $form['type']['#value'], $node);
+                   drupal_goto("/node/" . $node->nid);
               }
 
               // auto populate fields from civi
