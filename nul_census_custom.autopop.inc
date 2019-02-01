@@ -110,7 +110,7 @@ function nul_census_custom_autopopulate_service_areas_paragraphs($affiliateId, $
     $paragraph->is_new = TRUE;
     $paragraph->setHostEntity('node', $node);
     foreach ($serviceAreaParagraphFields as $key => $field) {
-      $paragraph->$field[LANGUAGE_NONE][0]['value'] = $lastYearsParagraph->$field[LANGUAGE_NONE][0]['value'];
+      $paragraph->{$field}[LANGUAGE_NONE][0]['value'] = $lastYearsParagraph[$values['value']]->{$field}[LANGUAGE_NONE][0]['value'];
     }
     $paragraph->save();
   }
