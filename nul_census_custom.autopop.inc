@@ -118,10 +118,12 @@ function nul_census_custom_autopopulate_from_last_year_census_node($affiliateId,
     // And the field is on this years census
     if (substr($fieldName, 0, 5) == 'field' && !in_array($fieldName, $fieldsToIgnore) && !empty($form[$fieldName])) {
       // If value is not empty default to it
-      if (!empty($fieldDetails[LANGUAGE_NONE][0]['value'])) {
-        $form[$fieldName][LANGUAGE_NONE][0]['value']['#default_value'] = $fieldDetails[LANGUAGE_NONE][0]['value'];
+        if (!empty($form[$fieldName][LANGUAGE_NONE]['#options'])) {
+          $form[$fieldName][LANGUAGE_NONE]['#default_value'] = $fieldDetails[LANGUAGE_NONE][0]['value'];
+        } else {
+          $form[$fieldName][LANGUAGE_NONE][0]['value']['#default_value'] = $fieldDetails[LANGUAGE_NONE][0]['value'];
+        }
       }
-    }
   }
 }
 
