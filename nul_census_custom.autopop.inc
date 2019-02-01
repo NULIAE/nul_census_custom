@@ -86,30 +86,24 @@ foreach ($fieldMapping['CEO'] as $fieldInDrupal => $fieldInCivi) {
 
 }
 
-function nul_census_custom_autopopulate_service_areas_paragraphs($affiliateId, $contentType) {
+function nul_census_custom_autopopulate_service_areas_paragraphs($affiliateId, $contentType, $node) {
+  // Load last years Service Area tab
   $lastYearsTab = nul_census_custom_last_years_node($affiliateId, $contentType);
-  // Service Areas Paragraphs
-  if ($fieldName = 'field_service_areas') {
-    // // TODO create the node with status not started
-    // $node = node_load();
-    // $node
-
-    // create a paragraph for each exisiting service area
-    foreach ($serviceArea[LANGUAGE_NONE] as $key => $values) {
-      $paragraph = new ParagraphsItemEntity(array('field_name' => 'field_service_areas', 'bundle' => 'service_area'));
-      $paragraph->is_new = TRUE;
-      $paragraph->setHostEntity('node', $form);
-      $paragraph->field_service_area_city_county[LANGUAGE_NONE][0]['value'] = 'Test Data';
-      $paragraph->field_service_area_population[LANGUAGE_NONE][0]['value'] = 1;
-      $paragraph->field_service_area_white[LANGUAGE_NONE][0]['value'] = 1.5;
-      $paragraph->field_service_area_hispanic[LANGUAGE_NONE][0]['value'] = 1.5;
-      $paragraph->field_service_area_asian_am[LANGUAGE_NONE][0]['value'] = 1.5;
-      $paragraph->field_service_area_native_am[LANGUAGE_NONE][0]['value'] = 1.5;
-      $paragraph->field_service_area_african_am[LANGUAGE_NONE][0]['value'] = 1.5;
-      $paragraph->field_service_area_other[LANGUAGE_NONE][0]['value'] = 1.5;
-      $paragraph->save();
-    }
-
+  print_r($lastYearsTab['field_service_areas']); die();
+  // Foreach thru last years service area paragraphs
+  foreach ($lastYearsTab['field_service_areas'][LANGUAGE_NONE] as $key => $values) {
+    $paragraph = new ParagraphsItemEntity(array('field_name' => 'field_service_areas', 'bundle' => 'service_area'));
+    $paragraph->is_new = TRUE;
+    $paragraph->setHostEntity('node', $node);
+    $paragraph->field_service_area_city_county[LANGUAGE_NONE][0]['value'] = 'Test Data';
+    $paragraph->field_service_area_population[LANGUAGE_NONE][0]['value'] = 1;
+    $paragraph->field_service_area_white[LANGUAGE_NONE][0]['value'] = 1.5;
+    $paragraph->field_service_area_hispanic[LANGUAGE_NONE][0]['value'] = 1.5;
+    $paragraph->field_service_area_asian_am[LANGUAGE_NONE][0]['value'] = 1.5;
+    $paragraph->field_service_area_native_am[LANGUAGE_NONE][0]['value'] = 1.5;
+    $paragraph->field_service_area_african_am[LANGUAGE_NONE][0]['value'] = 1.5;
+    $paragraph->field_service_area_other[LANGUAGE_NONE][0]['value'] = 1.5;
+    $paragraph->save();
   }
 }
 
