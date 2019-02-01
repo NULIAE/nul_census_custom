@@ -106,8 +106,8 @@ foreach ($fieldMapping['CEO'] as $fieldInDrupal => $fieldInCivi) {
 }
 
 //TODO write code to autopopulate service areas and employees and board members tabs from previous years census in drupal
-function nul_census_custom_autopopulate_from_last_year_census_node($affiliateId) {
-  $lastYearsCensusNode = nul_census_custom_last_years_census_node($affiliateId);
+function nul_census_custom_autopopulate_from_last_year_census_node($affiliateId, $contentType) {
+  $lastYearsTab = nul_census_custom_last_years_node($affiliateId, $contentType);
 }
 
 /**
@@ -115,18 +115,26 @@ function nul_census_custom_autopopulate_from_last_year_census_node($affiliateId)
  * @param  int $affiliateId affiliate custom field id
  * @return int             node id for last years census
  */
-function nul_census_custom_last_years_census_node($affiliateId) {
+function nul_census_custom_last_years_node($affiliateId, $contentType) {
   $lastYearsCensusNode = NULL;
   $thisYear = date("Y");
   $lastYear = $thisYear - 1;
   $query = new EntityFieldQuery();
-  $results = $query->entityCondition('entity_type', 'node')
+  $censusNode = $query->entityCondition('entity_type', 'node')
     ->entityCondition('bundle', 'census')
     ->fieldCondition('field_affiliate_select', 'value', $affiliateId)
     ->fieldCondition('field_year', 'value', $lastYear)
     ->execute();
-  if (!empty($results['node'])) {
-    $lastYearsCensusNode = key($results['node']);
+  if (!empty($censusNode['node'])) {
+    $lastYearsCensusNode = key($censusNode['node']);
+    $query = new EntityFieldQuery();
+    $results = $query->entityCondition('entity_type', 'node')
+      ->entityCondition('bundle', $contentType)
+      ->fieldCondition('field_parent_census', 'target_id', $lastYearsCensusNode)
+      ->execute();
+    if (!empty($results['node']) && !empty(key($results['node']))) {
+      $lastYearsTab = node_load(key($results['node']));
+    }
   }
-  return $lastYearsCensusNode;
+  return $lastYearsTab;
 }
