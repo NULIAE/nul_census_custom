@@ -1,17 +1,19 @@
 # Fields that autopopulate when you start a new census
 
 ## Census (Contact Information)
+### Auto Populates the year based on the current date.
+### Auto Populates the Affiliate Select based on the value in the url
+###  Auto Populates the Fields in the Fields table below  with the Contact "ORG" by Finding the Matching Affiliate Organization in CiviCRM using the following Criteria:
+1. is contact type "Organization"
+2. Contact_sub_type = "Urban_League_Affiliate"
+3. Custom field "Affiliate" matches the Affiliate ID in the url
 
-### Finding the Matching Affiliate Organization
-based on the Affiliate Select id in the url
-
-### Finding the Matching Affiliate CEO
-Looks in civi for a contact that meets the following criteria:
-Has the value "Affiliate CEO" for the custom civi field "Additional groups"
-Has the Affiliate Select Id for the custom field Affiliate
+### Auto Populates the Fields in the Fields table below  with the Contact "CEO" by Finding the Matching Affiliate CEO in CiviCRM using the following Criteria:
+1. Has the value "Affiliate CEO" for the custom civi field "Additional groups"
+2. Has the Affiliate Select Id for the custom field Affiliate
 
 ### Finding the Matching Email, Phone, Addresses
-Looks for a Email, Phone or Address for the contact of Location Type Main and picks the first one
+Looks for a Email, Phone or Address for the contact of Location Type Main on the civicrm contact record and picks the first one
 
 ### Fields
 
@@ -38,6 +40,7 @@ Looks for a Email, Phone or Address for the contact of Location Type Main and pi
 
 
 ## Community Relations
+Autopopulates from CiviCRM
 
 ### Fields
 
@@ -57,7 +60,8 @@ Looks for a Email, Phone or Address for the contact of Location Type Main and pi
 | Org     | Does affiliate do a marketing kit and/or pamphlet?                 | field_marketing_kit_or_pamphlet  | custom_1095            | n/a           |
 
 ## Service Areas
-These are paragraphs so there could be more than one, They are populated from last years census
+Auto Populated from last years census in drupal.
+These are paragraphs so there could be more than one.
 
 ## Employees and Board members
-Populated from last years census
+Auto Populated from last years census in drupal
