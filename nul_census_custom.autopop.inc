@@ -107,7 +107,9 @@ foreach ($fieldMapping['CEO'] as $fieldInDrupal => $fieldInCivi) {
 
 //TODO write code to autopopulate service areas and employees and board members tabs from previous years census in drupal
 function nul_census_custom_autopopulate_from_last_year_census_node($affiliateId, $contentType) {
-  $lastYearsTab = nul_census_custom_last_years_node($affiliateId, $contentType);
+  if ($contentType = '') {
+    $lastYearsTab = nul_census_custom_last_years_node($affiliateId, $contentType);
+  }
 }
 
 /**
