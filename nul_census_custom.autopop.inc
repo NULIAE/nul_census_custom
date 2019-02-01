@@ -89,20 +89,29 @@ foreach ($fieldMapping['CEO'] as $fieldInDrupal => $fieldInCivi) {
 function nul_census_custom_autopopulate_service_areas_paragraphs($affiliateId, $contentType, $node) {
   // Load last years Service Area tab
   $lastYearsTab = nul_census_custom_last_years_node($affiliateId, $contentType);
-  print_r($lastYearsTab['field_service_areas']); die();
+
+  $serviceAreaParagraphFields = array(
+    'field_service_area_city_county',
+    'field_service_area_population',
+    'field_service_area_white',
+    'field_service_area_hispanic',
+    'field_service_area_asian_am',
+    'field_service_area_native_am',
+    'field_service_area_african_am',
+    'field_service_area_other',
+  );
   // Foreach thru last years service area paragraphs
-  foreach ($lastYearsTab['field_service_areas'][LANGUAGE_NONE] as $key => $values) {
+  foreach ($lastYearsTab->field_service_areas[LANGUAGE_NONE] as $key => $values) {
+    // Load last years paragraph
+    $lastYearsParagraph = entity_load('paragraphs_item', array($values['value']));
+
+    // create new paragraph
     $paragraph = new ParagraphsItemEntity(array('field_name' => 'field_service_areas', 'bundle' => 'service_area'));
     $paragraph->is_new = TRUE;
     $paragraph->setHostEntity('node', $node);
-    $paragraph->field_service_area_city_county[LANGUAGE_NONE][0]['value'] = 'Test Data';
-    $paragraph->field_service_area_population[LANGUAGE_NONE][0]['value'] = 1;
-    $paragraph->field_service_area_white[LANGUAGE_NONE][0]['value'] = 1.5;
-    $paragraph->field_service_area_hispanic[LANGUAGE_NONE][0]['value'] = 1.5;
-    $paragraph->field_service_area_asian_am[LANGUAGE_NONE][0]['value'] = 1.5;
-    $paragraph->field_service_area_native_am[LANGUAGE_NONE][0]['value'] = 1.5;
-    $paragraph->field_service_area_african_am[LANGUAGE_NONE][0]['value'] = 1.5;
-    $paragraph->field_service_area_other[LANGUAGE_NONE][0]['value'] = 1.5;
+    foreach ($serviceAreaParagraphFields as $key => $field) {
+      $paragraph->$field[LANGUAGE_NONE][0]['value'] = $lastYearsParagraph->$field[LANGUAGE_NONE][0]['value'];
+    }
     $paragraph->save();
   }
 }
