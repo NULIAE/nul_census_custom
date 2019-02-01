@@ -3,10 +3,12 @@
 ## Census (Contact Information)
 
 ### Finding the Matching Affiliate Organization
-based on the id in the url
+based on the Affiliate Select id in the url
 
 ### Finding the Matching Affiliate CEO
-Defaults to the current user 
+Looks in civi for a contact that meets the following criteria:
+Has the value "Affiliate CEO" for the custom civi field "Additional groups"
+Has the Affiliate Select Id for the custom field Affiliate
 
 ### Finding the Matching Email, Phone, Addresses
 Looks for a Email, Phone or Address for the contact of Location Type Main and picks the first one
@@ -15,7 +17,7 @@ Looks for a Email, Phone or Address for the contact of Location Type Main and pi
 
 | Contact | Field Label in Drupal                  | Field Machine Name in Drupal     | Field in CiviCRM       | Location/Type |
 |---------|----------------------------------------|----------------------------------|------------------------|---------------|
-| Org     | Affiliate Select                       | field_affiliate_select           | Contact Id             | n/a           |
+| Org     | Affiliate Select                       | field_affiliate_select           | custom_296             | n/a           |
 | Org     | Year Organization was Established      | field_date_established           | custom_1069            | n/a           |
 | Org     | Address Line 1                         | field_address_line_1             | Street Address         | Main/Address  |
 | Org     | Address line 2                         | field_address_line_2             | Supplemental Address 1 | Main/Address  |
@@ -54,28 +56,8 @@ Looks for a Email, Phone or Address for the contact of Location Type Main and pi
 | Org     | What is the method of advertising or marketing?       	           | field_method_of_ad_marketing     | custom_1096            | n/a           |
 | Org     | Does affiliate do a marketing kit and/or pamphlet?                 | field_marketing_kit_or_pamphlet  | custom_1095            | n/a           |
 
-## TODO Service Areas
-If on a new Service Area tab I think we should create one paragraph for each exisiting service area in civi for the affiliate then we would not be matching per say... we could create a new hidden field for the entity id so that we are matching exactly
+## Service Areas
+These are paragraphs so there could be more than one, They are populated from last years census
 
-### Matching Service Areas
-
-### Fields
-
-| Contact | Field Label in Drupal                  | Field Machine Name in Drupal     | Field in CiviCRM       | Location/Type |
-|---------|----------------------------------------|----------------------------------|------------------------|---------------|
-| Org     | Service Area City/County	             | field_service_area_city_county	  |	custom_1072            | n/a           |
-| Org     | Service Area Population	               | field_service_area_population	  | custom_1073            | n/a           |
-| Org     | Service Area White	                   | field_service_area_white	Decimal	| custom_1074            | n/a           |
-| Org     | Service Area Hispanic/Latino	         | field_service_area_hispanic	    | custom_1075            | n/a           |
-| Org     | Service Area Asian American	           | field_service_area_asian_am	    | custom_1076            | n/a           |
-| Org     | Service Area Native American	         | field_service_area_native_am	    | custom_1077            | n/a           |
-| Org     | Service Area African American	         | field_service_area_african_am	  | custom_1078            | n/a           |
-| Org     | Service Area Other	                   | field_service_area_other	        | custom_1079            | n/a           |
-
-
-## TODO TEST USING 2019
-# Questions:
-
-1. Should we have a contact ref for address, email, Etc (allow user to pick from the exisiting ones in civi)
-2. Assuming we are looking for phones, emails etc of type "Main"
-3. What assumption should we make about who the CEO is if not basing it off of the logged in user or data entered into the first, last fields
+## Employees and Board members
+Populated from last years census

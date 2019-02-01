@@ -24,6 +24,7 @@ Search For:
 Contact Type = Individual
 First Name and Last Name entered
 Has the value "Affiliate CEO" for the custom civi field "Additional groups"
+Has the Affiliate Select Id for the custom field Affiliate
 
 THEN
 

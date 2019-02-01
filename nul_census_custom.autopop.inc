@@ -86,6 +86,12 @@ foreach ($fieldMapping['CEO'] as $fieldInDrupal => $fieldInCivi) {
 
 }
 
+/**
+ * populate Service Areas paragraphs from last year
+ * @param  int $affiliateId affiliate select id
+ * @param  string $contentType name of content type ('service_areas')
+ * @param  object $node        node object
+ */
 function nul_census_custom_autopopulate_service_areas_paragraphs($affiliateId, $contentType, $node) {
   // Load last years Service Area tab
   $lastYearsTab = nul_census_custom_last_years_node($affiliateId, $contentType);
@@ -116,7 +122,11 @@ function nul_census_custom_autopopulate_service_areas_paragraphs($affiliateId, $
   }
 }
 
-//TODO write code to autopopulate service areas and employees and board members tabs from previous years census in drupal
+/**
+ * auto populate basic fields from last years drupal census right now only education tab
+ * @param  int $affiliateId    affiliate select id
+ * @param  array $form        form from drupal
+ */
 function nul_census_custom_autopopulate_from_last_year_census_node($affiliateId, &$form) {
   $lastYearsTab = nul_census_custom_last_years_node($affiliateId, $form['type']['#value']);
   $fieldsToIgnore = array(
@@ -143,7 +153,7 @@ function nul_census_custom_autopopulate_from_last_year_census_node($affiliateId,
 /**
  * get last years census from affilaite id
  * @param  int $affiliateId affiliate custom field id
- * @return int             node id for last years census
+ * @return string content type
  */
 function nul_census_custom_last_years_node($affiliateId, $contentType) {
   $lastYearsCensusNode = NULL;
