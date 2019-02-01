@@ -678,8 +678,29 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               }
 
               // autopopulate fields from drupal
-              if (arg(2) == 'service-areas' || arg(2) == 'employees-and-board-members') {
+              if (arg(2) == 'employees-and-board-members') {
                 nul_census_custom_autopopulate_from_last_year_census_node($nodeAffiliate, $form);
+              }
+              // Because service areas has paragraphs we have to create a node save it and add the paragraphs from last year
+              if (arg(2) == 'service-areas')  {
+                  // Create New Service Area Node
+                  $node = new stdClass();  // Create a new node object
+                  $node->type = 'service_areas';  // Content type
+                  $node->language = LANGUAGE_NONE;  // Or e.g. 'en' if locale is enabled
+                  node_object_prepare($node);  //Set some default values
+
+                  // populate parent census, tab status and tab title
+                  $node->title = $censusTab->name;
+                  $node->field_parent_census[LANGUAGE_NONE]['#default_value'] = arg(3);
+                  $node->field_tab_status[LANGUAGE_NONE]['#default_value'][0] = array_search("Incomplete", $form['field_tab_status'][LANGUAGE_NONE]['#options']);
+
+                  $node = node_submit($node); // Prepare node for saving
+                  node_save($node);
+                  print_r($node); die();
+
+                  // add last years paragraphs
+                  nul_census_custom_autopopulate_service_areas_paragraphs($nodeAffiliate, $form['type']['#value']);
+                  // drupal_goto("/node/" . arg(3));
               }
 
               // auto populate fields from civi

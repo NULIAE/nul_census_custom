@@ -69,25 +69,6 @@ foreach ($fieldMapping['CEO'] as $fieldInDrupal => $fieldInCivi) {
       }
       break;
 
-    case 'service_areas':
-
-      // TODO create the node with status not started
-      $node = node_load();
-
-      // TODO get all the existing service areas using ApI something like below or a db query
-      $serviceAreas = nul_census_custom_civi_api('Customvalue', 'get', array('entity_id' => $affiliateIdInCivi));
-
-      // create a paragraph for each exisiting service area
-      foreach ($serviceArea as $key => $value) {
-        $paragraph = new ParagraphsItemEntity(array('field_name' => 'name_of_field_in_node', 'bundle' => 'name_of_paragraph_bundle'));
-        $paragraph->is_new = TRUE;
-        $paragraph->setHostEntity('node', $node);
-        $paragraph->field1_name_in_paragraph_bundle[LANGUAGE_NONE][0]['value'] = 'Test Data';
-        $paragraph->field2_name_in_paragraph_bundle[LANGUAGE_NONE][0]['value'] = 'Test Data';
-        $paragraph->save();
-      }
-      break;
-
     case 'community-relations':
       $orgInCivi = nul_census_custom_civi_api('Contact', 'getsingle', array('id' => $affiliateIdInCivi, 'return' => array_keys($fieldMapping)));
       foreach ($fieldMapping as $civiField => $drupalField) {
@@ -105,25 +86,54 @@ foreach ($fieldMapping['CEO'] as $fieldInDrupal => $fieldInCivi) {
 
 }
 
+function nul_census_custom_autopopulate_service_areas_paragraphs($affiliateId, $contentType) {
+  $lastYearsTab = nul_census_custom_last_years_node($affiliateId, $contentType);
+  // Service Areas Paragraphs
+  if ($fieldName = 'field_service_areas') {
+    // // TODO create the node with status not started
+    // $node = node_load();
+    // $node
+
+    // create a paragraph for each exisiting service area
+    foreach ($serviceArea[LANGUAGE_NONE] as $key => $values) {
+      $paragraph = new ParagraphsItemEntity(array('field_name' => 'field_service_areas', 'bundle' => 'service_area'));
+      $paragraph->is_new = TRUE;
+      $paragraph->setHostEntity('node', $form);
+      $paragraph->field_service_area_city_county[LANGUAGE_NONE][0]['value'] = 'Test Data';
+      $paragraph->field_service_area_population[LANGUAGE_NONE][0]['value'] = 1;
+      $paragraph->field_service_area_white[LANGUAGE_NONE][0]['value'] = 1.5;
+      $paragraph->field_service_area_hispanic[LANGUAGE_NONE][0]['value'] = 1.5;
+      $paragraph->field_service_area_asian_am[LANGUAGE_NONE][0]['value'] = 1.5;
+      $paragraph->field_service_area_native_am[LANGUAGE_NONE][0]['value'] = 1.5;
+      $paragraph->field_service_area_african_am[LANGUAGE_NONE][0]['value'] = 1.5;
+      $paragraph->field_service_area_other[LANGUAGE_NONE][0]['value'] = 1.5;
+      $paragraph->save();
+    }
+
+  }
+}
+
 //TODO write code to autopopulate service areas and employees and board members tabs from previous years census in drupal
 function nul_census_custom_autopopulate_from_last_year_census_node($affiliateId, &$form) {
   $lastYearsTab = nul_census_custom_last_years_node($affiliateId, $form['type']['#value']);
+  $fieldsToIgnore = array(
+    'field_tab_status',
+    'field_parent_census',
+  );
   foreach ($lastYearsTab as $fieldName => $fieldDetails) {
-    $fieldsToIgnore = array(
-      'field_tab_status',
-      'field_parent_census',
-    );
     // If fieldName starts with field,
     // And the field is not field_tab_status or field_parent_census
     // And the field is on this years census
     if (substr($fieldName, 0, 5) == 'field' && !in_array($fieldName, $fieldsToIgnore) && !empty($form[$fieldName])) {
-      // If value is not empty default to it
-        if (!empty($form[$fieldName][LANGUAGE_NONE]['#options'])) {
-          $form[$fieldName][LANGUAGE_NONE]['#default_value'] = $fieldDetails[LANGUAGE_NONE][0]['value'];
-        } else {
-          $form[$fieldName][LANGUAGE_NONE][0]['value']['#default_value'] = $fieldDetails[LANGUAGE_NONE][0]['value'];
-        }
+      // If field is radio or select
+      if (!empty($form[$fieldName][LANGUAGE_NONE]['#options'])) {
+        $form[$fieldName][LANGUAGE_NONE]['#default_value'] = $fieldDetails[LANGUAGE_NONE][0]['value'];
       }
+      // If field is Text
+      else {
+        $form[$fieldName][LANGUAGE_NONE][0]['value']['#default_value'] = $fieldDetails[LANGUAGE_NONE][0]['value'];
+      }
+    }
   }
 }
 
