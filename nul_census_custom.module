@@ -679,7 +679,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
 
               // autopopulate fields from drupal
               if (arg(2) == 'service-areas' || arg(2) == 'employees-and-board-members') {
-                nul_census_custom_autopopulate_from_last_year_census_node($nodeAffiliate, $form['type']['#value']);
+                nul_census_custom_autopopulate_from_last_year_census_node($nodeAffiliate, $form);
               }
 
               // auto populate fields from civi

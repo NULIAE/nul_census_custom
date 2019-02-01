@@ -106,9 +106,22 @@ foreach ($fieldMapping['CEO'] as $fieldInDrupal => $fieldInCivi) {
 }
 
 //TODO write code to autopopulate service areas and employees and board members tabs from previous years census in drupal
-function nul_census_custom_autopopulate_from_last_year_census_node($affiliateId, $contentType) {
-  if ($contentType = '') {
-    $lastYearsTab = nul_census_custom_last_years_node($affiliateId, $contentType);
+function nul_census_custom_autopopulate_from_last_year_census_node($affiliateId, $form) {
+  $lastYearsTab = nul_census_custom_last_years_node($affiliateId, $form['type']['#value']);
+  foreach ($lastYearsTab as $fieldName => $fieldDetails) {
+    $fieldsToIgnore = array(
+      'field_tab_status',
+      'field_parent_census',
+    );
+    // If fieldName starts with field,
+    // And the field is not field_tab_status or field_parent_census
+    // And the field is on this years census
+    if (substr($fieldName, 0, 5) == 'field' && !in_array($fieldName, $fieldsToIgnore) && !empty($form[$fieldName])) {
+      // If value is not empty default to it
+      if (!empty($fieldDetails[LANGUAGE_NONE][0]['value'])) {
+        $form[$fieldName][LANGUAGE_NONE][0]['value']['#default_value'] = $fieldDetails[LANGUAGE_NONE][0]['value'];
+      }
+    }
   }
 }
 
