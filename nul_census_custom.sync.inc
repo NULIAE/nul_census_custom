@@ -245,7 +245,7 @@ function nul_census_custom_fieldmapping($tab) {
 
       break;
 
-    case 'community-relations':
+    case 'community_relations':
       $mapping = array(
         'custom_1084' => 'field_produces_annual_report',
         'custom_1085' => 'field_newsletter',
