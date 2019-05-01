@@ -60,6 +60,7 @@ function nul_census_custom_preprocess_views_view(&$vars) {
       'https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css',
       array('type' => 'external')
     );
+    drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/clickOnce.js');
   }
   if ($view->name == 'full_census' || $view->name == 'throwa' || $view->name == 'census_summary_report') {
     // add needed stylesheet
