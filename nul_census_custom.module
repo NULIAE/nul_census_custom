@@ -683,6 +683,10 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
               }
               // Because service areas has paragraphs we have to create a node save it and add the paragraphs from last year
               if (arg(2) == 'service-areas')  {
+                // Check for exsisting Servicee Area Tab
+                $existingTab = nul_census_custom_load_tab('service_areas', arg(3));
+                // If no exisiting Tabs Create one
+                if (empty($existingTab)) {
                   // Create New Service Area Node
                   $node = new stdClass();  // Create a new node object
                   $node->type = 'service_areas';  // Content type
@@ -701,7 +705,13 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
                   node_save($node);
                   // add last years paragraphs
                   nul_census_custom_autopopulate_service_areas_paragraphs($nodeAffiliate, $form['type']['#value'], $node);
-                  drupal_goto("/node/" . $node->nid . "/edit");
+                  drupal_goto("/node/" . $node->nid . "/" . arg(3));
+                }
+
+                // If there is an existing tab redirect to it
+                if (key($existingTab['node'])) {
+                  drupal_goto("/node/" . key($existingTab['node']) . "/" . arg(3));
+                }
               }
 
               // auto populate fields from civi
