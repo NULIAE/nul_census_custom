@@ -705,7 +705,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
                   node_save($node);
                   // add last years paragraphs
                   nul_census_custom_autopopulate_service_areas_paragraphs($nodeAffiliate, $form['type']['#value'], $node);
-                  drupal_goto("/node/" . $node->nid . "/" . arg(3));
+                  drupal_goto("/node/" . $node->nid . "/edit");
                 }
 
                 // If there is an existing tab redirect to it
