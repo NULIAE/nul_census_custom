@@ -1097,7 +1097,7 @@ function nul_census_custom_node_validate($node, $form, &$form_state) {
     // Validate that this is the only tab of this type for this parent census (do not let ppl create duplicate tabs)
     // check if there is an existing node of the same content type with the same parent census
     // search for node of that type AND parent census with NID passed to the function
-    $allowParentCensus = nul_census_custom_no_duplicate_tabs($node->type, $node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
+    $allowParentCensus = nul_census_custom_no_duplicate_tabs($node->type, $node->field_parent_census[LANGUAGE_NONE][0]['target_id'], $node->nid);
     if ($allowParentCensus == FALSE) {
       form_set_error('parent_census', t('A tab of this type already exists for this census. Please update that tab instead'));
     }
