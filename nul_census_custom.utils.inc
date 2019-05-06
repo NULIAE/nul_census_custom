@@ -553,3 +553,29 @@ function nul_census_custom_check_for_required_url_parts($part) {
     }
   }
 }
+
+// Validate that this is the only tab of this type for this parent census (do not let ppl create duplicate tabs)
+// check if there is an existing node of the same content type with the same parent census
+// search for node of that type AND parent census with NID passed to the function
+//
+
+/**
+ * Validate that this is the only tab of this type for this parent census (do not let ppl create duplicate tabs)
+ * check if there is an existing node of the same content type with the same parent census
+ * search for node of that type AND parent census with NID passed to the function
+ * @return boolean whether or not the tab is a duplicate
+ */
+function nul_census_custom_no_duplicate_tabs($nodeType, $parentCensusId) {
+  $existingTabs = nul_census_custom_load_tab($nodeType, $parentCensusId);
+  // Do not allow node with this parent census of this type to be saved unless
+  $allowParentCensus = FALSE;
+  // creating tab for the first time
+  if (empty($existingTabs)) {
+    $allowParentCensus = TRUE;
+  }
+  // there is only one tab and it is this one
+  if (!empty($existingTabs['node']) && count($existingTabs['node']) == 1 && key($existingTabs['node']) == $node->nid) {
+    $allowParentCensus = TRUE;
+  }
+  return $allowParentCensus;
+}
