@@ -20,6 +20,7 @@
             $(key).show();
           }
         });
+
         $('div.field-group-div').each(function (index, key) {
           $(key).show();
         });
