@@ -258,7 +258,6 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
         if (!empty($statusOfTab) && !empty($node->field_parent_census[LANGUAGE_NONE][0]['target_id']) && !empty($node->nid)) {
           // IF on tab with status submitted and user has proper permissions add mark reviewed and resubmit buttons
           nul_census_custom_button_to_update_status($statusOfTab, 'Submitted', 'can mark census tabs resubmit and reviewed', 'tab', $node->nid, $node->field_parent_census[LANGUAGE_NONE][0]['target_id'], array('Reviewed', 'Resubmit'));
-
           // IF on tab with status incomplete and user has proper permissions add mark complete
           $displayCompleteButton = FALSE;
           if (!empty($node->field_do_you_offer_programs_of_t[LANGUAGE_NONE][0]['value'])
@@ -312,7 +311,6 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
               $programs
               $addAProgramLink
             </div>";
-
             // TODO if on program details tab add programs to the bottom of the tab
             $node->content['programsForThisTab'] = array(
               '#markup' => $markup,
