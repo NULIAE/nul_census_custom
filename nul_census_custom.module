@@ -294,8 +294,7 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
             // AGH #20337 IF the user has said they have programs AND the user has not entered any programs
             // THEN display a warning that they must add atleast one program
             if ($node->field_do_you_offer_programs_of_t[LANGUAGE_NONE][0]['value'] == 1) {
-              $programArea = nul_census_custom_searchTaxonomyByField('program_areas', 'field_content_type', $node->type);
-              $countOfProgramsOnTab = nul_census_custom_check_for_programs($programArea->tid, $node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
+              $countOfProgramsOnTab = nul_census_custom_check_for_programs($node->type, $node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
               if ($countOfProgramsOnTab == 0) {
                 $markup .= "<div class='noteEnterPrograms messages warning'>Atleast one program must be entered to complete this tab</div>";
               }
