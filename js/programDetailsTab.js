@@ -4,7 +4,7 @@
   $(document).ready(function () {
     hideFields();
     // AGH #20337 Add note for user that they will be required to enter programs if they say they have them
-    $('div#edit-field-do-you-offer-programs-of-t').append("<div class='noteEnterPrograms messages warning'>You will be required to enter information about programs</div>");
+    $('div#edit-field-do-you-offer-programs-of-t').append("<div class='noteEnterPrograms messages warning'>You will be required to enter information about atleast one program to complete this tab on the next screen.</div>");
 
     $('input[type=radio][name^=field_do_you_offer_programs_of_t]').change(hideFields);
     function hideFields() {
