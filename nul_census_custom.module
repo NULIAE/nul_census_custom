@@ -271,6 +271,9 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
           && $node->field_do_you_offer_programs_of_t[LANGUAGE_NONE][0]['value'] == 1) {
             $displayCompleteButton = TRUE;
           }
+          elseif (!isset($node->field_do_you_offer_programs_of_t[LANGUAGE_NONE][0]['value'])) {
+            $displayCompleteButton = TRUE;
+          }
           if ($displayCompleteButton == TRUE) {
             nul_census_custom_button_to_update_status($statusOfTab, 'Incomplete', 'can mark census tabs as complete', 'tabComplete', $node->nid, $node->field_parent_census[LANGUAGE_NONE][0]['target_id'], array('Complete'));
           }
