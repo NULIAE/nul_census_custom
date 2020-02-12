@@ -190,6 +190,7 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
         '#field_type' => 'text',
         '#entity_type' => $fieldDetails['entity_type'],
         '#bundle' => $fieldDetails['bundle'],
+        '#weight'=>  $fieldDetails['display']['default']['weight'],
         '#items' => array(),
       );
     }
@@ -682,7 +683,7 @@ function nul_census_custom_form_alter(&$form, &$form_state, $form_id) {
                 nul_census_custom_autopopulate_from_last_year_census_node($nodeAffiliate, $form);
               }
               // Because service areas has paragraphs we have to create a node save it and add the paragraphs from last year
-              if (arg(2) == 'service-areas')  {
+              if (arg(2) == 'serviccce-areas')  {
                   // Create New Service Area Node
                   $node = new stdClass();  // Create a new node object
                   $node->type = 'service_areas';  // Content type
