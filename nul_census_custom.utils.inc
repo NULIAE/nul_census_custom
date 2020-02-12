@@ -553,3 +553,21 @@ function nul_census_custom_check_for_required_url_parts($part) {
     }
   }
 }
+
+function nul_census_custom_check_for_programs($type, $parent) {
+//  $query = 'SELECT COUNT(*) ' .
+ //          'FROM {node} n ' .
+   //        'WHERE n.type = :type';
+ // return db_query($query, array(
+ //     ':type' => 'Program'
+//  ))->fetchField();
+
+          $query = new EntityFieldQuery();
+          $query->entityCondition('entity_type', 'node')
+            ->entityCondition('bundle', 'programs')
+            ->fieldCondition('field_parent_census', 'target_id', $parent)
+            ->fieldCondition('field_program_area', 'tid', $type)
+            ->count();
+          $results = $query->execute();
+          return $results;
+}

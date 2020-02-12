@@ -231,7 +231,6 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
         break;
 
       case 'programs':
-
         // Making Paragraph Tables into one table
         drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/paragraphTables.js');
 
@@ -277,7 +276,8 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
             $my_view->pre_execute();
             $programs = $my_view->render('block');
           }
-          $addAProgramLink = '';
+          $test = nul_census_custom_searchTaxonomyByField('program_areas', 'field_content_type', $node->type);
+        $addAProgramLink = '';
           if (!empty($programs) && arg(0) !== 'full-census') {
             if ($perms['canEdit'] || $perms['canResubmit']) {
               if (!empty($node->field_do_you_offer_programs_of_t[LANGUAGE_NONE][0]['value']) && $node->field_do_you_offer_programs_of_t[LANGUAGE_NONE][0]['value'] == 1) {
@@ -290,6 +290,12 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
               $programs
               $addAProgramLink
             </div>";
+            if ($node->field_do_you_offer_programs_of_t[LANGUAGE_NONE][0]['value'] == 1) {
+             $result = nul_census_custom_check_for_programs($test->tid, $node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
+ if ($result == 0) {
+$markup .= "<div>Atleast one Program must be entered to complete this tab</div>";
+            }
+}
             // TODO if on program details tab add programs to the bottom of the tab
             $node->content['programsForThisTab'] = array(
               '#markup' => $markup,
