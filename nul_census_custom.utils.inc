@@ -571,3 +571,17 @@ function nul_census_custom_check_for_programs($type, $parent) {
   $results = $query->execute();
   return $results;
 }
+
+/**
+ * Delete the census and all its related tabs and programs
+ * @param  int $censusNid    census to be deleted
+ */
+function nul_census_custom_delete_census($censusNid) {
+  node_delete($censusNid);
+  // search for node of that type AND parent census with NID passed to the function
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->fieldCondition('field_parent_census', 'target_id', $censusNid);
+  $results = $query->execute();
+  print_r($results); die();
+}
