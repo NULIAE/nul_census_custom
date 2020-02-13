@@ -303,7 +303,7 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
                 // THEN display a warning that they must add atleast one program
                 $countOfProgramsOnTab = nul_census_custom_check_for_programs($node->type, $node->field_parent_census[LANGUAGE_NONE][0]['target_id']);
                 if ($countOfProgramsOnTab == 0) {
-                  $programs .= "<div class='noteEnterPrograms messages warning'>Atleast one program must be entered to complete this tab</div>";
+                  $programs .= "<div class='noteEnterPrograms messages warning'>At least one program must be entered to complete this tab</div>";
                 }
                 $addAProgramLink = "<a class='button nulCensusButton' href='/node/add/programs/{$node->field_parent_census[LANGUAGE_NONE][0]['target_id']}/{$node->type}'>+ Add A Program</a>";
               }
