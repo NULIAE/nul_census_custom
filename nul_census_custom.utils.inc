@@ -577,23 +577,28 @@ function nul_census_custom_check_for_programs($type, $parent) {
  * @param  int $censusNid    census to be deleted
  */
 function nul_census_custom_delete_census($censusNid) {
- // node_delete($censusNid);
-  // search for node of that type AND parent census with NID passed to the function
+  // Delete all related programs
   $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'node')
     ->entityCondition('bundle', 'programs')
     ->fieldCondition('field_parent_census', 'target_id', $censusNid);
   $results = $query->execute();
   foreach ($results['node'] as $programId => $details) {
-   node_delete($programId);  
+   node_delete($programId);
   }
- $query = new EntityFieldQuery();
+
+  // Delete all tabs
+  $query = new EntityFieldQuery();
   $query->entityCondition('entity_type', 'node')
     ->fieldCondition('field_parent_census', 'target_id', $censusNid);
   $results = $query->execute();
   foreach ($results['node'] as $programId => $details) {
    node_delete($programId);
   }
+
+  // Delete parent census
   node_delete($censusNid);
+
+  // redirect to full list of censuses
   drupal_goto('census-s-by-affiliate');
 }
