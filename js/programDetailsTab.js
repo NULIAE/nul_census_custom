@@ -8,6 +8,7 @@
 
     $('input[type=radio][name^=field_do_you_offer_programs_of_t]').change(hideFields);
     function hideFields() {
+      $('.noteEnterPrograms').hide();
       // console.log($('input[type=radio][name^=field_do_you_offer_programs_of_t]:checked').val());
       if ($('input[type=radio][name^=field_do_you_offer_programs_of_t]:checked').val() == 1) {
         $('.node-form div.form-item').each(function (index, key) {
