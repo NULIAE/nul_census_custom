@@ -193,7 +193,10 @@ If on a program details tab in view mode can view add program button.
 
 #### Incomplete to Complete:
 
-All Census tabs start as Incomplete Users with proper permissions (edit own or any affiliate) will see a button on view of a tab node to mark the tab as complete
+All Census tabs start as Incomplete Users with proper permissions (edit own or any affiliate) will see a button on view of a tab node to mark the tab as complete.
+
+If a user is on a tab with the question "Our Affiliate offers programs of this type" and has selected "Yes"
+THEN they must add at least one program to view the "Complete" link.
 
 #### Complete to Submitted:
 
@@ -238,3 +241,16 @@ Custom code when on the content type programs
 When on a program details tabs and the user checks yes for "Affiliate had programs of this type" then on view of the program details tab will be an add a programs button. When the user clicks add a program they will be taken to a page to create a node of the type programs with the parent census id in the url and the program area of the program details tab they are coming from. The parent census id will be used to populate the parent census field and the program area will be used to set the program area for the program and limit the options for the services provided and program types to only those for that program area.
 
 NOTE: Programs do not have a status. they use the statuses of their program details tabs, if you can edit the program details tab you can edit the program and add new ones, if you can't edit the program details tab you can't edit or add programs
+
+## Deleting Censuses
+IF you are on a census's "Contact Information" tab  
+AND are logged in as a user with the permission 'can mark census tabs resubmit and reviewed'
+THEN you see a "Delete Census" link next to the "Sync to Civi" link
+AND when you click "Delete Census" the census you are on and all programs and tabs related to it are deleted
+AND you are redirected to /census-s-by-affiliate
+
+![Screenshot of Delete Census link](img/deleteCensusOption.png)
+
+IF you are on a census's "Contact Information" tab  
+AND are logged in as a user without the permission 'can mark census tabs resubmit and reviewed'
+THEN you cannot see a "Delete Census" link or a "Sync to Civi" link
