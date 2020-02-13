@@ -2,13 +2,14 @@
   // This hides the program details fields unless or until
   // the user clicks "Do you offer Programs of this type?"
   $(document).ready(function () {
-    hideFields();
     // AGH #20337 Add note for user that they will be required to enter programs if they say they have them
     $('div#edit-field-do-you-offer-programs-of-t').append("<div class='noteEnterPrograms messages warning'>You will be required to enter information about at least one program to complete this tab on the next screen.</div>");
+    $('.noteEnterPrograms').hide();
+
+    hideFields();
 
     $('input[type=radio][name^=field_do_you_offer_programs_of_t]').change(hideFields);
     function hideFields() {
-      $('.noteEnterPrograms').hide();
       // console.log($('input[type=radio][name^=field_do_you_offer_programs_of_t]:checked').val());
       if ($('input[type=radio][name^=field_do_you_offer_programs_of_t]:checked').val() == 1) {
         $('.node-form div.form-item').each(function (index, key) {
