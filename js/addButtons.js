@@ -17,12 +17,6 @@
        "/ReviewComplete'>Mark Census Review Complete</a></li";
     }
 
-    if (Drupal.settings.nul_census_custom.censuspart == 'deleteCensus') {
-      var buttonsToAdd = "<li><a href='"
-       + href  +
-       "/deleteCensus'>Delete Census</a></li";
-    }
-
     if (Drupal.settings.nul_census_custom.censuspart == 'resubmit') {
       var buttonsToAdd = "<li><a href='"
        + href  +
@@ -38,7 +32,9 @@
     if (Drupal.settings.nul_census_custom.censuspart == 'civiSync') {
       var buttonsToAdd = "<li><a href='"
        + href  +
-       "/civiSync'>Sync to Civi</a></li";
+       "/civiSync'>Sync to Civi</a></li><li><a href='"
+        + href  +
+        "/deleteCensus'>Delete Census</a></li";
     }
 
     // Insert buttons to mark as reviewed and resubmit

@@ -200,10 +200,9 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
     switch ($nodeType) {
       case 'census':
         drupal_add_css(drupal_get_path('module', 'nul_census_custom') . '/css/editForm.css');
-        // Add Button to Sync to Civi
+        // Add Button to Sync to Civi AND to delete census (both appear on the census tab if you have permission)
         if (user_access('can mark census tabs resubmit and reviewed')) {
           drupal_add_js(array('nul_census_custom' => array('censuspart' => 'civiSync')), array('type' => 'setting'));
-          drupal_add_js(array('nul_census_custom' => array('censuspart' => 'deleteCensus')), array('type' => 'setting'));
           drupal_add_js(array('nul_census_custom' => array('nid' => $node->nid)), array('type' => 'setting'));
           drupal_add_js(drupal_get_path('module', 'nul_census_custom') . '/js/addButtons.js');
         }
