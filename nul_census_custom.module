@@ -267,8 +267,8 @@ function nul_census_custom_node_view($node, $view_mode, $langcode) {
               $displayCompleteButton = TRUE;
             }
           }
-          elseif (!empty($node->field_do_you_offer_programs_of_t[LANGUAGE_NONE][0]['value'])
-          && $node->field_do_you_offer_programs_of_t[LANGUAGE_NONE][0]['value'] == 1) {
+          elseif (isset($node->field_do_you_offer_programs_of_t[LANGUAGE_NONE][0]['value'])
+          && $node->field_do_you_offer_programs_of_t[LANGUAGE_NONE][0]['value'] == 0) {
             $displayCompleteButton = TRUE;
           }
           elseif (!isset($node->field_do_you_offer_programs_of_t[LANGUAGE_NONE][0]['value'])) {
