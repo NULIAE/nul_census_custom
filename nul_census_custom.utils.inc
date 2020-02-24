@@ -553,3 +553,21 @@ function nul_census_custom_check_for_required_url_parts($part) {
     }
   }
 }
+
+/**
+ * Check the number of programs for the tab
+ * @param  string $type   tab content type
+ * @param  int $parent    parent census id
+ * @return int            number of programs for the tab
+ */
+function nul_census_custom_check_for_programs($type, $parent) {
+  $programArea = nul_census_custom_searchTaxonomyByField('program_areas', 'field_content_type', $type);
+  $query = new EntityFieldQuery();
+  $query->entityCondition('entity_type', 'node')
+    ->entityCondition('bundle', 'programs')
+    ->fieldCondition('field_parent_census', 'target_id', $parent)
+    ->fieldCondition('field_program_area', 'tid', $programArea->tid)
+    ->count();
+  $results = $query->execute();
+  return $results;
+}

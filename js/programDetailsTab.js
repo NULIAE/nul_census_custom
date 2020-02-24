@@ -2,7 +2,12 @@
   // This hides the program details fields unless or until
   // the user clicks "Do you offer Programs of this type?"
   $(document).ready(function () {
+    // AGH #20337 Add note for user that they will be required to enter programs if they say they have them
+    $('div#edit-field-do-you-offer-programs-of-t').append("<div class='noteEnterPrograms messages warning'>You will be required to enter information about at least one program to complete this tab on the next screen.</div>");
+    $('.noteEnterPrograms').hide();
+
     hideFields();
+
     $('input[type=radio][name^=field_do_you_offer_programs_of_t]').change(hideFields);
     function hideFields() {
       // console.log($('input[type=radio][name^=field_do_you_offer_programs_of_t]:checked').val());
@@ -21,12 +26,18 @@
         $('div.field-group-div').each(function (index, key) {
           $(key).show();
         });
+
+        // AGH #20337 Show note to user that they will be required to enter programs if they say they have them
+	      $('.noteEnterPrograms').show();
       }
 
       if ($('input[type=radio][name^=field_do_you_offer_programs_of_t]:checked').val() == 0 ||
       typeof (
         $('input[type=radio][name^=field_do_you_offer_programs]:checked').val())  === 'undefined'
       ) {
+        // AGH #20337 Do not show note to user that they will be required to enter programs because they have said they do not have any programs
+        $('.noteEnterPrograms').hide();
+
         $('.node-form div.form-item').each(function (index, key) {
           // skips the title, tab status and parent census fields,
           // whether the user sees those fields should be depenedent on their permissions
