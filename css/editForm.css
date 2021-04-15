@@ -351,3 +351,8 @@ div.nulTable div.field-group-div.nulTableRow div#autocomplete li {
 .program-h3-alt .field-label{width:30% !important;}
 
 .program-h3-alt .nulTable > h3:first-child {weight:600 !important;  font-weight: normal;}
+
+#emergency-relief-activities-node-form .form-wrapper {
+  margin-top: 25px;
+  margin-bottom: 25px;
+}
